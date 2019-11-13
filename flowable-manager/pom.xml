@@ -36,6 +36,17 @@
             <artifactId>spring-test</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- flowable UI集成 -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-ui-modeler-rest</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-ui-modeler-conf</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-ui-idm-conf</artifactId>
