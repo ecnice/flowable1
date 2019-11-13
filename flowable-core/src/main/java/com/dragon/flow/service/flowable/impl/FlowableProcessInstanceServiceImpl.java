@@ -35,7 +35,8 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
                 .name(params.getFormName().trim())
                 .businessKey(params.getBusinessKey().trim())
                 .variables(params.getVariables())
-                .tenantId(params.getSystemSn().trim()).start();
+                .tenantId(params.getSystemSn().trim())
+                .start();
         returnVo.setData(processInstance);
         return returnVo;
     }
