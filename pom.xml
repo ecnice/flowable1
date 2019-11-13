@@ -13,7 +13,8 @@
         <module>flowable-core</module>
         <module>flowable-manager</module>
         <module>flowable-server</module>
-        <module>parent</module>
+        <module>flowable-parent</module>
+        <module>flowable-rest</module>
     </modules>
 
 
