@@ -2,11 +2,8 @@ package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.service.flowable.IFlowableProcessDefinitionService;
 import org.flowable.engine.RepositoryService;
-import org.flowable.engine.repository.Deployment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
 
 /**
  * @author : bruce.liu
@@ -21,9 +18,5 @@ public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDef
     @Autowired
     private RepositoryService repositoryService;
 
-    @Override
-    public Deployment deploy(String fileName, InputStream inputStream) {
-        Deployment deploy = repositoryService.createDeployment().addInputStream(fileName + ".bpmn", inputStream).deploy();
-        return deploy;
-    }
+
 }
