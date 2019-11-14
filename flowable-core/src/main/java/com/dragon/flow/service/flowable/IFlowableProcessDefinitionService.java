@@ -13,10 +13,5 @@ import java.io.InputStream;
  */
 public interface IFlowableProcessDefinitionService {
 
-    /**
-     * 部署流程
-     * @param fileName 文件名
-     * @param inputStream 文件流
-     */
-    public Deployment deploy(String fileName, InputStream inputStream);
+
 }
