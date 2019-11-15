@@ -1,4 +1,22 @@
-1、登录
+1、登录 登录请求接口
+账号字段：j_username
+密码字段：j_password
+var data = form.getData();
+    var url = basePath + "/app/authentication";
+    $.POST({
+        url: url, data: data,dataType:"text",
+        success: function (msg, textStatus, request) {
+            if(textStatus == "success"){
+                $('#jsTipMsg').html("");
+                location.href = basePath+"/main";
+            }
+        },
+        error: function (msg) {
+            if(msg.status == "401"){
+                $('#jsTipMsg').addClass("errorText").html("账号或者密码错误");
+            }
+        }
+    });
 2、model列表
 3、导入model
 4、部署流程模板
