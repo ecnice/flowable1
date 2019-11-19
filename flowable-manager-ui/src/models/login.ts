@@ -3,7 +3,7 @@ import { routerRedux } from 'dva/router';
 import { Effect } from 'dva';
 import { stringify } from 'querystring';
 
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
+import { doLogout, fakeAccountLogin, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -36,12 +36,15 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
-      // Login successfully
-      if (response.status === 'ok') {
+      debugger;
+      if (response) {
+        if (response.status === 401) {
+        }
+      } else {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: { status: 'ok', type: 'account', currentAuthority: 'admin' },
+        });
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -59,13 +62,18 @@ const Model: LoginModelType = {
         }
         yield put(routerRedux.replace(redirect || '/'));
       }
+
+      // Login successfully
+      if (response.status === 'ok') {
+      }
     },
 
     *getCaptcha({ payload }, { call }) {
       yield call(getFakeCaptcha, payload);
     },
-    *logout(_, { put }) {
+    *logout(_, { call, put }) {
       const { redirect } = getPageQuery();
+      yield call(doLogout);
       // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
         yield put(

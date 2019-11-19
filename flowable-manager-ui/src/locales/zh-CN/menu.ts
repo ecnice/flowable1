@@ -1,5 +1,7 @@
 export default {
   'menu.welcome': '欢迎',
+  'menu.modules': '流程模板列表',
+  'menu.modulesEditor': '编辑流程',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',

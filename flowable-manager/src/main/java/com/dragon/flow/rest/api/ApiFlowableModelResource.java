@@ -21,19 +21,18 @@ import org.flowable.ui.modeler.model.ModelKeyRepresentation;
 import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.flowable.ui.modeler.service.FlowableModelQueryService;
 import org.flowable.ui.modeler.serviceapi.ModelService;
+import org.jsoup.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,7 +43,7 @@ import java.util.List;
  * @date : 2019/11/1321:21
  */
 @RestController
-@RequestMapping("/api/model")
+@RequestMapping("/rest/model")
 public class ApiFlowableModelResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFlowableModelResource.class);
     protected BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
@@ -56,10 +55,24 @@ public class ApiFlowableModelResource {
     private RepositoryService repositoryService;
 
 
-    @PostMapping(value = "/rest/page-model")
+    @GetMapping(value = "/rest/page-model")
     public ReturnVo<PagerModel<AbstractModel>> pageModel() {
         ReturnVo<PagerModel<AbstractModel>> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         List<AbstractModel> datas = modelService.getModelsByModelType(AbstractModel.MODEL_TYPE_BPMN);
+        AbstractModel abstractModel = new AbstractModel();
+        abstractModel.setName("测试模板名称");
+        abstractModel.setComment("描述comment");
+        abstractModel.setCreatedBy("创建人");
+        abstractModel.setCreated(new Date());
+        abstractModel.setDescription("详细描述");
+        abstractModel.setId("111");
+        abstractModel.setKey("key_1");
+        abstractModel.setLastUpdated(new Date());
+        abstractModel.setModelType(1);
+        abstractModel.setTenantId("tenantId");
+        abstractModel.setVersion(1);
+        datas.add(abstractModel);
+
         PagerModel<AbstractModel> pm = new PagerModel<>(datas.size(), datas);
         returnVo.setData(pm);
         return returnVo;
@@ -74,22 +87,33 @@ public class ApiFlowableModelResource {
 
     @PostMapping(value = "/rest/deploy")
     public ReturnVo<String> deploy(String modelId) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        Model model = modelService.getModel(modelId.trim());
-        //到时候需要添加分类
-        String categoryCode = "1000";
-        BpmnModel bpmnModel = modelService.getBpmnModel(model);
-        //添加隔离信息
-        String tenantId = "flow";
-        //必须指定文件后缀名否则部署不成功
-        Deployment deploy = repositoryService.createDeployment()
-                .name(model.getName())
-                .key(model.getKey())
-                .category(categoryCode)
-                .tenantId(tenantId)
-                .addBpmnModel(model.getKey() + ".bpmn", bpmnModel)
-                .deploy();
-        returnVo.setData(deploy.getId());
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.FAIL, "部署流程失败！");
+        if(StringUtils.isBlank(modelId)){
+            returnVo.setMsg("模板ID不能为空！");
+            return returnVo;
+        }
+        try {
+            Model model = modelService.getModel(modelId.trim());
+            //到时候需要添加分类
+            String categoryCode = "1000";
+            BpmnModel bpmnModel = modelService.getBpmnModel(model);
+            //添加隔离信息
+            String tenantId = "flow";
+            //必须指定文件后缀名否则部署不成功
+            Deployment deploy = repositoryService.createDeployment()
+                    .name(model.getName())
+                    .key(model.getKey())
+                    .category(categoryCode)
+                    .tenantId(tenantId)
+                    .addBpmnModel(model.getKey() + ".bpmn", bpmnModel)
+                    .deploy();
+            returnVo.setData(deploy.getId());
+            returnVo.setMsg("部署流程成功！");
+            returnVo.setCode(ReturnCode.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnVo.setMsg(String.format("部署流程异常！- %s", e.getMessage()));
+        }
         return returnVo;
     }
 

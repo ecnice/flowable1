@@ -1,9 +1,12 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import { message } from 'antd';
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { queryCurrent, queryModules, deployModules } from '@/services/modules';
+import { ConnectState } from '@/models/connect';
 
 export interface CurrentUser {
+  modules?: Array;
   avatar?: string;
   name?: string;
   title?: string;
@@ -21,8 +24,8 @@ export interface UserModelState {
   currentUser?: CurrentUser;
 }
 
-export interface UserModelType {
-  namespace: 'user';
+export interface ModulesModelType {
+  namespace: 'modules';
   state: UserModelState;
   effects: {
     fetch: Effect;
@@ -34,8 +37,8 @@ export interface UserModelType {
   };
 }
 
-const UserModel: UserModelType = {
-  namespace: 'user',
+const ModulesModel: ModulesModelType = {
+  namespace: 'modules',
 
   state: {
     currentUser: {},
@@ -43,11 +46,23 @@ const UserModel: UserModelType = {
 
   effects: {
     *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
+      const response = yield call(queryModules);
       yield put({
-        type: 'save',
+        type: 'saveList',
         payload: response,
       });
+    },
+    *deploy({ payload }, { call, put }) {
+      const response = yield call(deployModules, payload);
+      if (response.code === '100') {
+        message.success(response.msg);
+        yield put({
+          type: 'fetch',
+          payload: {},
+        });
+      } else {
+        message.error(response.msg);
+      }
     },
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
@@ -59,6 +74,12 @@ const UserModel: UserModelType = {
   },
 
   reducers: {
+    saveList(state, action) {
+      return {
+        ...state,
+        modules: action.payload.data.data || [],
+      };
+    },
     saveCurrentUser(state, action) {
       return {
         ...state,
@@ -84,4 +105,4 @@ const UserModel: UserModelType = {
   },
 };
 
-export default UserModel;
+export default ModulesModel;

@@ -8,9 +8,17 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
-  return request('/api/login/account', {
+  // _spring_security_remember_me
+  return request('/server/app/authentication', {
+    requestType: 'form',
     method: 'POST',
     data: params,
+  });
+}
+
+export async function doLogout() {
+  return request('/server/app/logout', {
+    method: 'POST',
   });
 }
 

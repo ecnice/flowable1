@@ -1,9 +1,8 @@
 /**
- * Ant Design Pro v4 use `@ant-design/pro-layout` to handle Layout.
+ * Dragon Flowable v4 use `@ant-design/pro-layout` to handle Layout.
  * You can view component api by:
  * https://github.com/ant-design/ant-design-pro-layout
  */
-
 import ProLayout, {
   MenuDataItem,
   BasicLayoutProps as ProLayoutProps,
@@ -15,8 +14,6 @@ import Link from 'umi/link';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Icon, Result, Button } from 'antd';
-import { formatMessage } from 'umi-plugin-react/locale';
-
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
@@ -35,7 +32,6 @@ const noMatch = (
     }
   />
 );
-
 export interface BasicLayoutProps extends ProLayoutProps {
   breadcrumbNameMap: {
     [path: string]: MenuDataItem;
@@ -51,72 +47,63 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
     [path: string]: MenuDataItem;
   };
 };
-
 /**
  * use Authorized check all menu item
  */
+
 const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
   menuList.map(item => {
-    const localItem = {
-      ...item,
-      children: item.children ? menuDataRender(item.children) : [],
-    };
+    const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
 
 const defaultFooterDom = (
   <DefaultFooter
-    copyright="2019 蚂蚁金服体验技术部出品"
+    copyright="2019 Flowable体验技术部出品"
     links={[
       {
-        key: 'Ant Design Pro',
-        title: 'Ant Design Pro',
-        href: 'https://pro.ant.design',
+        key: 'Dragon1',
+        title: 'Dragon1',
+        href: 'https://www.flowable.com',
         blankTarget: true,
       },
       {
         key: 'github',
         title: <Icon type="github" />,
-        href: 'https://github.com/ant-design/ant-design-pro',
+        href: 'https://gitee.com/lwj/flowable',
         blankTarget: true,
       },
       {
-        key: 'Ant Design',
-        title: 'Ant Design',
-        href: 'https://ant.design',
+        key: 'Dragon2',
+        title: 'Dragon',
+        href: 'https://gitee.com/lwj/flowable',
         blankTarget: true,
       },
     ]}
   />
 );
 
-const footerRender: BasicLayoutProps['footerRender'] = () => {
-  if (!isAntDesignPro()) {
-    return defaultFooterDom;
-  }
-  return (
-    <>
-      {defaultFooterDom}
-      <div
-        style={{
-          padding: '0px 24px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-            width="82px"
-            alt="netlify logo"
-          />
-        </a>
-      </div>
-    </>
-  );
-};
+const footerRender: BasicLayoutProps['footerRender'] = () => (
+  <>
+    {defaultFooterDom}
+    <div
+      style={{
+        padding: '0px 24px 24px',
+        textAlign: 'center',
+      }}
+    ></div>
+  </>
+);
 
 const BasicLayout: React.FC<BasicLayoutProps> = props => {
-  const { dispatch, children, settings, location = { pathname: '/' } } = props;
+  const {
+    dispatch,
+    children,
+    settings,
+    location = {
+      pathname: '/',
+    },
+  } = props;
   /**
    * constructor
    */
@@ -134,6 +121,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   /**
    * init variables
    */
+
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
       dispatch({
@@ -141,12 +129,11 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         payload,
       });
     }
-  };
-  // get children authority
+  }; // get children authority
+
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
-
   return (
     <ProLayout
       logo={logo}
@@ -155,15 +142,13 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         if (menuItemProps.isUrl) {
           return defaultDom;
         }
+
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
-          breadcrumbName: formatMessage({
-            id: 'menu.home',
-            defaultMessage: 'Home',
-          }),
+          breadcrumbName: '首页',
         },
         ...routers,
       ]}
@@ -177,7 +162,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       }}
       footerRender={footerRender}
       menuDataRender={menuDataRender}
-      formatMessage={formatMessage}
       rightContentRender={rightProps => <RightContent {...rightProps} />}
       {...props}
       {...settings}
