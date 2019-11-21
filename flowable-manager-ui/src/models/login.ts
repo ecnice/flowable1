@@ -36,7 +36,6 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      debugger;
       if (response) {
         if (response.status === 401) {
         }

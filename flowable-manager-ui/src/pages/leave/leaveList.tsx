@@ -1,7 +1,7 @@
-import {Card, Button, Modal, Table, Form, Input, DatePicker, InputNumber, message} from 'antd';
-import React, {Component, PureComponent} from 'react';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {connect} from 'dva';
+import { Card, Button, Modal, Table, Form, Input, DatePicker, InputNumber, message } from 'antd';
+import React, { Component, PureComponent } from 'react';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
 import moment from 'moment/moment';
 import styles from './leaveList.less';
 
@@ -10,7 +10,7 @@ const FormItem = Form.Item;
 @Form.create()
 class ModalForm extends PureComponent {
   render() {
-    const {modalVisible, form, record, handleOk, handleModalVisible, modalTitle} = this.props;
+    const { modalVisible, form, record, handleOk, handleModalVisible, modalTitle } = this.props;
     const okHandle = () => {
       form.validateFields((err, panelValue) => {
         if (err) return;
@@ -18,14 +18,14 @@ class ModalForm extends PureComponent {
         panelValue = {
           ...panelValue,
           startTime: moment(panelValue.startTime).format('YYYY-MM-DD'),
-          endTime: moment(panelValue.endTime).format('YYYY-MM-DD')
+          endTime: moment(panelValue.endTime).format('YYYY-MM-DD'),
         };
         record == null ? handleOk.add(panelValue, resetForm) : handleOk.edit(panelValue, resetForm);
       });
     };
     const resetForm = () => {
       form.resetFields();
-      handleModalVisible()
+      handleModalVisible();
     };
     const formItems = () => {
       const id = record ? record.id : null;
@@ -33,30 +33,30 @@ class ModalForm extends PureComponent {
         initialValue: id,
       });
       return [
-        <FormItem key="name" labelCol={{span: 5}} wrapperCol={{span: 16}} label="姓名">
+        <FormItem key="name" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="姓名">
           {form.getFieldDecorator('name', {
             initialValue: record ? record.name : '',
-            rules: [{required: true, message: '请输入姓名'}],
-          })(<Input width={120} placeholder="请输入姓名"/>)}
+            rules: [{ required: true, message: '请输入姓名' }],
+          })(<Input width={120} placeholder="请输入姓名" />)}
         </FormItem>,
-        <FormItem key="startTime" labelCol={{span: 5}} wrapperCol={{span: 16}} label="开始时间">
+        <FormItem key="startTime" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="开始时间">
           {form.getFieldDecorator('startTime', {
             initialValue: record ? moment(record.startTime) : '',
-            rules: [{required: true, message: '请选择开始时间'}],
-          })(<DatePicker format="YYYY-MM-DD"/>)}
+            rules: [{ required: true, message: '请选择开始时间' }],
+          })(<DatePicker format="YYYY-MM-DD" />)}
         </FormItem>,
-        <FormItem key="endTime" labelCol={{span: 5}} wrapperCol={{span: 16}} label="结束时间">
+        <FormItem key="endTime" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="结束时间">
           {form.getFieldDecorator('endTime', {
             initialValue: record ? moment(record.endTime) : '',
-            rules: [{required: true, message: '请选择结束时间'}],
-          })(<DatePicker format="YYYY-MM-DD"/>)}
+            rules: [{ required: true, message: '请选择结束时间' }],
+          })(<DatePicker format="YYYY-MM-DD" />)}
         </FormItem>,
-        <FormItem key="days" labelCol={{span: 5}} wrapperCol={{span: 16}} label="请假天数">
+        <FormItem key="days" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="请假天数">
           {form.getFieldDecorator('days', {
             initialValue: record ? record.days : 0,
-            rules: [{required: true, message: '请输入请假天数'}],
-          })(<InputNumber min={0}/>)}
-        </FormItem>
+            rules: [{ required: true, message: '请输入请假天数' }],
+          })(<InputNumber min={0} />)}
+        </FormItem>,
       ];
     };
     const onCancel = () => {
@@ -66,7 +66,7 @@ class ModalForm extends PureComponent {
     return (
       <Modal
         width={650}
-        bodyStyle={{padding: '10px 15px 10px'}}
+        bodyStyle={{ padding: '10px 15px 10px' }}
         destroyOnClose
         title={modalTitle}
         visible={modalVisible}
@@ -80,23 +80,22 @@ class ModalForm extends PureComponent {
   }
 }
 
-
-@connect(({leave, loading}) => ({
+@connect(({ pm, loading }) => ({
   loading: loading.models.leave,
-  data: leave.data,
+  data: pm.data,
 }))
 class LeaveList extends Component {
   state = {
-    modalVisible: false,//弹框实现隐藏状态
-    modalValue: null,//修改数据
-    modalTitle: '',//弹框名称
-    selectedRows: [],//选择项
-    selectedRowKeys: []//选择项（key）
+    modalVisible: false, //弹框实现隐藏状态
+    modalValue: null, //修改数据
+    modalTitle: '', //弹框名称
+    selectedRows: [], //选择项
+    selectedRowKeys: [], //选择项（key）
   };
 
   //查询列表
   componentWillMount() {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'leave/fetch',
     });
@@ -148,17 +147,18 @@ class LeaveList extends Component {
   };
   //回掉
   callback = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'leave/fetch',
     });
-  }
+  };
 
   render() {
-    const {data, loading} = this.props;
-    const {selectedRows, selectedRowKeys, modalVisible, modalTitle, modalValue} = this.state;
+    const { data, loading } = this.props;
+    debugger;
+    const { selectedRows, selectedRowKeys, modalVisible, modalTitle, modalValue } = this.state;
     const parentMethods = {
-      handleOk: {add: this.handleAdd, edit: this.handleEdit},
+      handleOk: { add: this.handleAdd, edit: this.handleEdit },
       handleModalVisible: this.handleModalVisible,
     };
     const paginationProps = {
@@ -190,7 +190,6 @@ class LeaveList extends Component {
         dataIndex: 'startTime',
         key: 'startTime',
         render: val => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
-
       },
       {
         title: '结束时间',
@@ -198,7 +197,6 @@ class LeaveList extends Component {
         key: 'endTime',
         width: 150,
         render: val => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
-
       },
       {
         title: '请假天数',
@@ -208,9 +206,9 @@ class LeaveList extends Component {
       },
     ];
     return (
-      <PageHeaderWrapper title={'请假管理'}>
+      <PageHeaderWrapper title={}>
         <Card bordered={false}>
-          <div className={styles.tableList} style={{height: '100%'}}>
+          <div className={styles.tableList} style={{ height: '100%' }}>
             <div className={styles.tableListOperator}>
               <span>
                 <Button
