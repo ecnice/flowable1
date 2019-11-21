@@ -77,7 +77,7 @@ public interface ILeaveService {
 	 * @throws Exception
 	 * @Description:
 	 */
-	public void insertLeave(Leave Leave) throws Exception;
+	public Leave insertLeave(Leave Leave) throws Exception;
 
 	/**
 	 * 批量添加请假单Leave

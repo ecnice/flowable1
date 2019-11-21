@@ -4,6 +4,7 @@
     <resultMap id="LeaveMap" type="com.dragon.flow.model.leave.Leave" >
         <id column="id" property="id" jdbcType="VARCHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
         <result column="days" property="days" jdbcType="INTEGER" />
         <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
         <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
@@ -11,6 +12,7 @@
     <sql id="Base_Column_List" >
         id,
         name,
+        process_instance_id,
         days,
         start_time,
         end_time
@@ -18,10 +20,13 @@
 
     <sql id="where">
         <if test="id != null and id != ''">
-        and id = #{id,jdbcType=VARCHAR}
+            and id = #{id,jdbcType=VARCHAR}
         </if>
         <if test="name != null and name != ''">
-        and name = #{name,jdbcType=VARCHAR}
+            and name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="processInstanceId != null and processInstanceId != ''">
+            and process_instance_id = #{processInstanceId,jdbcType=VARCHAR}
         </if>
         <if test="days != null">
         and days = #{days,jdbcType=INTEGER}
@@ -86,6 +91,7 @@
         values (
         #{id,jdbcType=VARCHAR},
         #{name,jdbcType=VARCHAR},
+        #{processInstanceId,jdbcType=VARCHAR},
         #{days,jdbcType=INTEGER},
         #{startTime,jdbcType=TIMESTAMP},
         #{endTime,jdbcType=TIMESTAMP}
@@ -99,6 +105,7 @@
 	        (
 	        #{item.id,jdbcType=VARCHAR},
 	        #{item.name,jdbcType=VARCHAR},
+            #{item.processInstanceId,jdbcType=VARCHAR},
 	        #{item.days,jdbcType=INTEGER},
 	        #{item.startTime,jdbcType=TIMESTAMP},
 	        #{item.endTime,jdbcType=TIMESTAMP}
@@ -133,6 +140,9 @@
             <if test="name != null" >
                 name = #{name,jdbcType=VARCHAR},
             </if>
+            <if test="processInstanceId != null" >
+                process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+            </if>
             <if test="days != null" >
                 days = #{days,jdbcType=INTEGER},
             </if>
@@ -155,6 +165,9 @@
             <if test="Leave.name != null" >
                 name = #{Leave.name,jdbcType=VARCHAR},
             </if>
+            <if test="Leave.processInstanceId != null" >
+                process_instance_id = #{Leave.processInstanceId,jdbcType=VARCHAR},
+            </if>
             <if test="Leave.days != null" >
                 days = #{Leave.days,jdbcType=INTEGER},
             </if>
@@ -176,6 +189,9 @@
             </if>
             <if test="Leave.name != null" >
                 name = #{Leave.name,jdbcType=VARCHAR},
+            </if>
+            <if test="Leave.processInstanceId != null" >
+                process_instance_id = #{Leave.processInstanceId,jdbcType=VARCHAR},
             </if>
             <if test="Leave.days != null" >
                 days = #{Leave.days,jdbcType=INTEGER},
@@ -203,6 +219,9 @@
 		            <if test="item.name != null" >
 		                name = #{item.name,jdbcType=VARCHAR},
 		            </if>
+                    <if test="item.processInstanceId != null">
+                        process_instance_id = #{item.processInstanceId,jdbcType=VARCHAR},
+                    </if>
 		            <if test="item.days != null" >
 		                days = #{item.days,jdbcType=INTEGER},
 		            </if>

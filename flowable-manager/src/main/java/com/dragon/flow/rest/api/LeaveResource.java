@@ -1,16 +1,25 @@
 package com.dragon.flow.rest.api;
 
 import com.dragon.flow.model.leave.Leave;
+import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.leave.ILeaveService;
+import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
+import com.dragon.tools.common.UUIDGenerator;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import com.dragon.tools.common.ReturnCode;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.idm.api.User;
+import org.flowable.ui.common.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -20,13 +29,15 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/rest/leave")
-public class LeaveController {
-    private static Logger logger = LoggerFactory.getLogger(LeaveController.class);
+public class LeaveResource {
+    private static Logger logger = LoggerFactory.getLogger(LeaveResource.class);
 
     private final String nameSpace = "leave";
 
-    @Resource
+    @Autowired
     private ILeaveService LeaveService;
+    @Autowired
+    private IFlowableProcessInstanceService flowableProcessInstanceService;
 
     @GetMapping("/ajaxList")
     public PagerModel<Leave> ajaxList(Leave Leave, Query query, String sessionId) {
@@ -42,10 +53,26 @@ public class LeaveController {
 
     //添加
     @PostMapping("/add")
-    public ReturnVo add(Leave Leave, String sessionId) {
+    public ReturnVo add(Leave leave, String sessionId) {
         ReturnVo returnVo = new ReturnVo(ReturnCode.FAIL, "添加失败");
         try {
-            this.LeaveService.insertLeave(Leave);
+            String leaveId = UUIDGenerator.generate();
+            leave.setId(leaveId);
+            StartProcessInstanceVo startProcessInstanceVo = new StartProcessInstanceVo();
+            startProcessInstanceVo.setBusinessKey(leaveId);
+            User user = SecurityUtils.getCurrentUserObject();
+            startProcessInstanceVo.setCreator(user.getId());
+            startProcessInstanceVo.setCurrentUserCode(user.getId());
+            startProcessInstanceVo.setFormName("请假流程");
+            startProcessInstanceVo.setSystemSn("flow");
+            startProcessInstanceVo.setProcessDefinitionKey("qinjia");
+            Map<String,Object> variables = new HashMap<>();
+            variables.put("days",leave.getDays());
+            startProcessInstanceVo.setVariables(variables);
+            ReturnVo<ProcessInstance> returnStart = flowableProcessInstanceService.startProcessInstanceByKey(startProcessInstanceVo);
+            String processInstanceId = returnStart.getData().getProcessInstanceId();
+            leave.setProcessInstanceId(processInstanceId);
+            this.LeaveService.insertLeave(leave);
             returnVo = new ReturnVo(ReturnCode.SUCCESS, "添加成功");
         } catch (Exception e) {
             logger.error("LeaveController-add:", e);

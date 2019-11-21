@@ -63,13 +63,14 @@ public class LeaveServiceImpl implements ILeaveService {
 	}
 
 	@Override
-	public void insertLeave(Leave Leave) throws Exception {
+	public Leave insertLeave(Leave Leave) throws Exception {
 		if (StringUtils.isBlank(Leave.getId())){
 			Leave.setId(UUID.randomUUID().toString().replace("-",""));
 		}
 		Leave.setCreateTime(new Date());
 		Leave.setUpdateTime(new Date());
 		this.LeaveDao.insertLeave(Leave);
+		return Leave;
 	}
 
 	@Override

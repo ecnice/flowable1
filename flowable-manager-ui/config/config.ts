@@ -117,6 +117,13 @@ export default {
               hideChildrenInMenu: true,
             },
             {
+              path: '/leave',
+              name: '请假管理',
+              icon: 'smile',
+              component: './leave/leaveList',
+              hideChildrenInMenu: true,
+            },
+            {
               path: '/modules/editor/:modelId',
               hideInMenu: true,
               name: 'modulesEditor',

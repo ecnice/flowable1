@@ -15,6 +15,10 @@ public class Leave extends BaseModel{
      */
     private String id;
     /**
+     * 流程实例id
+     */
+    private String processInstanceId;
+    /**
      *
      */
     private String name;
@@ -36,6 +40,14 @@ public class Leave extends BaseModel{
      * 查询条件
      */
     private String keyWord;
+
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
 
     public String getId()
     {
