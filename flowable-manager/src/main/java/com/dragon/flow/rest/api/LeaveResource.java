@@ -39,8 +39,8 @@ public class LeaveResource {
     @Autowired
     private IFlowableProcessInstanceService flowableProcessInstanceService;
 
-    @GetMapping("/ajaxList")
-    public PagerModel<Leave> ajaxList(Leave Leave, Query query, String sessionId) {
+    @GetMapping("/list")
+    public PagerModel<Leave> list(Leave Leave, Query query, String sessionId) {
         PagerModel<Leave> pm = null;
         try {
             pm = this.LeaveService.getPagerModelByQuery(Leave, query);

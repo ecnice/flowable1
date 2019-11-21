@@ -1,44 +1,43 @@
 import { Card, Table } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
+// import { connect } from 'dva';
 
 class LeaveList extends Component {
   callback(key) {
     console.log(key);
   }
   render() {
-    const { modules } = this.props;
+    // const { modules } = this.props;
     const columns = [
       {
-        title: '名称',
+        title: '姓名',
         width: 100,
         dataIndex: 'name',
         key: 'name',
       },
       {
-        title: 'Key',
+        title: '开始时间',
         width: 100,
-        dataIndex: 'key',
-        key: 'key',
+        dataIndex: 'startTime',
+        key: 'startTime',
       },
       {
-        title: '系统',
-        dataIndex: 'tenantId',
-        key: 'tenantId',
+        title: '结束时间',
+        dataIndex: 'endTime',
+        key: 'endTime',
         width: 150,
       },
       {
-        title: '描述',
-        dataIndex: 'comment',
-        key: 'comment',
+        title: '请假天数',
+        dataIndex: 'days',
+        key: 'days',
         width: 150,
       },
     ];
     return (
       <PageHeaderWrapper title={}>
-        <Card>
-          <Table rowKey="id" columns={columns} dataSource={modules} />
-        </Card>
+        <Card></Card>
       </PageHeaderWrapper>
     );
   }
