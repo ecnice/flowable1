@@ -104,9 +104,16 @@ export default {
             },
             {
               path: '/modules',
-              name: 'modules',
+              name: '模版管理',
               icon: 'smile',
               component: './modules/ModulesList',
+              hideChildrenInMenu: true,
+            },
+            {
+              path: '/tasks',
+              name: '任务管理',
+              icon: 'smile',
+              component: './tasks/tasksList',
               hideChildrenInMenu: true,
             },
             {
@@ -116,11 +123,12 @@ export default {
               icon: 'smile',
               component: './modules/ModulesEditor',
             },
+
             {
               path: '/admin',
               name: 'admin',
               icon: 'crown',
-              component: './Admin',
+              component: './group/Admin',
               authority: ['admin'],
             },
             {

@@ -4,6 +4,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import styles from './modules.less';
 import router from 'umi/router';
+import moment from 'moment';
 
 @connect(({ modules, loading }) => ({
   modules: modules.modules,
@@ -39,14 +40,47 @@ class ModulesList extends Component {
   }
 
   doEdit(modelId) {
-    console.log(modelId);
     router.push(`/modules/editor/${modelId}`);
+  }
+
+  doLoadXmlByModelId(modelId) {
+    window.open(`/server/rest/model/loadXmlByModelId/${modelId}`);
+  }
+
+  doLoadPngByModelId(modelId) {
+    window.open(`/server/rest/model/loadPngByModelId/${modelId}`);
   }
 
   render() {
     const { modules } = this.props;
     const _that = this;
+    const modelTypes = { 0: 'BPMN', 2: 'FORM', 3: 'APP', 4: 'DECISION_TABLE', 5: 'CMMN' };
     const columns = [
+      {
+        title: '操作',
+        key: 'operation',
+        // fixed: 'right',
+        width: 200,
+        render: (text, record) =>
+          modules.length >= 1 ? (
+            <div>
+              <Popconfirm title="确定要部署吗?" onConfirm={() => this.doDeploy(record.id)}>
+                <a>部署</a>
+              </Popconfirm>
+              &nbsp;&nbsp;
+              <a onClick={() => this.doLoadXmlByModelId(record.id)}>查看XML</a>
+              &nbsp;&nbsp;
+              <a onClick={() => this.doLoadPngByModelId(record.id)}>查看图片</a>
+            </div>
+          ) : null,
+      },
+      {
+        title: '类型',
+        dataIndex: 'modelType',
+        key: 'modelType',
+        render: (text, record) => modelTypes[text],
+        width: 100,
+      },
       {
         title: '名称',
         width: 100,
@@ -81,35 +115,14 @@ class ModulesList extends Component {
         title: '创建时间',
         dataIndex: 'created',
         key: 'created',
+        render: text => <div>{moment(text).format('YYYY-MM-DD HH:MM:SS')} </div>,
         width: 150,
-      },
-      {
-        title: '模板类型',
-        dataIndex: 'modelType',
-        key: 'modelType',
-        width: 150,
-      },
-      {
-        title: 'Action',
-        key: 'operation',
-        // fixed: 'right',
-        width: 100,
-        render: (text, record) =>
-          modules.length >= 1 ? (
-            <div>
-              <Popconfirm title="确定要部署吗?" onConfirm={() => this.doDeploy(record.id)}>
-                <a>部署</a>
-              </Popconfirm>
-              &nbsp;&nbsp;
-              <a onClick={() => this.doEdit(record.id)}>编辑</a>
-            </div>
-          ) : null,
       },
     ];
 
     const props = {
       name: 'file',
-      action: '/server/rest/model/rest/import-process-model',
+      action: '/server/rest/model/import-process-model',
       showUploadList: false,
       headers: {
         authorization: 'authorization-text',
@@ -128,7 +141,7 @@ class ModulesList extends Component {
     };
 
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper title={}>
         <Card>
           <div className={styles.toolBar}>
             <Upload {...props}>

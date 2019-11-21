@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, Typography, Alert, Icon } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-
+import TableBasic from './components/TableBasic/index';
 export default (): React.ReactNode => (
   <PageHeaderWrapper content=" 这个页面只有 admin 权限才能查看">
+    <TableBasic />
     <Card>
       <Alert
         message="umi ui 现已发布，欢迎使用 npm run ui 启动体验。"
@@ -15,12 +16,22 @@ export default (): React.ReactNode => (
           marginBottom: 48,
         }}
       />
-      <Typography.Title level={2} style={{ textAlign: 'center' }}>
+      <Typography.Title
+        level={2}
+        style={{
+          textAlign: 'center',
+        }}
+      >
         <Icon type="smile" theme="twoTone" /> Dragon Flowable{' '}
         <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" /> You
       </Typography.Title>
     </Card>
-    <p style={{ textAlign: 'center', marginTop: 24 }}>
+    <p
+      style={{
+        textAlign: 'center',
+        marginTop: 24,
+      }}
+    >
       Want to add more pages? Please refer to{' '}
       <a href="https://pro.ant.design/docs/block-cn" target="_blank" rel="noopener noreferrer">
         use block

@@ -3,36 +3,34 @@ package com.dragon.flow.rest.api;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.vo.ReturnVo;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.bpmn.BpmnAutoLayout;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
-import org.flowable.ui.common.security.SecurityUtils;
+import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.ui.common.service.exception.BadRequestException;
 import org.flowable.ui.common.util.XmlUtil;
 import org.flowable.ui.modeler.domain.AbstractModel;
 import org.flowable.ui.modeler.domain.Model;
-import org.flowable.ui.modeler.model.ModelKeyRepresentation;
-import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.flowable.ui.modeler.service.FlowableModelQueryService;
 import org.flowable.ui.modeler.serviceapi.ModelService;
-import org.jsoup.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Date;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -53,42 +51,34 @@ public class ApiFlowableModelResource {
     private ModelService modelService;
     @Autowired
     private RepositoryService repositoryService;
+    @Value("${flowable.activityFontName}")
+    private String activityFontName;
+    @Value("${flowable.labelFontName}")
+    private String labelFontName;
+    @Value("${flowable.annotationFontName}")
+    private String annotationFontName;
 
 
-    @GetMapping(value = "/rest/page-model")
+    @GetMapping(value = "/page-model")
     public ReturnVo<PagerModel<AbstractModel>> pageModel() {
         ReturnVo<PagerModel<AbstractModel>> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         List<AbstractModel> datas = modelService.getModelsByModelType(AbstractModel.MODEL_TYPE_BPMN);
-        AbstractModel abstractModel = new AbstractModel();
-        abstractModel.setName("测试模板名称");
-        abstractModel.setComment("描述comment");
-        abstractModel.setCreatedBy("创建人");
-        abstractModel.setCreated(new Date());
-        abstractModel.setDescription("详细描述");
-        abstractModel.setId("111");
-        abstractModel.setKey("key_1");
-        abstractModel.setLastUpdated(new Date());
-        abstractModel.setModelType(1);
-        abstractModel.setTenantId("tenantId");
-        abstractModel.setVersion(1);
-        datas.add(abstractModel);
-
         PagerModel<AbstractModel> pm = new PagerModel<>(datas.size(), datas);
         returnVo.setData(pm);
         return returnVo;
     }
 
-    @PostMapping(value = "/rest/import-process-model")
+    @PostMapping(value = "/import-process-model")
     public ReturnVo<String> importProcessModel(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         modelQueryService.importProcessModel(request, file);
         return returnVo;
     }
 
-    @PostMapping(value = "/rest/deploy")
+    @PostMapping(value = "/deploy")
     public ReturnVo<String> deploy(String modelId) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.FAIL, "部署流程失败！");
-        if(StringUtils.isBlank(modelId)){
+        if (StringUtils.isBlank(modelId)) {
             returnVo.setMsg("模板ID不能为空！");
             return returnVo;
         }
@@ -141,6 +131,46 @@ public class ApiFlowableModelResource {
             }
         }
         return null;
+    }
+
+    /**
+     * 显示xml
+     *
+     * @param modelId
+     * @return
+     */
+    @GetMapping(value = "/loadXmlByModelId/{modelId}")
+    public void loadXmlByModelId(@PathVariable String modelId, HttpServletResponse response) {
+        try {
+            Model model = modelService.getModel(modelId);
+            byte[] b = modelService.getBpmnXML(model);
+            response.setHeader("Content-type", "text/xml;charset=UTF-8");
+            response.getOutputStream().write(b);
+        } catch (Exception e) {
+            LOGGER.error("ApiFlowableModelResource-loadXmlByModelId:" + e);
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping(value = "/loadPngByModelId/{modelId}")
+    public void loadPngByModelId(@PathVariable String modelId, HttpServletResponse response) {
+        Model model = modelService.getModel(modelId);
+        BpmnModel bpmnModel = modelService.getBpmnModel(model,new HashMap<>(),new HashMap<>());
+        DefaultProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
+        InputStream is = processDiagramGenerator.generateDiagram(bpmnModel, "png", Collections.<String>emptyList(), Collections.<String>emptyList(),
+                activityFontName, labelFontName, annotationFontName,
+                null, 1.0, true);
+        try {
+            response.setHeader("Content-Type", "image/png");
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = is.read(b, 0, 1024)) != -1) {
+                response.getOutputStream().write(b, 0, len);
+            }
+        } catch (Exception e) {
+            LOGGER.error("ApiFlowableModelResource-loadPngByModelId:" + e);
+            e.printStackTrace();
+        }
     }
 
 

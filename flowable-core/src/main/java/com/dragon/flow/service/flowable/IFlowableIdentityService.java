@@ -7,4 +7,5 @@ package com.dragon.flow.service.flowable;
  * @date : 2019/11/1411:46
  */
 public interface IFlowableIdentityService {
+
 }
