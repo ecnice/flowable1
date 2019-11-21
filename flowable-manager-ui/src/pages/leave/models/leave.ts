@@ -40,6 +40,7 @@ const LeaveModel: LeaveModelType = {
   namespace: 'leave',
   state: {
     currentUser: {},
+    data: []
   },
 
   effects: {
@@ -50,14 +51,22 @@ const LeaveModel: LeaveModelType = {
         payload: response,
       });
     },
-    *insert({ payload }, { call, put }) {
+    *insert({ payload,resetform,callback }, { call, put }) {
       const response = yield call(insertLeave, payload);
       if (response.code === '100') {
         message.success(response.msg);
-        yield put({
-          type: 'fetch',
-          payload: {},
-        });
+        resetform();
+        callback();
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *update({ payload,resetform,callback }, { call, put }) {
+      const response = yield call(updateLeave, payload);
+      if (response.code === '100') {
+        message.success(response.msg);
+        resetform();
+        callback();
       } else {
         message.error(response.msg);
       }
@@ -68,7 +77,7 @@ const LeaveModel: LeaveModelType = {
     list(state, action) {
       return {
         ...state,
-        modules: action.payload.data.data || [],
+        data: action.payload.data.data || [],
       };
     },
     saveLeave(state, action) {
