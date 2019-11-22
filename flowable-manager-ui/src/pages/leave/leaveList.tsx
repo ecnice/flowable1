@@ -10,7 +10,15 @@ const FormItem = Form.Item;
 @Form.create()
 class ModalForm extends PureComponent {
   render() {
-    const { modalVisible, form, record, handleOk, handleModalVisible, modalTitle,loading } = this.props;
+    const {
+      modalVisible,
+      form,
+      record,
+      handleOk,
+      handleModalVisible,
+      modalTitle,
+      loading,
+    } = this.props;
     const okHandle = () => {
       form.validateFields((err, panelValue) => {
         if (err) return;
@@ -37,7 +45,7 @@ class ModalForm extends PureComponent {
           {form.getFieldDecorator('name', {
             initialValue: record ? record.name : '',
             rules: [{ required: true, message: '请输入姓名' }],
-          })(<Input style={{width: 170}} placeholder="请输入姓名" />)}
+          })(<Input style={{ width: 170 }} placeholder="请输入姓名" />)}
         </FormItem>,
         <FormItem key="startTime" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="开始时间">
           {form.getFieldDecorator('startTime', {
@@ -55,7 +63,7 @@ class ModalForm extends PureComponent {
           {form.getFieldDecorator('days', {
             initialValue: record ? record.days : 0,
             rules: [{ required: true, message: '请输入请假天数' }],
-          })(<InputNumber style={{ width: 170 }}  min={0} />)}
+          })(<InputNumber style={{ width: 170 }} min={0} />)}
         </FormItem>,
       ];
     };
@@ -70,7 +78,7 @@ class ModalForm extends PureComponent {
         destroyOnClose
         title={modalTitle}
         visible={modalVisible}
-        okButtonProps={{loading: loading}}
+        okButtonProps={{ loading: loading }}
         closable={true}
         onCancel={onCancel}
         onOk={okHandle}
@@ -81,9 +89,9 @@ class ModalForm extends PureComponent {
   }
 }
 
-@connect(({ pm, loading }) => ({
-  loading: loading.models.pm,
-  data: pm.data,
+@connect(({ leave, loading }) => ({
+  loading: loading.models.leave,
+  data: leave.data,
 }))
 class LeaveList extends Component {
   state = {
@@ -98,7 +106,7 @@ class LeaveList extends Component {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'pm/fetch',
+      type: 'leave/fetch',
     });
   }
 
@@ -127,7 +135,7 @@ class LeaveList extends Component {
   //添加
   handleAdd = (panel, resetform) => {
     this.props.dispatch({
-      type: 'pm/insert',
+      type: 'leave/insert',
       payload: panel,
       callback: this.callback,
       resetform: resetform,
@@ -136,25 +144,25 @@ class LeaveList extends Component {
   //修改
   handleEdit = (panel, resetform) => {
     this.props.dispatch({
-      type: 'pm/update',
+      type: 'leave/update',
       payload: panel,
       callback: this.callback,
       resetform: resetform,
     });
   };
   //删除
-  handleDel = (records )=> {
+  handleDel = records => {
     message.warn('暂时无接口');
   };
   //回掉
   callback = () => {
     const { dispatch } = this.props;
     this.setState({
-      selectedRows:[],
-      selectedRowKeys:[],
-    })
+      selectedRows: [],
+      selectedRowKeys: [],
+    });
     dispatch({
-      type: 'pm/fetch',
+      type: 'leave/fetch',
     });
   };
 
@@ -209,7 +217,7 @@ class LeaveList extends Component {
         width: 150,
       },
     ];
-    const handleDel=this.handleDel;
+    const handleDel = this.handleDel;
     return (
       <PageHeaderWrapper title={}>
         <Card bordered={false}>
@@ -222,7 +230,7 @@ class LeaveList extends Component {
                   loading={loading}
                   onClick={() => this.handleModalAdd(true)}
                 >
-                  新建
+                  我要请假
                 </Button>
                 {selectedRows.length == 1 ? (
                   <span>

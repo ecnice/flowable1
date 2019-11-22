@@ -24,7 +24,7 @@ export interface UserModelState {
 }
 
 export interface LeaveModelType {
-  namespace: 'pm';
+  namespace: 'leave';
   state: UserModelState;
   effects: {
     fetch: Effect;
@@ -37,10 +37,10 @@ export interface LeaveModelType {
 }
 
 const LeaveModel: LeaveModelType = {
-  namespace: 'pm',
+  namespace: 'leave',
   state: {
     currentUser: {},
-    data: []
+    data: [],
   },
 
   effects: {
@@ -51,7 +51,7 @@ const LeaveModel: LeaveModelType = {
         payload: response,
       });
     },
-    *insert({ payload,resetform,callback }, { call, put }) {
+    *insert({ payload, resetform, callback }, { call, put }) {
       const response = yield call(insertLeave, payload);
       if (response.code === '100') {
         message.success(response.msg);
@@ -61,7 +61,7 @@ const LeaveModel: LeaveModelType = {
         message.error(response.msg);
       }
     },
-    *update({ payload,resetform,callback }, { call, put }) {
+    *update({ payload, resetform, callback }, { call, put }) {
       const response = yield call(updateLeave, payload);
       if (response.code === '100') {
         message.success(response.msg);
