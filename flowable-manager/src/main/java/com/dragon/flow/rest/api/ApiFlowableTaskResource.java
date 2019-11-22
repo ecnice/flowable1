@@ -2,18 +2,14 @@ package com.dragon.flow.rest.api;
 
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
-import com.dragon.flow.vo.flowable.CompleteTaskVo;
-import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
-import com.dragon.flow.vo.flowable.TaskQueryVo;
+import com.dragon.flow.vo.flowable.*;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.ui.common.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,7 +76,6 @@ public class ApiFlowableTaskResource extends BaseResource {
 
     /**
      * 审批任务
-     *
      * @param params 参数
      * @return
      */
@@ -94,6 +89,31 @@ public class ApiFlowableTaskResource extends BaseResource {
 
     private void setUserCode(TaskQueryVo params) {
         params.setUserCode(this.getLoginUser().getId());
+    }
+    /**
+     * 转办
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/turnTask")
+    public ReturnVo<String> turnTask(TurnTaskVo params){
+        ReturnVo<String> returnVo = null;
+        params.setUserCode(this.getLoginUser().getId());
+        returnVo = flowableTaskService.turnTask(params);
+        return returnVo;
+    }
+
+    /**
+     * 委派
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/delegateTask")
+    public ReturnVo<String> delegateTask(DelegateTaskVo params){
+        ReturnVo<String> returnVo = null;
+        params.setUserCode(this.getLoginUser().getId());
+        returnVo = flowableTaskService.delegateTask(params);
+        return returnVo;
     }
 
 }
