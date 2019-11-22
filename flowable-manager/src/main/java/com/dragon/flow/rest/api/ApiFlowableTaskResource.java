@@ -2,15 +2,19 @@ package com.dragon.flow.rest.api;
 
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
+import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
+import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
+import com.dragon.tools.vo.ReturnVo;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/task")
-public class ApiFlowableTaskResource {
+public class ApiFlowableTaskResource extends BaseResource{
 
     @Autowired
     private IFlowableTaskService flowableTaskService;
@@ -67,6 +71,19 @@ public class ApiFlowableTaskResource {
     public PagerModel<HistoricProcessInstance> myProcessInstances(ProcessInstanceQueryVo params, Query query) {
         PagerModel<HistoricProcessInstance> pm = flowableProcessInstanceService.getMyProcessInstances(params, query);
         return pm;
+    }
+
+    /**
+     * 审批任务
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/complete")
+    public ReturnVo<String> complete(CompleteTaskVo params) {
+        ReturnVo<String> returnVo = null;
+        params.setUserCode(this.getLoginUser().getId());
+        returnVo = flowableTaskService.complete(params);
+        return returnVo;
     }
 
 

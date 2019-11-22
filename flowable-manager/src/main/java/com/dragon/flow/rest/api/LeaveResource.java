@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/rest/leave")
-public class LeaveResource {
+public class LeaveResource extends BaseResource{
     private static Logger logger = LoggerFactory.getLogger(LeaveResource.class);
 
     private final String nameSpace = "leave";

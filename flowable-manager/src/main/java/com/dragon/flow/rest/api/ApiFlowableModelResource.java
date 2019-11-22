@@ -42,7 +42,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/rest/model")
-public class ApiFlowableModelResource {
+public class ApiFlowableModelResource extends BaseResource{
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFlowableModelResource.class);
     protected BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
     @Autowired
