@@ -22,7 +22,6 @@ class ModalForm extends PureComponent {
     const okHandle = () => {
       form.validateFields((err, panelValue) => {
         if (err) return;
-
         panelValue = {
           ...panelValue,
           startTime: moment(panelValue.startTime).format('YYYY-MM-DD'),
