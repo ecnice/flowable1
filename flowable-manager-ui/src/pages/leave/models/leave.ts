@@ -9,7 +9,7 @@ export interface UserModelState {
 }
 
 export interface LeaveModelType {
-  namespace: 'pm';
+  namespace: 'leave';
   state: UserModelState;
   effects: {
     fetch: Effect;
@@ -22,7 +22,7 @@ export interface LeaveModelType {
 }
 
 const LeaveModel: LeaveModelType = {
-  namespace: 'pm',
+  namespace: 'leave',
   state: {
     data: [],
   },

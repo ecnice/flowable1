@@ -6,9 +6,9 @@ import moment from 'moment/moment';
 import styles from './leaveList.less';
 import LeaveListModalForm from './leaveListModalForm';
 
-@connect(({ pm, loading }: any) => ({
-  loading: loading.models.pm,
-  data: pm.data,
+@connect(({ leave, loading }: any) => ({
+  loading: loading.models.leave,
+  data: leave.data,
 }))
 class LeaveList extends PureComponent<any, any> {
   state = {
@@ -23,7 +23,7 @@ class LeaveList extends PureComponent<any, any> {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'pm/fetch',
+      type: 'leave/fetch',
     });
   }
 
@@ -52,7 +52,7 @@ class LeaveList extends PureComponent<any, any> {
   //添加
   handleAdd = (panel: any, resetform: any) => {
     this.props.dispatch({
-      type: 'pm/insert',
+      type: 'leave/insert',
       payload: panel,
       callback: this.callback,
       resetform: resetform,
@@ -61,7 +61,7 @@ class LeaveList extends PureComponent<any, any> {
   //修改
   handleEdit = (panel: any, resetform: any) => {
     this.props.dispatch({
-      type: 'pm/update',
+      type: 'leave/update',
       payload: panel,
       callback: this.callback,
       resetform: resetform,
@@ -79,7 +79,7 @@ class LeaveList extends PureComponent<any, any> {
       selectedRowKeys: [],
     });
     dispatch({
-      type: 'pm/fetch',
+      type: 'leave/fetch',
     });
   };
 
@@ -147,7 +147,7 @@ class LeaveList extends PureComponent<any, any> {
                   loading={loading}
                   onClick={() => this.handleModalAdd(true)}
                 >
-                  新建
+                  我要请假
                 </Button>
                 {selectedRows.length == 1 ? (
                   <span>
