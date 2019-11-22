@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/task")
-public class ApiFlowableTaskResource extends BaseResource{
+public class ApiFlowableTaskResource extends BaseResource {
 
     @Autowired
     private IFlowableTaskService flowableTaskService;
@@ -73,14 +73,14 @@ public class ApiFlowableTaskResource extends BaseResource{
      */
     @GetMapping(value = "/my-processInstances")
     public PagerModel<HistoricProcessInstance> myProcessInstances(ProcessInstanceQueryVo params, Query query) {
-        User user = SecurityUtils.getCurrentUserObject();
-        params.setUserCode(user.getId());
+        params.setUserCode(this.getLoginUser().getId());
         PagerModel<HistoricProcessInstance> pm = flowableProcessInstanceService.getMyProcessInstances(params, query);
         return pm;
     }
 
     /**
      * 审批任务
+     *
      * @param params 参数
      * @return
      */
@@ -93,8 +93,7 @@ public class ApiFlowableTaskResource extends BaseResource{
     }
 
     private void setUserCode(TaskQueryVo params) {
-        User user = SecurityUtils.getCurrentUserObject();
-        params.setUserCode(user.getId());
+        params.setUserCode(this.getLoginUser().getId());
     }
 
 }
