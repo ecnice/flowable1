@@ -1,91 +1,16 @@
-import { Card, Button, Modal, Table, Form, Input, DatePicker, InputNumber, message } from 'antd';
-import React, { Component, PureComponent } from 'react';
+import { Card, Button, Modal, Table, message } from 'antd';
+import React, { PureComponent } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment/moment';
 import styles from './leaveList.less';
+import LeaveListModalForm from './leaveListModalForm';
 
-const FormItem = Form.Item;
-
-@Form.create()
-class ModalForm extends PureComponent {
-  render() {
-    const { modalVisible, form, record, handleOk, handleModalVisible, modalTitle,loading } = this.props;
-    const okHandle = () => {
-      form.validateFields((err, panelValue) => {
-        if (err) return;
-
-        panelValue = {
-          ...panelValue,
-          startTime: moment(panelValue.startTime).format('YYYY-MM-DD'),
-          endTime: moment(panelValue.endTime).format('YYYY-MM-DD'),
-        };
-        record == null ? handleOk.add(panelValue, resetForm) : handleOk.edit(panelValue, resetForm);
-      });
-    };
-    const resetForm = () => {
-      form.resetFields();
-      handleModalVisible();
-    };
-    const formItems = () => {
-      const id = record ? record.id : null;
-      form.getFieldDecorator('id', {
-        initialValue: id,
-      });
-      return [
-        <FormItem key="name" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="姓名">
-          {form.getFieldDecorator('name', {
-            initialValue: record ? record.name : '',
-            rules: [{ required: true, message: '请输入姓名' }],
-          })(<Input style={{width: 170}} placeholder="请输入姓名" />)}
-        </FormItem>,
-        <FormItem key="startTime" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="开始时间">
-          {form.getFieldDecorator('startTime', {
-            initialValue: record ? moment(record.startTime) : '',
-            rules: [{ required: true, message: '请选择开始时间' }],
-          })(<DatePicker format="YYYY-MM-DD" />)}
-        </FormItem>,
-        <FormItem key="endTime" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="结束时间">
-          {form.getFieldDecorator('endTime', {
-            initialValue: record ? moment(record.endTime) : '',
-            rules: [{ required: true, message: '请选择结束时间' }],
-          })(<DatePicker format="YYYY-MM-DD" />)}
-        </FormItem>,
-        <FormItem key="days" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="请假天数">
-          {form.getFieldDecorator('days', {
-            initialValue: record ? record.days : 0,
-            rules: [{ required: true, message: '请输入请假天数' }],
-          })(<InputNumber style={{ width: 170 }}  min={0} />)}
-        </FormItem>,
-      ];
-    };
-    const onCancel = () => {
-      form.resetFields();
-      handleModalVisible();
-    };
-    return (
-      <Modal
-        width={400}
-        bodyStyle={{ padding: '10px 15px 10px' }}
-        destroyOnClose
-        title={modalTitle}
-        visible={modalVisible}
-        okButtonProps={{loading: loading}}
-        closable={true}
-        onCancel={onCancel}
-        onOk={okHandle}
-      >
-        {formItems()}
-      </Modal>
-    );
-  }
-}
-
-@connect(({ pm, loading }) => ({
+@connect(({ pm, loading }: any) => ({
   loading: loading.models.pm,
   data: pm.data,
 }))
-class LeaveList extends Component {
+class LeaveList extends PureComponent<any, any> {
   state = {
     modalVisible: false, //弹框实现隐藏状态
     modalValue: null, //修改数据
@@ -103,7 +28,7 @@ class LeaveList extends Component {
   }
 
   //打开编辑页面
-  handleModalEdit = (flag, selectedRows) => {
+  handleModalEdit = (flag: boolean, selectedRows: any) => {
     this.setState({
       modalVisible: !!flag,
       modalValue: selectedRows[0],
@@ -111,13 +36,13 @@ class LeaveList extends Component {
     });
   };
   //修改modal状态
-  handleModalVisible = flag => {
+  handleModalVisible = (flag: boolean) => {
     this.setState({
       modalVisible: !!flag,
     });
   };
   //打开新增页面
-  handleModalAdd = flag => {
+  handleModalAdd = (flag: boolean) => {
     this.setState({
       modalTitle: '新增请假申请',
       modalValue: null,
@@ -125,7 +50,7 @@ class LeaveList extends Component {
     });
   };
   //添加
-  handleAdd = (panel, resetform) => {
+  handleAdd = (panel: any, resetform: any) => {
     this.props.dispatch({
       type: 'pm/insert',
       payload: panel,
@@ -134,7 +59,7 @@ class LeaveList extends Component {
     });
   };
   //修改
-  handleEdit = (panel, resetform) => {
+  handleEdit = (panel: any, resetform: any) => {
     this.props.dispatch({
       type: 'pm/update',
       payload: panel,
@@ -143,16 +68,16 @@ class LeaveList extends Component {
     });
   };
   //删除
-  handleDel = (records )=> {
+  handleDel = (records: any) => {
     message.warn('暂时无接口');
   };
   //回掉
   callback = () => {
     const { dispatch } = this.props;
     this.setState({
-      selectedRows:[],
-      selectedRowKeys:[],
-    })
+      selectedRows: [],
+      selectedRowKeys: [],
+    });
     dispatch({
       type: 'pm/fetch',
     });
@@ -171,10 +96,10 @@ class LeaveList extends Component {
       showSizeChanger: true,
       showQuickJumper: true,
     };
-    const rowSelection = {
+    const rowSelection: any = {
       selectedRowKeys: selectedRowKeys,
       type: 'radio',
-      onChange: (selectedRowKeys, selectedRows) => {
+      onChange: (selectedRowKeys: any, selectedRows: any) => {
         this.setState({
           selectedRows: selectedRows,
           selectedRowKeys: selectedRowKeys,
@@ -193,14 +118,14 @@ class LeaveList extends Component {
         width: 100,
         dataIndex: 'startTime',
         key: 'startTime',
-        render: val => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
+        render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
       },
       {
         title: '结束时间',
         dataIndex: 'endTime',
         key: 'endTime',
         width: 150,
-        render: val => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
+        render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''),
       },
       {
         title: '请假天数',
@@ -209,9 +134,9 @@ class LeaveList extends Component {
         width: 150,
       },
     ];
-    const handleDel=this.handleDel;
+    const handleDel = this.handleDel;
     return (
-      <PageHeaderWrapper title={}>
+      <PageHeaderWrapper title={'请假管理'}>
         <Card bordered={false}>
           <div className={styles.tableList} style={{ height: '100%' }}>
             <div className={styles.tableListOperator}>
@@ -268,7 +193,7 @@ class LeaveList extends Component {
             />
           </div>
         </Card>
-        <ModalForm
+        <LeaveListModalForm
           {...parentMethods}
           modalVisible={modalVisible}
           record={modalValue}

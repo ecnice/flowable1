@@ -11,11 +11,13 @@ import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
+import org.flowable.idm.api.User;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.flowable.ui.common.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +89,7 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     public PagerModel<Task> getApplyingTasks(TaskQueryVo params, Query query) {
         TaskQuery taskQuery = taskService.createTaskQuery().taskCandidateOrAssigned(params.getUserCode());
         long count = taskQuery.count();
-        List<Task> tasks = taskQuery.listPage(query.getPageIndex(), query.getPageSize());
+        List<Task> tasks = taskQuery.listPage(query.getPageIndex()-1, query.getPageIndex()-1+query.getPageSize());
         return new PagerModel<>(count, tasks);
     }
 
@@ -95,7 +97,7 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     public PagerModel<HistoricTaskInstance> getApplyedTasks(TaskQueryVo params, Query query) {
         HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery().taskAssignee(params.getUserCode()).finished();
         long count = historicTaskInstanceQuery.count();
-        List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceEndTime().listPage(query.getPageIndex(), query.getPageSize());
+        List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceEndTime().asc().listPage(query.getPageIndex()-1, query.getPageIndex()-1+query.getPageSize());
         return new PagerModel<>(count, historicTaskInstances);
     }
 }

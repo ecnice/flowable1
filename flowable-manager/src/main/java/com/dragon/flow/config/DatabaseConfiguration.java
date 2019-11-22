@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 
-@Configuration
+//@Configuration
 public class DatabaseConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseConfiguration.class);

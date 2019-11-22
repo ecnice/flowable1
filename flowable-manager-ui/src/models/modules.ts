@@ -3,10 +3,9 @@ import { Reducer } from 'redux';
 import { message } from 'antd';
 
 import { queryCurrent, queryModules, deployModules } from '@/services/modules';
-import { ConnectState } from '@/models/connect';
 
 export interface CurrentUser {
-  modules?: Array;
+  modules?: Array<any>;
   avatar?: string;
   name?: string;
   title?: string;
@@ -22,6 +21,7 @@ export interface CurrentUser {
 
 export interface UserModelState {
   currentUser?: CurrentUser;
+  modules?: [];
 }
 
 export interface ModulesModelType {
@@ -30,8 +30,10 @@ export interface ModulesModelType {
   effects: {
     fetch: Effect;
     fetchCurrent: Effect;
+    deploy: Effect;
   };
   reducers: {
+    saveList: Reducer<UserModelState>;
     saveCurrentUser: Reducer<UserModelState>;
     changeNotifyCount: Reducer<UserModelState>;
   };

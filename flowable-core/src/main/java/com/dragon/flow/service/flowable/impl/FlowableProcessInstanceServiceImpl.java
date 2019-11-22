@@ -52,8 +52,9 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
 
     @Override
     public PagerModel<HistoricProcessInstance> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) {
+
         List<HistoricProcessInstance> datas = historyService.createHistoricProcessInstanceQuery().processInstanceNameLike(params.getFormName())
-                .startedBy(params.getUserCode()).listPage(query.getPageIndex(), query.getPageSize());
+                .startedBy(params.getUserCode()).listPage(query.getPageIndex()-1, query.getPageIndex()-1+query.getPageSize());
         long count = historyService.createHistoricProcessInstanceQuery().processInstanceNameLike(params.getFormName())
                 .startedBy(params.getUserCode()).count();
         return new PagerModel<>(count, datas);

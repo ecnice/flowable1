@@ -6,11 +6,11 @@ import styles from './modules.less';
 import router from 'umi/router';
 import moment from 'moment';
 
-@connect(({ modules, loading }) => ({
+@connect(({ modules, loading }: any) => ({
   modules: modules.modules,
   fetchingData: loading.effects['modules/fetch'],
 }))
-class ModulesList extends Component {
+class ModulesList extends Component<any, any> {
   state: {};
   onTabChange = (type: string) => {
     this.setState({ type });
@@ -28,7 +28,7 @@ class ModulesList extends Component {
     this.doFetchData();
   }
 
-  doDeploy(modelId) {
+  doDeploy(modelId: string) {
     const { dispatch } = this.props;
     dispatch({
       type: 'modules/deploy',
@@ -39,7 +39,7 @@ class ModulesList extends Component {
     // this.doFetchData();
   }
 
-  doEdit(modelId) {
+  doEdit(modelId: string) {
     router.push(`/modules/editor/${modelId}`);
   }
 

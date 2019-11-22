@@ -53,6 +53,7 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         configure.setEnableTaskRelationshipCounts(true);
         //启动同步功能 一定要启动否则报错
         configure.setAsyncExecutor(springAsyncExecutor());
+
     }
 
     @Bean

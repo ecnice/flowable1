@@ -9,7 +9,7 @@ import router from 'umi/router';
   modules: modules.modules,
   fetchingData: loading.effects['modules/fetch'],
 }))
-class ModulesEditor extends Component {
+class ModulesEditor extends Component<any, any> {
   state: {};
   onTabChange = (type: string) => {
     this.setState({ type });

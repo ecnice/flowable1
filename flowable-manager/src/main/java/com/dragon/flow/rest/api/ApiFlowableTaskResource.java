@@ -7,8 +7,10 @@ import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.ui.common.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +41,12 @@ public class ApiFlowableTaskResource {
      */
     @GetMapping(value = "/get-applying-tasks")
     public PagerModel<Task> getApplyingTasks(TaskQueryVo params, Query query) {
+        setUserCode(params);
         PagerModel<Task> pm = flowableTaskService.getApplyingTasks(params, query);
         return pm;
     }
+
+
 
     /**
      * 获取已办任务列表
@@ -52,6 +57,7 @@ public class ApiFlowableTaskResource {
      */
     @GetMapping(value = "/get-applyed-tasks")
     public PagerModel<HistoricTaskInstance> getApplyedTasks(TaskQueryVo params, Query query) {
+        setUserCode(params);
         PagerModel<HistoricTaskInstance> pm = flowableTaskService.getApplyedTasks(params, query);
         return pm;
     }
@@ -65,9 +71,14 @@ public class ApiFlowableTaskResource {
      */
     @GetMapping(value = "/my-processInstances")
     public PagerModel<HistoricProcessInstance> myProcessInstances(ProcessInstanceQueryVo params, Query query) {
+        User user = SecurityUtils.getCurrentUserObject();
+        params.setUserCode(user.getId());
         PagerModel<HistoricProcessInstance> pm = flowableProcessInstanceService.getMyProcessInstances(params, query);
         return pm;
     }
-
+    private void setUserCode(TaskQueryVo params) {
+        User user = SecurityUtils.getCurrentUserObject();
+        params.setUserCode(user.getId());
+    }
 
 }
