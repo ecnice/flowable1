@@ -10,7 +10,7 @@ const FormItem = Form.Item;
 @Form.create()
 class ModalForm extends PureComponent {
   render() {
-    const { modalVisible, form, record, handleOk, handleModalVisible, modalTitle } = this.props;
+    const { modalVisible, form, record, handleOk, handleModalVisible, modalTitle,loading } = this.props;
     const okHandle = () => {
       form.validateFields((err, panelValue) => {
         if (err) return;
@@ -33,29 +33,29 @@ class ModalForm extends PureComponent {
         initialValue: id,
       });
       return [
-        <FormItem key="name" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="姓名">
+        <FormItem key="name" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="姓名">
           {form.getFieldDecorator('name', {
             initialValue: record ? record.name : '',
             rules: [{ required: true, message: '请输入姓名' }],
-          })(<Input width={120} placeholder="请输入姓名" />)}
+          })(<Input style={{width: 170}} placeholder="请输入姓名" />)}
         </FormItem>,
-        <FormItem key="startTime" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="开始时间">
+        <FormItem key="startTime" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="开始时间">
           {form.getFieldDecorator('startTime', {
             initialValue: record ? moment(record.startTime) : '',
             rules: [{ required: true, message: '请选择开始时间' }],
           })(<DatePicker format="YYYY-MM-DD" />)}
         </FormItem>,
-        <FormItem key="endTime" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="结束时间">
+        <FormItem key="endTime" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="结束时间">
           {form.getFieldDecorator('endTime', {
             initialValue: record ? moment(record.endTime) : '',
             rules: [{ required: true, message: '请选择结束时间' }],
           })(<DatePicker format="YYYY-MM-DD" />)}
         </FormItem>,
-        <FormItem key="days" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }} label="请假天数">
+        <FormItem key="days" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="请假天数">
           {form.getFieldDecorator('days', {
             initialValue: record ? record.days : 0,
             rules: [{ required: true, message: '请输入请假天数' }],
-          })(<InputNumber min={0} />)}
+          })(<InputNumber style={{ width: 170 }}  min={0} />)}
         </FormItem>,
       ];
     };
@@ -65,11 +65,12 @@ class ModalForm extends PureComponent {
     };
     return (
       <Modal
-        width={650}
+        width={400}
         bodyStyle={{ padding: '10px 15px 10px' }}
         destroyOnClose
         title={modalTitle}
         visible={modalVisible}
+        okButtonProps={{loading: loading}}
         closable={true}
         onCancel={onCancel}
         onOk={okHandle}
@@ -81,7 +82,7 @@ class ModalForm extends PureComponent {
 }
 
 @connect(({ pm, loading }) => ({
-  loading: loading.models.leave,
+  loading: loading.models.pm,
   data: pm.data,
 }))
 class LeaveList extends Component {
@@ -97,7 +98,7 @@ class LeaveList extends Component {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'leave/fetch',
+      type: 'pm/fetch',
     });
   }
 
@@ -124,38 +125,41 @@ class LeaveList extends Component {
     });
   };
   //添加
-  handleAdd = (panel, resetForm) => {
+  handleAdd = (panel, resetform) => {
     this.props.dispatch({
-      type: 'leave/insert',
+      type: 'pm/insert',
       payload: panel,
       callback: this.callback,
-      resetForm: resetForm,
+      resetform: resetform,
     });
   };
   //修改
-  handleEdit = (panel, resetForm) => {
+  handleEdit = (panel, resetform) => {
     this.props.dispatch({
-      type: 'leave/update',
+      type: 'pm/update',
       payload: panel,
       callback: this.callback,
-      resetForm: resetForm,
+      resetform: resetform,
     });
   };
   //删除
-  handleDel = records => {
+  handleDel = (records )=> {
     message.warn('暂时无接口');
   };
   //回掉
   callback = () => {
     const { dispatch } = this.props;
+    this.setState({
+      selectedRows:[],
+      selectedRowKeys:[],
+    })
     dispatch({
-      type: 'leave/fetch',
+      type: 'pm/fetch',
     });
   };
 
   render() {
     const { data, loading } = this.props;
-    debugger;
     const { selectedRows, selectedRowKeys, modalVisible, modalTitle, modalValue } = this.state;
     const parentMethods = {
       handleOk: { add: this.handleAdd, edit: this.handleEdit },
@@ -205,6 +209,7 @@ class LeaveList extends Component {
         width: 150,
       },
     ];
+    const handleDel=this.handleDel;
     return (
       <PageHeaderWrapper title={}>
         <Card bordered={false}>
@@ -238,7 +243,7 @@ class LeaveList extends Component {
                           cancelText: '取消',
                           okText: '确认',
                           onOk() {
-                            this.handleDel(selectedRows);
+                            handleDel(selectedRows);
                           },
                         })
                       }

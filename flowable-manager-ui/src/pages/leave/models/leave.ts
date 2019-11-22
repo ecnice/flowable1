@@ -24,7 +24,7 @@ export interface UserModelState {
 }
 
 export interface LeaveModelType {
-  namespace: 'modules';
+  namespace: 'pm';
   state: UserModelState;
   effects: {
     fetch: Effect;
@@ -37,7 +37,7 @@ export interface LeaveModelType {
 }
 
 const LeaveModel: LeaveModelType = {
-  namespace: 'leave',
+  namespace: 'pm',
   state: {
     currentUser: {},
     data: []
@@ -77,7 +77,7 @@ const LeaveModel: LeaveModelType = {
     list(state, action) {
       return {
         ...state,
-        data: action.payload.data.data || [],
+        data: action.payload.data || [],
       };
     },
     saveLeave(state, action) {

@@ -65,7 +65,7 @@ public class LeaveResource {
             startProcessInstanceVo.setCurrentUserCode(user.getId());
             startProcessInstanceVo.setFormName("请假流程");
             startProcessInstanceVo.setSystemSn("flow");
-            startProcessInstanceVo.setProcessDefinitionKey("qinjia");
+            startProcessInstanceVo.setProcessDefinitionKey("qingjia");
             Map<String,Object> variables = new HashMap<>();
             variables.put("days",leave.getDays());
             startProcessInstanceVo.setVariables(variables);
