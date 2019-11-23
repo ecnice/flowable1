@@ -1,17 +1,19 @@
-import { Card, Button, Modal, Table, message } from 'antd';
-import React, { PureComponent } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
+import {Card, Button, Modal, Table, message} from 'antd';
+import React, {PureComponent} from 'react';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
 import moment from 'moment/moment';
 import styles from './leaveList.less';
 import LeaveListModalForm from './leaveListModalForm';
 
-@connect(({ leave, loading }: any) => ({
+@connect(({leave, loading}: any) => ({
   loading: loading.models.leave,
   data: leave.data,
+  total: leave.total
 }))
 class LeaveList extends PureComponent<any, any> {
   state = {
+    pageNum: 1,
     modalVisible: false, //弹框实现隐藏状态
     modalValue: null, //修改数据
     modalTitle: '', //弹框名称
@@ -21,9 +23,12 @@ class LeaveList extends PureComponent<any, any> {
 
   //查询列表
   componentWillMount() {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'leave/fetch',
+      payload:{
+        pageNum:1
+      }
     });
   }
 
@@ -73,28 +78,43 @@ class LeaveList extends PureComponent<any, any> {
   };
   //回掉
   callback = () => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     this.setState({
       selectedRows: [],
       selectedRowKeys: [],
     });
     dispatch({
       type: 'leave/fetch',
+      payload: {pageNum: this.state.pageNum}
     });
   };
+  //分页点击
+  changePage = (page: number) => {
+    const {dispatch} = this.props;
+    this.setState({
+      pageNum: page,
+    }, () => {
+      dispatch({
+        type: 'leave/fetch',
+        payload: {pageNum: page}
+      });
+    })
+  }
 
   render() {
-    const { data, loading } = this.props;
-    const { selectedRows, selectedRowKeys, modalVisible, modalTitle, modalValue } = this.state;
+    const {data, loading, total} = this.props;
+    const {selectedRows, selectedRowKeys, pageNum, modalVisible, modalTitle, modalValue} = this.state;
     const parentMethods = {
-      handleOk: { add: this.handleAdd, edit: this.handleEdit },
+      handleOk: {add: this.handleAdd, edit: this.handleEdit},
       handleModalVisible: this.handleModalVisible,
     };
     const paginationProps = {
-      defaultPageSize: 5,
+      current: pageNum,
+      total: total,
+      showTotal: (total:number) => (`共 ${total} 条数据`),
+      pageSize:20,
+      onChange: this.changePage,
       hideOnSinglePage: true,
-      showSizeChanger: true,
-      showQuickJumper: true,
     };
     const rowSelection: any = {
       selectedRowKeys: selectedRowKeys,
@@ -136,9 +156,9 @@ class LeaveList extends PureComponent<any, any> {
     ];
     const handleDel = this.handleDel;
     return (
-      <PageHeaderWrapper title={'请假管理'}>
+      <PageHeaderWrapper title={}>
         <Card bordered={false}>
-          <div className={styles.tableList} style={{ height: '100%' }}>
+          <div className={styles.tableList} style={{height: '100%'}}>
             <div className={styles.tableListOperator}>
               <span>
                 <Button

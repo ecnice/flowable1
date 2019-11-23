@@ -1,12 +1,12 @@
-import { Tabs, Card, Table } from 'antd';
-import React, { PureComponent } from 'react';
+import {Tabs, Card, Table} from 'antd';
+import React, {PureComponent} from 'react';
 
-const { TabPane } = Tabs;
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
+const {TabPane} = Tabs;
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
 import moment from 'moment';
 
-@connect(({ tasks, loading }: any) => ({
+@connect(({tasks, loading}: any) => ({
   loading: loading.models.tasks,
   applyingTasks: tasks.applyingTasks,
   applyedTasks: tasks.applyedTasks,
@@ -16,12 +16,20 @@ import moment from 'moment';
 class TaskList extends PureComponent<any, any> {
   state = {
     key: '1',
-    pageIndex: 1,
+    applyingPageNum: 1,
+    applyedPageNum: 1,
+    myProcessPageNum: 1,
     formName: '',
   };
+
+  //加载完成查询
+  componentWillMount() {
+    this.applying({pageNum: 1})
+  }
+
   //查询待办
   applying = (payload: any) => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'tasks/fetchApplyingTasks',
       payload: payload,
@@ -29,7 +37,7 @@ class TaskList extends PureComponent<any, any> {
   };
   //查询已办
   applyed = (payload: any) => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'tasks/fetchApplyedTasks',
       payload: payload,
@@ -37,41 +45,92 @@ class TaskList extends PureComponent<any, any> {
   };
   //查询我的流程
   myProcessInstance = (payload: any) => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'tasks/fetchMyProcessInstancesTasks',
       payload: payload,
     });
-    debugger;
+  debugger;
   };
 
   //tabs切换
   onChange = (key: string) => {
     this.setState({
       key: key,
-      pageIndex: 0,
+      pageNum: 0,
       formName: '',
     });
     switch (key) {
       case '1': {
-        this.applying({ pageIndex: 0 });
+        this.applying({pageNum: 0});
         break;
       }
       case '2': {
-        this.applyed({ pageIndex: 0 });
+        this.applyed({pageNum: 0});
         break;
       }
       case '3': {
-        this.myProcessInstance({ pageIndex: 0 });
+        this.myProcessInstance({pageNum: 0});
         break;
       }
       default: {
       }
     }
   };
+  //待办分页点击
+  applyingChangePage = (page: number) => {
+    this.setState({
+      applyingPageNum: page,
+    }, () => {
+      this.applying({pageNum: page}
+      );
+    })
+  }
+  //已办分页点击
+  applyedChangePage = (page: number) => {
+    this.setState({
+      applyedPageNum: page,
+    }, () => {
+      this.applyed({pageNum: page});
+    })
+  }
+  //我的流程分页点击
+  myProcessChangePage = (page: number) => {
+    this.setState({
+      myProcessPageNum: page,
+    }, () => {
+      this.myProcessInstance({pageNum: page}
+      );
+    })
+  }
 
   render() {
-    const { loading, applyingTasks, applyedTasks, myProcessInstances, total } = this.props;
+    const {loading, applyingTasks, applyedTasks, myProcessInstances, total} = this.props;
+    const {applyingPageNum, applyedPageNum, myProcessPageNum} = this.state;
+    const applyingPaginationProps = {
+      current: applyingPageNum,
+      total: total,
+      showTotal: (total: number) => (`共 ${total} 条数据`),
+      pageSize: 20,
+      onChange: this.applyingChangePage,
+      hideOnSinglePage: true,
+    };
+    const applyedPaginationProps = {
+      current: applyedPageNum,
+      total: total,
+      showTotal: (total: number) => (`共 ${total} 条数据`),
+      pageSize: 20,
+      onChange: this.applyedChangePage,
+      hideOnSinglePage: true,
+    };
+    const myProcessPaginationProps = {
+      current: myProcessPageNum,
+      total: total,
+      showTotal: (total: number) => (`共 ${total} 条数据`),
+      pageSize: 20,
+      onChange: this.myProcessChangePage,
+      hideOnSinglePage: true,
+    };
     const applyingColumns = [
       {
         title: '名称',
@@ -130,7 +189,7 @@ class TaskList extends PureComponent<any, any> {
       {
         title: '名称',
         width: 100,
-        dataIndex: 'formName',
+        dataIndex: 'name',
       },
       {
         title: '审批人',
@@ -163,26 +222,32 @@ class TaskList extends PureComponent<any, any> {
             <Tabs type="card" defaultActiveKey={'1'} onChange={this.onChange}>
               <TabPane tab="待办任务" key="1">
                 <Table
+                  size="small"
                   loading={loading}
                   rowKey="id"
                   columns={applyingColumns}
                   dataSource={applyingTasks}
+                  pagination={applyingPaginationProps}
                 />
               </TabPane>
               <TabPane tab="已办任务" key="2">
                 <Table
+                  size="small"
                   loading={loading}
                   rowKey="id"
                   columns={applyedColumns}
                   dataSource={applyedTasks}
+                  pagination={applyedPaginationProps}
                 />
               </TabPane>
               <TabPane tab="我发起任务" key="3">
                 <Table
+                  size="small"
                   loading={loading}
                   rowKey="id"
                   columns={myProcessInstancesColumns}
                   dataSource={myProcessInstances}
+                  pagination={myProcessPaginationProps}
                 />
               </TabPane>
             </Tabs>
