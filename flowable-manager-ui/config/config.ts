@@ -130,14 +130,6 @@ export default {
               icon: 'smile',
               component: './modules/ModulesEditor',
             },
-
-            {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './group/Admin',
-              authority: ['admin'],
-            },
             {
               component: './404',
             },
