@@ -1,4 +1,4 @@
-package com.dragon.flow.vo.flowable;
+package com.dragon.flow.vo.flowable.ret;
 
 import java.io.Serializable;
 

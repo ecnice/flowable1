@@ -5,21 +5,22 @@ import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
-import org.flowable.idm.api.User;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
-import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
-import org.flowable.ui.common.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.dragon.flow.dao.flowable.IFlowableTaskDao;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     private TaskService taskService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private IFlowableTaskDao flowableTaskDao;
 
     @Override
     public ReturnVo<String> delegateTask(DelegateTaskVo delegateTaskVo) {
@@ -64,9 +67,9 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
         if (taskVo != null) {
             Task task = taskVo.getData();
             if (task != null) {
-                if (DelegationState.PENDING.equals(task.getDelegationState())){
+                if (DelegationState.PENDING.equals(task.getDelegationState())) {
                     taskService.resolveTask(params.getTaskId());
-                }else {
+                } else {
                     //2.修改执行人
                     taskService.setAssignee(params.getTaskId(), params.getUserCode());
                     //3.执行任务
@@ -86,18 +89,16 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     }
 
     @Override
-    public PagerModel<Task> getApplyingTasks(TaskQueryVo params, Query query) {
-        TaskQuery taskQuery = taskService.createTaskQuery().taskCandidateOrAssigned(params.getUserCode());
-        long count = taskQuery.count();
-        List<Task> tasks = taskQuery.listPage(query.getPageIndex()-1, query.getPageIndex()-1+query.getPageSize());
-        return new PagerModel<>(count, tasks);
+    public PagerModel<TaskVo> getApplyingTasks(TaskQueryVo params, Query query) {
+        PageHelper.startPage(query.getStartRow(), query.getPageSize());
+        Page<TaskVo> applyingTasks = flowableTaskDao.getApplyingTasks(params);
+        return new PagerModel<>(applyingTasks.getTotal(), applyingTasks.getResult());
     }
 
     @Override
-    public PagerModel<HistoricTaskInstance> getApplyedTasks(TaskQueryVo params, Query query) {
-        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery().taskAssignee(params.getUserCode()).finished();
-        long count = historicTaskInstanceQuery.count();
-        List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceEndTime().asc().listPage(query.getPageIndex()-1, query.getPageIndex()-1+query.getPageSize());
-        return new PagerModel<>(count, historicTaskInstances);
+    public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query query) {
+        PageHelper.startPage(query.getStartRow(), query.getPageSize());
+        Page<TaskVo> applyingTasks = flowableTaskDao.getApplyedTasks(params);
+        return new PagerModel<>(applyingTasks.getTotal(), applyingTasks.getResult());
     }
 }

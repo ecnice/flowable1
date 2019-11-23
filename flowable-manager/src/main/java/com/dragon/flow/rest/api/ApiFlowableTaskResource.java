@@ -5,6 +5,8 @@ import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.service.leave.ILeaveService;
 import com.dragon.flow.vo.flowable.*;
+import com.dragon.flow.vo.flowable.ret.FormInfoVo;
+import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
@@ -51,9 +53,9 @@ public class ApiFlowableTaskResource extends BaseResource {
      * @return
      */
     @GetMapping(value = "/get-applying-tasks")
-    public PagerModel<Task> getApplyingTasks(TaskQueryVo params, Query query) {
+    public PagerModel<TaskVo> getApplyingTasks(TaskQueryVo params, Query query) {
         setUserCode(params);
-        PagerModel<Task> pm = flowableTaskService.getApplyingTasks(params, query);
+        PagerModel<TaskVo> pm = flowableTaskService.getApplyingTasks(params, query);
         return pm;
     }
 
@@ -65,9 +67,9 @@ public class ApiFlowableTaskResource extends BaseResource {
      * @return
      */
     @GetMapping(value = "/get-applyed-tasks")
-    public PagerModel<HistoricTaskInstance> getApplyedTasks(TaskQueryVo params, Query query) {
+    public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query query) {
         setUserCode(params);
-        PagerModel<HistoricTaskInstance> pm = flowableTaskService.getApplyedTasks(params, query);
+        PagerModel<TaskVo> pm = flowableTaskService.getApplyedTasks(params, query);
         return pm;
     }
 

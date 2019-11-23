@@ -26,6 +26,7 @@ class TaskList extends PureComponent<any, any> {
       type: 'tasks/fetchApplyingTasks',
       payload: payload,
     });
+    debugger;
   };
   //查询已办
   applyed = (payload: any) => {
@@ -42,6 +43,7 @@ class TaskList extends PureComponent<any, any> {
       type: 'tasks/fetchMyProcessInstancesTasks',
       payload: payload,
     });
+    debugger;
   };
 
   //tabs切换
@@ -71,28 +73,21 @@ class TaskList extends PureComponent<any, any> {
 
   render() {
     const { loading, applyingTasks, applyedTasks, myProcessInstances, total } = this.props;
-
     const applyingColumns = [
       {
         title: '名称',
         width: 100,
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'formName',
+        key: 'formName',
       },
       {
-        title: '描述',
+        title: '任务名称',
         width: 100,
-        dataIndex: 'description',
-      },
-      {
-        title: '系统',
-        dataIndex: 'tenantId',
-        key: 'tenantId',
-        width: 150,
+        dataIndex: 'taskName',
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'startTime',
         width: 150,
         render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
       },
@@ -101,25 +96,17 @@ class TaskList extends PureComponent<any, any> {
       {
         title: '名称',
         width: 100,
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'formName',
+        key: 'formName',
       },
       {
-        title: '描述',
-        dataIndex: 'description',
-        key: 'comment',
-        width: 150,
+        title: '任务名称',
+        width: 100,
+        dataIndex: 'taskName',
       },
-      {
-        title: '系统',
-        dataIndex: 'tenantId',
-        key: 'tenantId',
-        width: 150,
-      },
-
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'startTime',
         width: 150,
         render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
       },

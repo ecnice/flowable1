@@ -4,6 +4,7 @@ import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
@@ -50,12 +51,12 @@ public interface IFlowableTaskService {
      * @param params 参数
      * @return
      */
-    public PagerModel<Task> getApplyingTasks(TaskQueryVo params, Query  query) ;
+    public PagerModel<TaskVo> getApplyingTasks(TaskQueryVo params, Query  query) ;
 
     /**
      * 查询已办任务列表
      * @param params 参数
      * @return
      */
-    public PagerModel<HistoricTaskInstance> getApplyedTasks(TaskQueryVo params, Query  query) ;
+    public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query  query) ;
 }
