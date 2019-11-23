@@ -86,6 +86,11 @@ class TaskList extends PureComponent<any, any> {
         dataIndex: 'taskName',
       },
       {
+        title: '系统',
+        width: 100,
+        dataIndex: 'systemSn',
+      },
+      {
         title: '创建时间',
         dataIndex: 'startTime',
         width: 150,
@@ -105,6 +110,11 @@ class TaskList extends PureComponent<any, any> {
         dataIndex: 'taskName',
       },
       {
+        title: '系统',
+        width: 100,
+        dataIndex: 'systemSn',
+      },
+      {
         title: '创建时间',
         dataIndex: 'startTime',
         width: 150,
@@ -121,16 +131,16 @@ class TaskList extends PureComponent<any, any> {
       {
         title: '名称',
         width: 100,
-        dataIndex: 'name',
+        dataIndex: 'formName',
       },
       {
-        title: 'Key',
+        title: '审批人',
         width: 100,
-        dataIndex: 'processDefinitionKey',
+        dataIndex: 'approver',
       },
       {
         title: '系统',
-        dataIndex: 'tenantId',
+        dataIndex: 'systemSn',
         width: 150,
       },
       {
@@ -148,7 +158,7 @@ class TaskList extends PureComponent<any, any> {
       },
     ];
     return (
-      <PageHeaderWrapper title={'任务管理'}>
+      <PageHeaderWrapper title={''}>
         <Card>
           <div className="card-container">
             <Tabs type="card" defaultActiveKey={'1'} onChange={this.onChange}>

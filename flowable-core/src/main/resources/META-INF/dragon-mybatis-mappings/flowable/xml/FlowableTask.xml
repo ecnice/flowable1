@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dragon.flow.dao.flowable.IFlowableTaskDao" >
-    <resultMap id="TaskVoMap" type="com.dragon.flow.vo.flowable.ret.TaskVo" >
-        <id column="id" property="id" jdbcType="VARCHAR" />
-        <result column="name" property="name" jdbcType="VARCHAR" />
-        <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
-        <result column="days" property="days" jdbcType="INTEGER" />
-        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
-        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
-    </resultMap>
-
     <select id="getApplyingTasks" parameterType="com.dragon.flow.vo.flowable.TaskQueryVo" resultType="com.dragon.flow.vo.flowable.ret.TaskVo">
         SELECT DISTINCT
             t1.ID_ AS taskId,
@@ -17,6 +8,7 @@
             t2.FIRST_ AS approver,
             t2.ID_ AS approverId,
             t3.NAME_ AS formName,
+            t3.TENANT_ID_ as systemSn,
             t3.BUSINESS_KEY_ AS businessKey,
             t3.PROC_INST_ID_ AS processInstanceId,
             t1.CREATE_TIME_ AS startTime
@@ -38,6 +30,7 @@
             t3.NAME_ AS formName,
             t3.BUSINESS_KEY_ AS businessKey,
             t3.PROC_INST_ID_ AS processInstanceId,
+            t3.TENANT_ID_ as systemSn,
             t1.START_TIME_ AS startTime,
             t1.END_TIME_ as endTime
         FROM

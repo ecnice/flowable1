@@ -2,6 +2,7 @@ package com.dragon.flow.service.flowable;
 
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
+import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
@@ -29,7 +30,7 @@ public interface IFlowableProcessInstanceService {
      * @param query 分页参数
      * @return
      */
-    public PagerModel<HistoricProcessInstance> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) ;
+    public PagerModel<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) ;
 
 
 }
