@@ -139,7 +139,11 @@ class ModulesList extends Component<any, any> {
         }
       },
     };
-
+    const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: (total: number) => `共 ${total} 条数据`,
+    };
     return (
       <PageHeaderWrapper title={}>
         <Card>
@@ -151,7 +155,13 @@ class ModulesList extends Component<any, any> {
               </Button>
             </Upload>
           </div>
-          <Table rowKey="id" columns={columns} dataSource={modules} />
+          <Table
+            bordered
+            rowKey="id"
+            columns={columns}
+            dataSource={modules}
+            pagination={paginationProps}
+          />
         </Card>
       </PageHeaderWrapper>
     );

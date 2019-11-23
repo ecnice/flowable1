@@ -1,19 +1,20 @@
-import {Card, Button, Modal, Table, message} from 'antd';
-import React, {PureComponent} from 'react';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {connect} from 'dva';
+import { Card, Button, Modal, Table, message } from 'antd';
+import React, { PureComponent } from 'react';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
 import moment from 'moment/moment';
 import styles from './leaveList.less';
 import LeaveListModalForm from './leaveListModalForm';
 
-@connect(({leave, loading}: any) => ({
+@connect(({ leave, loading }: any) => ({
   loading: loading.models.leave,
   data: leave.data,
-  total: leave.total
+  total: leave.total,
 }))
 class LeaveList extends PureComponent<any, any> {
   state = {
     pageNum: 1,
+    pageSize: 10,
     modalVisible: false, //弹框实现隐藏状态
     modalValue: null, //修改数据
     modalTitle: '', //弹框名称
@@ -23,12 +24,13 @@ class LeaveList extends PureComponent<any, any> {
 
   //查询列表
   componentWillMount() {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'leave/fetch',
-      payload:{
-        pageNum:1
-      }
+      payload: {
+        pageNum: 1,
+        pageSize: 10,
+      },
     });
   }
 
@@ -78,43 +80,72 @@ class LeaveList extends PureComponent<any, any> {
   };
   //回掉
   callback = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
+    const { pageNum, pageSize } = this.state;
     this.setState({
       selectedRows: [],
       selectedRowKeys: [],
     });
     dispatch({
       type: 'leave/fetch',
-      payload: {pageNum: this.state.pageNum}
+      payload: { pageNum: pageNum, pageSize: pageSize },
     });
   };
   //分页点击
   changePage = (page: number) => {
-    const {dispatch} = this.props;
-    this.setState({
-      pageNum: page,
-    }, () => {
-      dispatch({
-        type: 'leave/fetch',
-        payload: {pageNum: page}
-      });
-    })
-  }
+    const { dispatch } = this.props;
+    const { pageSize } = this.state;
+    this.setState(
+      {
+        pageNum: page,
+      },
+      () => {
+        dispatch({
+          type: 'leave/fetch',
+          payload: { pageNum: page, pageSize: pageSize },
+        });
+      },
+    );
+  };
+  //修改pagesize
+  changePageSize = (current: number, size: number) => {
+    const { dispatch } = this.props;
+    this.setState(
+      {
+        pageNum: current,
+        pageSize: size,
+      },
+      () => {
+        dispatch({
+          type: 'leave/fetch',
+          payload: { pageNum: current, pageSize: size },
+        });
+      },
+    );
+  };
 
   render() {
-    const {data, loading, total} = this.props;
-    const {selectedRows, selectedRowKeys, pageNum, modalVisible, modalTitle, modalValue} = this.state;
+    const { data, loading, total } = this.props;
+    const {
+      selectedRows,
+      selectedRowKeys,
+      pageNum,
+      modalVisible,
+      modalTitle,
+      modalValue,
+    } = this.state;
     const parentMethods = {
-      handleOk: {add: this.handleAdd, edit: this.handleEdit},
+      handleOk: { add: this.handleAdd, edit: this.handleEdit },
       handleModalVisible: this.handleModalVisible,
     };
     const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
       current: pageNum,
       total: total,
-      showTotal: (total:number) => (`共 ${total} 条数据`),
-      pageSize:20,
+      showTotal: (total: number) => `共 ${total} 条数据`,
       onChange: this.changePage,
-      hideOnSinglePage: true,
+      onShowSizeChange: this.changePageSize,
     };
     const rowSelection: any = {
       selectedRowKeys: selectedRowKeys,
@@ -156,9 +187,9 @@ class LeaveList extends PureComponent<any, any> {
     ];
     const handleDel = this.handleDel;
     return (
-      <PageHeaderWrapper title={}>
+      <PageHeaderWrapper title={''}>
         <Card bordered={false}>
-          <div className={styles.tableList} style={{height: '100%'}}>
+          <div className={styles.tableList} style={{ height: '100%' }}>
             <div className={styles.tableListOperator}>
               <span>
                 <Button
@@ -202,7 +233,6 @@ class LeaveList extends PureComponent<any, any> {
               </span>
             </div>
             <Table
-              size="small"
               bordered
               rowKey="id"
               loading={loading}
