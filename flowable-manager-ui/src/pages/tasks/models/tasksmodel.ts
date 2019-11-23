@@ -3,7 +3,7 @@ import { Reducer } from 'redux';
 
 import {
   getApplyedTasks,
-  getApplyingTasks,
+  getApplyingTasks, getFormInfoForTask,
   getMyProcessInstances,
 } from '@/pages/tasks/services/tasksservice';
 
@@ -11,7 +11,8 @@ export interface TasksModelState {
   applyingTasks?: [];
   applyedTasks?: [];
   myProcessInstances?: [];
-  total: number;
+  total?: number;
+  formInfo?:object;
 }
 
 export interface TasksModelType {
@@ -21,11 +22,13 @@ export interface TasksModelType {
     fetchApplyingTasks: Effect;
     fetchApplyedTasks: Effect;
     fetchMyProcessInstancesTasks: Effect;
+    fetchFormInfo: Effect;
   };
   reducers: {
     saveApplyingTasks: Reducer<TasksModelState>;
     saveApplyedTasks: Reducer<TasksModelState>;
     saveMyProcessInstancesTasks: Reducer<TasksModelState>;
+    saveFormInfo: Reducer<TasksModelState>;
   };
 }
 
@@ -36,6 +39,7 @@ const TasksModel: TasksModelType = {
     applyedTasks: [],
     myProcessInstances: [],
     total: 0,
+    formInfo:{}
   },
   effects: {
     *fetchApplyingTasks({ payload }, { call, put }) {
@@ -45,20 +49,29 @@ const TasksModel: TasksModelType = {
         payload: response,
       });
     },
-    *fetchApplyedTasks({ payload, resetform, callback }, { call, put }) {
+    *fetchApplyedTasks({ payload }, { call, put }) {
       const response = yield call(getApplyedTasks, payload);
       yield put({
         type: 'saveApplyedTasks',
         payload: response,
       });
     },
-    *fetchMyProcessInstancesTasks({ payload, resetform, callback }, { call, put }) {
+    *fetchMyProcessInstancesTasks({ payload }, { call, put }) {
       const response = yield call(getMyProcessInstances, payload);
       yield put({
         type: 'saveMyProcessInstancesTasks',
         payload: response,
       });
     },
+    *fetchFormInfo({ payload, callback }, { call, put }) {
+      const response = yield call(getFormInfoForTask, payload);
+      yield put({
+        type: 'saveFormInfo',
+        payload: response,
+      });
+      callback();
+    },
+
   },
 
   reducers: {
@@ -81,6 +94,12 @@ const TasksModel: TasksModelType = {
         ...state,
         myProcessInstances: payload.data || [],
         total: payload.total,
+      };
+    },
+    saveFormInfo(state, { payload }) {
+      return {
+        ...state,
+        formInfo: payload.data || [],
       };
     },
   },

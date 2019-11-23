@@ -15,7 +15,7 @@ class LeaveList extends PureComponent<any, any> {
   state = {
     pageNum: 1,
     pageSize: 10,
-    modalVisible: false, //弹框实现隐藏状态
+    modalVisible: false, //弹框显示隐藏状态
     modalValue: null, //修改数据
     modalTitle: '', //弹框名称
     selectedRows: [], //选择项

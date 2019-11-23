@@ -1,10 +1,11 @@
-import { Tabs, Card, Table } from 'antd';
+import {Tabs, Card, Table} from 'antd';
 import React, { PureComponent } from 'react';
 
 const { TabPane } = Tabs;
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
+import TaskModalForm from "./TaskModalForm";
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,
@@ -12,6 +13,7 @@ import moment from 'moment';
   applyedTasks: tasks.applyedTasks,
   myProcessInstances: tasks.myProcessInstances,
   total: tasks.total,
+  formInfo: tasks.formInfo,
 }))
 class TaskList extends PureComponent<any, any> {
   state = {
@@ -23,6 +25,8 @@ class TaskList extends PureComponent<any, any> {
     applyedPageSize: 10,
     myProcessPageSize: 10,
     formName: '',
+    modalVisible: false, //弹框显示隐藏状态
+    modalTitle: '', //弹框名称
   };
 
   //加载完成查询
@@ -152,10 +156,35 @@ class TaskList extends PureComponent<any, any> {
       },
     );
   };
-
+  //办理任务
+  handTask=(record:any)=>{
+    const{dispatch}= this.props;
+    dispatch({
+      type: 'tasks/fetchFormInfo',
+      payload: {
+        taskId:record.taskId,
+        processInstanceId:record.processInstanceId,
+        businessKey:record.businessKey
+      },
+      callback:this.showHandleTaskModal
+    });
+  }
+  //修改modal状态
+  handleModalVisible = (flag: boolean) => {
+    this.setState({
+      modalVisible: !!flag,
+    });
+  };
+  //打开办理页面
+  showHandleTaskModal = () => {
+    this.setState({
+      modalTitle: '办理任务',
+      modalVisible: true,
+    });
+  };
   render() {
-    const { loading, applyingTasks, applyedTasks, myProcessInstances, total } = this.props;
-    const { applyingPageNum, applyedPageNum, myProcessPageNum } = this.state;
+    const { loading, applyingTasks, applyedTasks, myProcessInstances, total,formInfo } = this.props;
+    const { applyingPageNum, applyedPageNum, myProcessPageNum,modalVisible,modalTitle } = this.state;
     const applyingPaginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -185,27 +214,43 @@ class TaskList extends PureComponent<any, any> {
     };
     const applyingColumns = [
       {
+        title: '操作',
+        key: 'action',
+        width: 100,
+        render: (text:string,record:any) => (
+          <span>
+            <a onClick={()=>this.handTask(record)}>
+              办理
+            </a>
+          </span>
+        ),
+      },
+      {
         title: '名称',
         width: 100,
         dataIndex: 'formName',
-        key: 'formName',
+        key: 'formName'
       },
       {
         title: '任务名称',
         width: 100,
         dataIndex: 'taskName',
+        key:'taskName'
       },
       {
         title: '系统',
         width: 100,
         dataIndex: 'systemSn',
+        key: 'systemSn'
       },
       {
         title: '创建时间',
         dataIndex: 'startTime',
-        width: 150,
+        key: 'startTime',
+        width: 100,
         render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
       },
+
     ];
     const applyedColumns = [
       {
@@ -305,6 +350,15 @@ class TaskList extends PureComponent<any, any> {
             </Tabs>
           </div>
         </Card>
+        <TaskModalForm
+          handle={null}
+          canHandel={true}
+          handleModalVisible={this.handleModalVisible}
+          modalVisible={modalVisible}
+          record={formInfo.formInfo}
+          modalTitle={modalTitle}
+          loading={loading}
+        />
       </PageHeaderWrapper>
     );
   }

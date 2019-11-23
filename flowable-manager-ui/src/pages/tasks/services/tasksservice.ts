@@ -18,3 +18,10 @@ export async function getMyProcessInstances(params: any): Promise<any> {
     params: params,
   });
 }
+export async function getFormInfoForTask(params: any): Promise<any> {
+  return request(`/server/rest/task/find-formInfo`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
