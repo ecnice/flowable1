@@ -49,7 +49,10 @@ public class TaskVo implements Serializable {
      * 结束时间
      */
     private Date endTime;
-
+    /**
+     * 系统标识
+     */
+    private String systemSn;
     public String getTaskId() {
         return taskId;
     }
@@ -120,5 +123,13 @@ public class TaskVo implements Serializable {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getSystemSn() {
+        return systemSn;
+    }
+
+    public void setSystemSn(String systemSn) {
+        this.systemSn = systemSn;
     }
 }

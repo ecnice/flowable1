@@ -6,6 +6,7 @@ import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.service.leave.ILeaveService;
 import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.FormInfoVo;
+import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
@@ -81,9 +82,9 @@ public class ApiFlowableTaskResource extends BaseResource {
      * @return
      */
     @GetMapping(value = "/my-processInstances")
-    public PagerModel<HistoricProcessInstance> myProcessInstances(ProcessInstanceQueryVo params, Query query) {
+    public PagerModel<ProcessInstanceVo> myProcessInstances(ProcessInstanceQueryVo params, Query query) {
         params.setUserCode(this.getLoginUser().getId());
-        PagerModel<HistoricProcessInstance> pm = flowableProcessInstanceService.getMyProcessInstances(params, query);
+        PagerModel<ProcessInstanceVo> pm = flowableProcessInstanceService.getMyProcessInstances(params, query);
         return pm;
     }
 
