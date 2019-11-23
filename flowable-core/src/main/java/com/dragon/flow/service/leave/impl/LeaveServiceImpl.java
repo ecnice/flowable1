@@ -52,7 +52,7 @@ public class LeaveServiceImpl implements ILeaveService {
 	@Override
 	public PagerModel<Leave> getPagerModelByQuery(Leave Leave, Query query)
 			throws Exception {
-		PageHelper.startPage(query.getPageIndex(),query.getPageSize());
+		PageHelper.startPage(query.getPageNum(),query.getPageSize());
 		Page<Leave> page = this.LeaveDao.getPagerModelByQuery(Leave);
 		return new PagerModel<Leave>(page);
 	}
