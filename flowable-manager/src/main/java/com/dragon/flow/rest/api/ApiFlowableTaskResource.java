@@ -1,13 +1,18 @@
 package com.dragon.flow.rest.api;
 
+import com.dragon.flow.model.leave.Leave;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
+import com.dragon.flow.service.leave.ILeaveService;
 import com.dragon.flow.vo.flowable.*;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
+import org.flowable.engine.HistoryService;
+import org.flowable.engine.RuntimeService;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,12 @@ public class ApiFlowableTaskResource extends BaseResource {
     private IFlowableTaskService flowableTaskService;
     @Autowired
     private IFlowableProcessInstanceService flowableProcessInstanceService;
+    @Autowired
+    private ILeaveService leaveService;
+    @Autowired
+    private RuntimeService runtimeService;
+    @Autowired
+    private HistoryService historyService;
 
     /**
      * 获取待办任务列表
@@ -113,6 +124,30 @@ public class ApiFlowableTaskResource extends BaseResource {
         ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
         returnVo = flowableTaskService.delegateTask(params);
+        return returnVo;
+    }
+
+    /**
+     * 查询表单详情
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/find-formInfo")
+    public ReturnVo<FormInfoVo> findFormInfoByFormInfoQueryVo(FormInfoQueryVo params) throws Exception{
+        ReturnVo<FormInfoVo> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"OK");
+        FormInfoVo<Leave> formInfoVo = new FormInfoVo(params.getTaskId(),params.getProcessInstanceId());
+        String processInstanceId = params.getProcessInstanceId();
+        String businessKey = null;
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        if (processInstance == null){
+            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            businessKey = historicProcessInstance.getBusinessKey();
+        }else {
+            businessKey = processInstance.getBusinessKey();
+        }
+        Leave leave = leaveService.getLeaveById(businessKey);
+        formInfoVo.setFormInfo(leave);
+        returnVo.setData(formInfoVo);
         return returnVo;
     }
 
