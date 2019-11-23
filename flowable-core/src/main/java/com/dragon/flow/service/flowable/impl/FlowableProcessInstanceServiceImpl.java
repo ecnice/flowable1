@@ -57,7 +57,7 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
 
     @Override
     public PagerModel<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) {
-        PageHelper.startPage(query.getStartRow(), query.getPageSize());
+        PageHelper.startPage(query.getPageNum(), query.getPageSize());
         Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getMyProcessInstances(params);
         return new PagerModel<>(myProcesses.getTotal(), myProcesses.getResult());
     }

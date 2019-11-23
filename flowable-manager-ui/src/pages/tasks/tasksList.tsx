@@ -26,7 +26,6 @@ class TaskList extends PureComponent<any, any> {
       type: 'tasks/fetchApplyingTasks',
       payload: payload,
     });
-    debugger;
   };
   //查询已办
   applyed = (payload: any) => {
