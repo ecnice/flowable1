@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dragon.flow.dao.flowable.IFlowableCommentDao">
+    <select id="getFlowCommentVosByProcessInstanceId" parameterType="java.lang.String"
+            resultType="com.dragon.flow.vo.flowable.ret.FlowCommentVo">
+       SELECT
+        ID_,
+        TYPE_ AS type,
+        TIME_ AS time,
+        USER_ID_ AS userId,
+        TASK_ID_ AS taskId,
+        PROC_INST_ID_ AS processInstanceId,
+        MESSAGE_ AS message,
+        CONVERT (FULL_MSG_ USING utf8) AS fullMsg
+    FROM
+        act_hi_comment
+    WHERE
+        PROC_INST_ID_ = #{value} and ACTION_='AddComment'
+    ORDER BY
+        TIME_ ASC
+    </select>
+</mapper>

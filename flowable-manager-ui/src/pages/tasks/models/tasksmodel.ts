@@ -3,7 +3,8 @@ import { Reducer } from 'redux';
 
 import {
   getApplyedTasks,
-  getApplyingTasks, getFormInfoForTask,
+  getApplyingTasks,
+  getFormInfoForTask,
   getMyProcessInstances,
 } from '@/pages/tasks/services/tasksservice';
 
@@ -12,7 +13,7 @@ export interface TasksModelState {
   applyedTasks?: [];
   myProcessInstances?: [];
   total?: number;
-  formInfo?:object;
+  formInfo?: object;
 }
 
 export interface TasksModelType {
@@ -39,7 +40,7 @@ const TasksModel: TasksModelType = {
     applyedTasks: [],
     myProcessInstances: [],
     total: 0,
-    formInfo:{}
+    formInfo: {},
   },
   effects: {
     *fetchApplyingTasks({ payload }, { call, put }) {
@@ -71,7 +72,6 @@ const TasksModel: TasksModelType = {
       });
       callback();
     },
-
   },
 
   reducers: {

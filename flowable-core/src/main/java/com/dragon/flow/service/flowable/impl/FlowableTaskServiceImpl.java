@@ -1,10 +1,12 @@
 package com.dragon.flow.service.flowable.impl;
 
+import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
@@ -37,7 +39,7 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     @Autowired
     private TaskService taskService;
     @Autowired
-    private HistoryService historyService;
+    private IFlowableCommentService flowableCommentService;
     @Autowired
     private IFlowableTaskDao flowableTaskDao;
 
@@ -62,7 +64,9 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     public ReturnVo<String> complete(CompleteTaskVo params) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         //1.添加审批意见
-        taskService.addComment(params.getTaskId(), params.getProcessInstanceId(), params.getMessage());
+        FlowCommentVo comment = new FlowCommentVo(params.getTaskId(), params.getUserCode(),
+                params.getProcessInstanceId(), params.getMessage(), params.getType());
+        flowableCommentService.addComment(comment);
         ReturnVo<Task> taskVo = findTaskById(params.getTaskId());
         if (taskVo != null) {
             Task task = taskVo.getData();

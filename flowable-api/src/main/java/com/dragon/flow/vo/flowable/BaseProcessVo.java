@@ -25,6 +25,10 @@ public class BaseProcessVo implements Serializable {
      * 流程实例的id
      */
     private String processInstanceId;
+    /**
+     * 审批类型
+     */
+    private String type;
 
     public String getTaskId() {
         return taskId;
@@ -57,5 +61,13 @@ public class BaseProcessVo implements Serializable {
 
     public void setProcessInstanceId(String processInstanceId) {
         this.processInstanceId = processInstanceId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

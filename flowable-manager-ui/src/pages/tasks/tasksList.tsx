@@ -1,11 +1,11 @@
-import {Tabs, Card, Table} from 'antd';
+import { Tabs, Card, Table } from 'antd';
 import React, { PureComponent } from 'react';
 
 const { TabPane } = Tabs;
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
-import TaskModalForm from "./TaskModalForm";
+import TaskModalForm from './taskDetailForm';
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,
@@ -14,6 +14,7 @@ import TaskModalForm from "./TaskModalForm";
   myProcessInstances: tasks.myProcessInstances,
   total: tasks.total,
   formInfo: tasks.formInfo,
+  commentList: tasks.commentList,
 }))
 class TaskList extends PureComponent<any, any> {
   state = {
@@ -157,18 +158,18 @@ class TaskList extends PureComponent<any, any> {
     );
   };
   //办理任务
-  handTask=(record:any)=>{
-    const{dispatch}= this.props;
+  handTask = (record: any) => {
+    const { dispatch } = this.props;
     dispatch({
       type: 'tasks/fetchFormInfo',
       payload: {
-        taskId:record.taskId,
-        processInstanceId:record.processInstanceId,
-        businessKey:record.businessKey
+        taskId: record.taskId,
+        processInstanceId: record.processInstanceId,
+        businessKey: record.businessKey,
       },
-      callback:this.showHandleTaskModal
+      callback: this.showHandleTaskModal,
     });
-  }
+  };
   //修改modal状态
   handleModalVisible = (flag: boolean) => {
     this.setState({
@@ -182,9 +183,23 @@ class TaskList extends PureComponent<any, any> {
       modalVisible: true,
     });
   };
+
   render() {
-    const { loading, applyingTasks, applyedTasks, myProcessInstances, total,formInfo } = this.props;
-    const { applyingPageNum, applyedPageNum, myProcessPageNum,modalVisible,modalTitle } = this.state;
+    const {
+      loading,
+      applyingTasks,
+      applyedTasks,
+      myProcessInstances,
+      total,
+      formInfo,
+    } = this.props;
+    const {
+      applyingPageNum,
+      applyedPageNum,
+      myProcessPageNum,
+      modalVisible,
+      modalTitle,
+    } = this.state;
     const applyingPaginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -217,11 +232,9 @@ class TaskList extends PureComponent<any, any> {
         title: '操作',
         key: 'action',
         width: 100,
-        render: (text:string,record:any) => (
+        render: (text: string, record: any) => (
           <span>
-            <a onClick={()=>this.handTask(record)}>
-              办理
-            </a>
+            <a onClick={() => this.handTask(record)}>办理</a>
           </span>
         ),
       },
@@ -229,19 +242,19 @@ class TaskList extends PureComponent<any, any> {
         title: '名称',
         width: 100,
         dataIndex: 'formName',
-        key: 'formName'
+        key: 'formName',
       },
       {
         title: '任务名称',
         width: 100,
         dataIndex: 'taskName',
-        key:'taskName'
+        key: 'taskName',
       },
       {
         title: '系统',
         width: 100,
         dataIndex: 'systemSn',
-        key: 'systemSn'
+        key: 'systemSn',
       },
       {
         title: '创建时间',
@@ -250,7 +263,6 @@ class TaskList extends PureComponent<any, any> {
         width: 100,
         render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
       },
-
     ];
     const applyedColumns = [
       {

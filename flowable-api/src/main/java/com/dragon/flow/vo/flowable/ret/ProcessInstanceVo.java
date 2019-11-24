@@ -37,9 +37,13 @@ public class ProcessInstanceVo implements Serializable {
      */
     private String approver;
     /**
-     * 审批人id
+     * 发起人
      */
-    private String approverId;
+    private String starter;
+    /**
+     * 发起人id
+     */
+    private String starterId;
     /**
      * 系统标识
      */
@@ -93,19 +97,27 @@ public class ProcessInstanceVo implements Serializable {
         this.approver = approver;
     }
 
-    public String getApproverId() {
-        return approverId;
-    }
-
-    public void setApproverId(String approverId) {
-        this.approverId = approverId;
-    }
-
     public String getSystemSn() {
         return systemSn;
     }
 
     public void setSystemSn(String systemSn) {
         this.systemSn = systemSn;
+    }
+
+    public String getStarter() {
+        return starter;
+    }
+
+    public void setStarter(String starter) {
+        this.starter = starter;
+    }
+
+    public String getStarterId() {
+        return starterId;
+    }
+
+    public void setStarterId(String starterId) {
+        this.starterId = starterId;
     }
 }

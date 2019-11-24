@@ -1,9 +1,12 @@
 package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.dao.flowable.IFlowableProcessInstanceDao;
+import com.dragon.flow.enm.flowable.CommentTypeEnum;
+import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
+import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
@@ -38,6 +41,8 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     private IdentityService identityService;
     @Autowired
     private IFlowableProcessInstanceDao flowableProcessInstanceDao;
+    @Autowired
+    private IFlowableCommentService flowableCommentService;
 
 
     @Override
@@ -52,6 +57,11 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
                 .tenantId(params.getSystemSn().trim())
                 .start();
         returnVo.setData(processInstance);
+        //添加备注
+        FlowCommentVo flowCommentVo = new FlowCommentVo(params.getCurrentUserCode(),
+                processInstance.getProcessInstanceId(), params.getFormName() + "提交",
+                CommentTypeEnum.TJ.toString());
+        flowableCommentService.addComment(flowCommentVo);
         return returnVo;
     }
 
