@@ -11,10 +11,10 @@ export interface FormDetailModelType {
   namespace: 'formDetail';
   state: FormDetailModelState;
   effects: {
-    commentList: Effect;
+    fetchCommentList: Effect;
   };
   reducers: {
-    commentList: Reducer<FormDetailModelState>;
+    saveCommentList: Reducer<FormDetailModelState>;
   };
 }
 
@@ -37,7 +37,7 @@ const FormDetailModel: FormDetailModelType = {
     saveCommentList(state, { payload }) {
       return {
         ...state,
-        commentList: payload.data || [],
+        commentList: payload || [],
       };
     },
   },

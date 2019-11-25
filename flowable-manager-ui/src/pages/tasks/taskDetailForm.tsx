@@ -43,14 +43,14 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     note: '',
   };
 
-  //加载完成查询
+ /* //加载完成查询
   componentWillMount() {
     const processInstanceId = this.props.record ? this.props.record.processInstanceId : null;
     if (processInstanceId != null) {
       debugger;
       this.getCommentList({ processInstanceId: processInstanceId });
     }
-  }
+  }*/
 
   //查询审批意见
   getCommentList = (payload: any) => {

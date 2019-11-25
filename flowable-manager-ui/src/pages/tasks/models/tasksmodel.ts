@@ -70,6 +70,10 @@ const TasksModel: TasksModelType = {
         type: 'saveFormInfo',
         payload: response,
       });
+      yield put({
+        type: 'formDetail/fetchCommentList',
+        payload: {processInstanceId:response.data.processInstanceId},
+      });
       callback();
     },
   },
