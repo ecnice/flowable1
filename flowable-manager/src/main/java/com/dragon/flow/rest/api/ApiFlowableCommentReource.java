@@ -28,18 +28,6 @@ public class ApiFlowableCommentReource extends BaseResource{
     private IFlowableCommentService flowableCommentService;
 
     /**
-     * 添加
-     * @param comment 备注
-     * @return
-     */
-    @PostMapping("/addComment")
-    public ReturnVo<String> addComment(FlowCommentVo comment){
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"OK");
-        flowableCommentService.addComment(comment);
-        return returnVo;
-    }
-
-    /**
      * 通过流程实例id获取审批意见
      * @param processInstanceId 流程实例id
      * @return
