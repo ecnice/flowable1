@@ -6,3 +6,10 @@ export async function commentsByProcessInstanceId(params: any): Promise<any> {
     params: params,
   });
 }
+
+export async function complete(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/complete`, {
+    method: 'POST',
+    params: params,
+  });
+}

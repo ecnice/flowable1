@@ -11,6 +11,7 @@ import {
   Comment,
   Tooltip,
   List,
+  Avatar,
 } from 'antd';
 import React, { PureComponent } from 'react';
 import { FormComponentProps } from 'antd/es/form';
@@ -24,33 +25,25 @@ import { connect } from 'dva';
 
 interface IProps extends FormComponentProps {
   loading: boolean;
-  modalVisible: boolean;
   canHandel: boolean;
   record: any;
+  formInfo: any;
   handle: any;
-  handleModalVisible: any;
   modalTitle: string;
   commentList: [];
   dispatch?: any;
+  formatCommentList: [];
 }
 
-@connect(({ formDetail, loading }: any) => ({
+@connect(({ formDetail, tasks, loading }: any) => ({
   loading: loading.models.formDetail,
   commentList: formDetail.commentList,
+  modalVisible: tasks.modalVisible,
 }))
 class TaskDetailForm extends PureComponent<IProps, any> {
   state = {
     note: '',
   };
-
- /* //加载完成查询
-  componentWillMount() {
-    const processInstanceId = this.props.record ? this.props.record.processInstanceId : null;
-    if (processInstanceId != null) {
-      debugger;
-      this.getCommentList({ processInstanceId: processInstanceId });
-    }
-  }*/
 
   //查询审批意见
   getCommentList = (payload: any) => {
@@ -61,6 +54,55 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
   };
 
+  //内容
+  MyContent = (content: any) => {
+    return <p>{content}</p>;
+  };
+  //时间
+  MyDatetime = (time: any) => {
+    return (
+      <Tooltip
+        title={moment(time)
+          .subtract(1, 'days')
+          .format('YYYY-MM-DD HH:mm:ss')}
+      >
+        <span>
+          {moment(time)
+            .subtract(1, 'days')
+            .fromNow()}
+        </span>
+      </Tooltip>
+    );
+  };
+
+  //打开办理页面
+  onCancel = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tasks/showHandleTaskModal',
+      payload: {
+        modalTitle: '办理任务',
+        modalVisible: false,
+      },
+    });
+  };
+
+  //审批
+  complete = () => {
+    const { dispatch, formInfo } = this.props;
+    dispatch({
+      type: 'formDetail/fetchComplete',
+      payload: {
+        message: this.state.note,
+        taskId: formInfo.taskId,
+        processInstanceId: formInfo.processInstanceId,
+        type: 'SP',
+      },
+    });
+    debugger;
+    setTimeout(() => this.onCancel(), 2000);
+  };
+
   render() {
     const {
       modalVisible,
@@ -68,72 +110,11 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       record,
       handle,
       canHandel,
-      handleModalVisible,
       modalTitle,
       loading,
       commentList,
     } = this.props;
     debugger;
-    const commentColumns = [
-      {
-        title: '类型',
-        width: 100,
-        dataIndex: 'typeName',
-        key: 'typeName',
-      },
-      {
-        title: '意见',
-        width: 100,
-        dataIndex: 'message',
-        key: 'message',
-      },
-      {
-        title: '时间',
-        width: 100,
-        dataIndex: 'time',
-        key: 'time',
-        render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
-      },
-    ];
-    const data = [
-      {
-        author: '张三',
-
-        content: <p>审批意见测试数据</p>,
-        datetime: (
-          <Tooltip
-            title={moment()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD HH:mm:ss')}
-          >
-            <span>
-              {moment()
-                .subtract(1, 'days')
-                .fromNow()}
-            </span>
-          </Tooltip>
-        ),
-      },
-      {
-        author: '王五',
-
-        content: <p>审批意见测试数据</p>,
-        datetime: (
-          <Tooltip
-            title={moment()
-              .subtract(2, 'days')
-              .format('YYYY-MM-DD HH:mm:ss')}
-          >
-            <span>
-              {moment()
-                .subtract(2, 'days')
-                .fromNow()}
-            </span>
-          </Tooltip>
-        ),
-      },
-    ];
-
     const formItems = () => {
       const id = record ? record.id : null;
       form.getFieldDecorator('id', {
@@ -166,9 +147,6 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         </FormItem>,
       ];
     };
-    const onCancel = () => {
-      handleModalVisible();
-    };
     return (
       <Modal
         width={800}
@@ -179,7 +157,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         okButtonProps={{ loading: loading }}
         closable={true}
         footer={null}
-        onCancel={onCancel}
+        onCancel={this.onCancel}
       >
         <Card title={'表单详情'}>{formItems()}</Card>
         {canHandel && (
@@ -194,7 +172,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
               <div className={styles.handelTask}>
-                <Button>审批</Button>
+                <Button onClick={this.complete}>审批</Button>
                 <Button>转办</Button>
                 <Button>委派</Button>
                 <Button>驳回</Button>
@@ -204,14 +182,24 @@ class TaskDetailForm extends PureComponent<IProps, any> {
           </React.Fragment>
         )}
         <Divider />
-        <Card title={'审批意见列表'}>
+        <Card title={'审批意见'}>
           <List
             className="comment-list"
             itemLayout="horizontal"
             dataSource={commentList}
             renderItem={(item: any) => (
               <li>
-                <Comment author={item.typeName} content={item.message} datetime={item.time} />
+                <Comment
+                  author={item.userName + '-' + item.typeName}
+                  avatar={
+                    <Avatar
+                      src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                      alt="Han Solo"
+                    />
+                  }
+                  content={this.MyContent(item.message)}
+                  datetime={this.MyDatetime(item.time)}
+                />
               </li>
             )}
           />

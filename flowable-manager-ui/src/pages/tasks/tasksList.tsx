@@ -26,7 +26,6 @@ class TaskList extends PureComponent<any, any> {
     applyedPageSize: 10,
     myProcessPageSize: 10,
     formName: '',
-    modalVisible: false, //弹框显示隐藏状态
     modalTitle: '', //弹框名称
   };
 
@@ -170,17 +169,15 @@ class TaskList extends PureComponent<any, any> {
       callback: this.showHandleTaskModal,
     });
   };
-  //修改modal状态
-  handleModalVisible = (flag: boolean) => {
-    this.setState({
-      modalVisible: !!flag,
-    });
-  };
   //打开办理页面
   showHandleTaskModal = () => {
-    this.setState({
-      modalTitle: '办理任务',
-      modalVisible: true,
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tasks/showHandleTaskModal',
+      payload: {
+        modalTitle: '办理任务',
+        modalVisible: true,
+      },
     });
   };
 
@@ -192,14 +189,10 @@ class TaskList extends PureComponent<any, any> {
       myProcessInstances,
       total,
       formInfo,
-    } = this.props;
-    const {
-      applyingPageNum,
-      applyedPageNum,
-      myProcessPageNum,
       modalVisible,
-      modalTitle,
-    } = this.state;
+    } = this.props;
+    debugger;
+    const { applyingPageNum, applyedPageNum, myProcessPageNum, modalTitle } = this.state;
     const applyingPaginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -365,9 +358,9 @@ class TaskList extends PureComponent<any, any> {
         <TaskModalForm
           handle={null}
           canHandel={true}
-          handleModalVisible={this.handleModalVisible}
-          modalVisible={modalVisible}
+          handleModalVisible={this.showHandleTaskModal}
           record={formInfo.formInfo}
+          formInfo={formInfo}
           modalTitle={modalTitle}
           loading={loading}
         />

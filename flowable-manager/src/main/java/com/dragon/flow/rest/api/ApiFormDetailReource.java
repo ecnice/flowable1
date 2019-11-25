@@ -7,6 +7,8 @@ import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
 import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
+import com.dragon.tools.common.DateUtil;
+import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.vo.ReturnVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,8 +43,14 @@ public class ApiFormDetailReource extends BaseResource{
     @GetMapping("/commentsByProcessInstanceId")
     public List<FlowCommentVo> commentsByProcessInstanceId(String processInstanceId) {
         List<FlowCommentVo> datas = flowableCommentService.getFlowCommentVosByProcessInstanceId(processInstanceId);
-        FlowCommentVo flowCommentVo = new FlowCommentVo("00000001", processInstanceId, "提交", CommentTypeEnum.TJ.toString());
-        datas.add(flowCommentVo);
+        for(int i=0; i<10;i++) {
+            FlowCommentVo flowCommentVo = new FlowCommentVo("00000001", processInstanceId, "军哥提交了一个请假的流程", CommentTypeEnum.TJ.toString());
+            flowCommentVo.setUserName("军哥");
+            flowCommentVo.setTime(DateUtil.addDate(new Date(),-i));
+            flowCommentVo.setTypeName(CommentTypeEnum.getEnumMsgByType(flowCommentVo.getType()));
+            datas.add(flowCommentVo);
+        }
+
         return datas;
     }
 
@@ -52,7 +61,7 @@ public class ApiFormDetailReource extends BaseResource{
      */
     @PostMapping(value = "/complete")
     public ReturnVo<String> complete(CompleteTaskVo params) {
-        ReturnVo<String> returnVo = null;
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"OK");
         params.setUserCode(this.getLoginUser().getId());
         returnVo = flowableTaskService.complete(params);
         return returnVo;

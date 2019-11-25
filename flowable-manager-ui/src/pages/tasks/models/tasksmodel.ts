@@ -41,6 +41,8 @@ const TasksModel: TasksModelType = {
     myProcessInstances: [],
     total: 0,
     formInfo: {},
+    modalVisible: false,
+    modalTitle: '',
   },
   effects: {
     *fetchApplyingTasks({ payload }, { call, put }) {
@@ -70,9 +72,10 @@ const TasksModel: TasksModelType = {
         type: 'saveFormInfo',
         payload: response,
       });
+      //查询审批意见
       yield put({
         type: 'formDetail/fetchCommentList',
-        payload: {processInstanceId:response.data.processInstanceId},
+        payload: { processInstanceId: response.data.processInstanceId },
       });
       callback();
     },
@@ -104,6 +107,13 @@ const TasksModel: TasksModelType = {
       return {
         ...state,
         formInfo: payload.data || [],
+      };
+    },
+    showHandleTaskModal(state, { payload }) {
+      return {
+        ...state,
+        modalTitle: payload.modalTitle,
+        modalVisible: payload.modalVisible,
       };
     },
   },
