@@ -12,6 +12,7 @@ import {
   Tooltip,
   List,
   Avatar,
+  message,
 } from 'antd';
 import React, { PureComponent } from 'react';
 import { FormComponentProps } from 'antd/es/form';
@@ -89,18 +90,20 @@ class TaskDetailForm extends PureComponent<IProps, any> {
 
   //审批
   complete = () => {
-    const { dispatch, formInfo } = this.props;
-    dispatch({
-      type: 'formDetail/fetchComplete',
-      payload: {
-        message: this.state.note,
-        taskId: formInfo.taskId,
-        processInstanceId: formInfo.processInstanceId,
-        type: 'SP',
-      },
-    });
-    debugger;
-    setTimeout(() => this.onCancel(), 2000);
+    if (this.state.note) {
+      const { dispatch, formInfo } = this.props;
+      dispatch({
+        type: 'formDetail/fetchComplete',
+        payload: {
+          message: this.state.note,
+          taskId: formInfo.taskId,
+          processInstanceId: formInfo.processInstanceId,
+          type: 'SP',
+        },
+      });
+    } else {
+      message.warn('请填写意见!');
+    }
   };
 
   render() {

@@ -43,6 +43,8 @@ const TasksModel: TasksModelType = {
     formInfo: {},
     modalVisible: false,
     modalTitle: '',
+    showImageModal: false,
+    imgSrc: '',
   },
   effects: {
     *fetchApplyingTasks({ payload }, { call, put }) {
@@ -114,6 +116,15 @@ const TasksModel: TasksModelType = {
         ...state,
         modalTitle: payload.modalTitle,
         modalVisible: payload.modalVisible,
+      };
+    },
+    processImage(state, { payload }) {
+      return {
+        ...state,
+        showImageModal: payload.showImageModal,
+        imgSrc: payload.showImageModal
+          ? '/server/rest/formdetail/image/' + payload.processInstanceId
+          : '',
       };
     },
   },

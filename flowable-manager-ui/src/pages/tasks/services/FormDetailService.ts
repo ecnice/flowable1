@@ -13,3 +13,10 @@ export async function complete(params: any): Promise<any> {
     params: params,
   });
 }
+
+export async function image(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/image`, {
+    method: 'GET',
+    params: params,
+  });
+}

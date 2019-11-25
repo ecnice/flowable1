@@ -2,7 +2,11 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { message } from 'antd';
 
-import { commentsByProcessInstanceId, complete } from '@/pages/tasks/services/FormDetailService';
+import {
+  commentsByProcessInstanceId,
+  complete,
+  image,
+} from '@/pages/tasks/services/FormDetailService';
 
 export interface FormDetailModelState {
   commentList?: [];
@@ -23,6 +27,7 @@ const FormDetailModel: FormDetailModelType = {
   namespace: 'formDetail',
   state: {
     commentList: [],
+    imgSrc: '',
   },
   effects: {
     *fetchCommentList({ payload }, { call, put }) {
@@ -46,6 +51,13 @@ const FormDetailModel: FormDetailModelType = {
       } else {
         message.error(response.msg);
       }
+    },
+    *fetchProcessImage({ payload }, { call, put }) {
+      const response = yield call(image, payload);
+      yield put({
+        type: 'processImage',
+        payload: response,
+      });
     },
   },
 

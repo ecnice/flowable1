@@ -1,4 +1,4 @@
-import { Tabs, Card, Table } from 'antd';
+import { Tabs, Card, Table, Modal } from 'antd';
 import React, { PureComponent } from 'react';
 
 const { TabPane } = Tabs;
@@ -6,6 +6,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
 import TaskModalForm from './taskDetailForm';
+import authorize from '@/components/Authorized/Secured';
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,
@@ -15,6 +16,8 @@ import TaskModalForm from './taskDetailForm';
   total: tasks.total,
   formInfo: tasks.formInfo,
   commentList: tasks.commentList,
+  showImageModal: tasks.showImageModal,
+  imgSrc: tasks.imgSrc,
 }))
 class TaskList extends PureComponent<any, any> {
   state = {
@@ -33,6 +36,17 @@ class TaskList extends PureComponent<any, any> {
   componentWillMount() {
     this.applying({ pageNum: 1, pageSize: 10 });
   }
+
+  //关闭窗口
+  onCancel = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tasks/processImage',
+      payload: {
+        showImageModal: false,
+      },
+    });
+  };
 
   //查询待办
   applying = (payload: any) => {
@@ -181,6 +195,18 @@ class TaskList extends PureComponent<any, any> {
     });
   };
 
+  //跟踪流程
+  processImage = (processInstanceId: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tasks/processImage',
+      payload: {
+        showImageModal: true,
+        processInstanceId: processInstanceId,
+      },
+    });
+  };
+
   render() {
     const {
       loading,
@@ -190,6 +216,8 @@ class TaskList extends PureComponent<any, any> {
       total,
       formInfo,
       modalVisible,
+      showImageModal,
+      imgSrc,
     } = this.props;
     debugger;
     const { applyingPageNum, applyedPageNum, myProcessPageNum, modalTitle } = this.state;
@@ -228,6 +256,8 @@ class TaskList extends PureComponent<any, any> {
         render: (text: string, record: any) => (
           <span>
             <a onClick={() => this.handTask(record)}>办理</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a onClick={() => this.processImage(record.processInstanceId)}>跟踪</a>
           </span>
         ),
       },
@@ -259,6 +289,16 @@ class TaskList extends PureComponent<any, any> {
     ];
     const applyedColumns = [
       {
+        title: '操作',
+        key: 'action',
+        width: 100,
+        render: (text: string, record: any) => (
+          <span>
+            <a onClick={() => this.processImage(record.processInstanceId)}>跟踪</a>
+          </span>
+        ),
+      },
+      {
         title: '名称',
         width: 100,
         dataIndex: 'formName',
@@ -288,6 +328,16 @@ class TaskList extends PureComponent<any, any> {
       },
     ];
     const myProcessInstancesColumns = [
+      {
+        title: '操作',
+        key: 'action',
+        width: 100,
+        render: (text: string, record: any) => (
+          <span>
+            <a onClick={() => this.processImage(record.processInstanceId)}>跟踪</a>
+          </span>
+        ),
+      },
       {
         title: '名称',
         width: 100,
@@ -364,6 +414,20 @@ class TaskList extends PureComponent<any, any> {
           modalTitle={modalTitle}
           loading={loading}
         />
+        <Modal
+          width={1200}
+          bodyStyle={{ padding: '10px 15px 10px' }}
+          destroyOnClose
+          title="查看图片"
+          visible={showImageModal}
+          mask={true}
+          okButtonProps={{ loading: loading }}
+          closable={true}
+          footer={null}
+          onCancel={this.onCancel}
+        >
+          <img src={imgSrc} />
+        </Modal>
       </PageHeaderWrapper>
     );
   }

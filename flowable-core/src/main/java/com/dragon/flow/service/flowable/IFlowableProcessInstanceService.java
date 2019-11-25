@@ -32,5 +32,10 @@ public interface IFlowableProcessInstanceService {
      */
     public PagerModel<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) ;
 
-
+    /**
+     * 获取流程图图片
+     * @param processInstanceId 流程实例id
+     * @return
+     */
+    public byte[] createImage(String processInstanceId);
 }

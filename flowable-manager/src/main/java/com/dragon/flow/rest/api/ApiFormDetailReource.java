@@ -2,6 +2,7 @@ package com.dragon.flow.rest.api;
 
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
+import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
@@ -10,12 +11,13 @@ import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
 import com.dragon.tools.common.DateUtil;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.vo.ReturnVo;
+import org.flowable.ui.modeler.domain.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -29,11 +31,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/rest/formdetail")
 public class ApiFormDetailReource extends BaseResource{
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiFormDetailReource.class);
     @Autowired
     private IFlowableCommentService flowableCommentService;
     @Autowired
     private IFlowableTaskService flowableTaskService;
+    @Autowired
+    private IFlowableProcessInstanceService flowableProcessInstanceService;
 
     /**
      * 通过流程实例id获取审批意见
@@ -91,5 +95,17 @@ public class ApiFormDetailReource extends BaseResource{
         params.setUserCode(this.getLoginUser().getId());
         returnVo = flowableTaskService.delegateTask(params);
         return returnVo;
+    }
+
+    @GetMapping(value = "/image/{processInstanceId}")
+    public void image(@PathVariable String processInstanceId, HttpServletResponse response) {
+        try {
+            byte[] b = flowableProcessInstanceService.createImage(processInstanceId);
+            response.setHeader("Content-type", "text/xml;charset=UTF-8");
+            response.getOutputStream().write(b);
+        } catch (Exception e) {
+            LOGGER.error("ApiFormDetailReource-image:" + e);
+            e.printStackTrace();
+        }
     }
 }
