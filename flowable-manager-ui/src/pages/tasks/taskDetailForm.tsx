@@ -22,10 +22,6 @@ const { TextArea } = Input;
 import moment from 'moment';
 import { connect } from 'dva';
 
-@connect(({ formDetail, loading }: any) => ({
-  loading: loading.models.formDetail,
-  commentList: formDetail.commentList,
-}))
 interface IProps extends FormComponentProps {
   loading: boolean;
   modalVisible: boolean;
@@ -35,15 +31,20 @@ interface IProps extends FormComponentProps {
   handleModalVisible: any;
   modalTitle: string;
   commentList: [];
+  dispatch?: any;
 }
 
+@connect(({ formDetail, loading }: any) => ({
+  loading: loading.models.formDetail,
+  commentList: formDetail.commentList,
+}))
 class TaskDetailForm extends PureComponent<IProps, any> {
   state = {
     note: '',
   };
 
   //加载完成查询
-  componentDidMount() {
+  componentWillMount() {
     const processInstanceId = this.props.record ? this.props.record.processInstanceId : null;
     if (processInstanceId != null) {
       debugger;
@@ -72,7 +73,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       loading,
       commentList,
     } = this.props;
-
+    debugger;
     const commentColumns = [
       {
         title: '类型',
@@ -208,7 +209,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
             className="comment-list"
             itemLayout="horizontal"
             dataSource={commentList}
-            renderItem={item => (
+            renderItem={(item: any) => (
               <li>
                 <Comment author={item.typeName} content={item.message} datetime={item.time} />
               </li>

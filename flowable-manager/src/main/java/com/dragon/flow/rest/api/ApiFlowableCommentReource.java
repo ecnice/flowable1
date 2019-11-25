@@ -1,5 +1,6 @@
 package com.dragon.flow.rest.api;
 
+import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
 import com.dragon.tools.common.ReturnCode;
@@ -27,7 +28,7 @@ public class ApiFlowableCommentReource extends BaseResource{
     private IFlowableCommentService flowableCommentService;
 
     /**
-     * 添加备注
+     * 添加
      * @param comment 备注
      * @return
      */
@@ -46,6 +47,8 @@ public class ApiFlowableCommentReource extends BaseResource{
     @GetMapping("/listByProcessInstanceId")
     public List<FlowCommentVo> listByProcessInstanceId(String processInstanceId) {
         List<FlowCommentVo> datas = flowableCommentService.getFlowCommentVosByProcessInstanceId(processInstanceId);
+        FlowCommentVo flowCommentVo = new FlowCommentVo("00000001", processInstanceId, "提交", CommentTypeEnum.TJ.toString());
+        datas.add(flowCommentVo);
         return datas;
     }
 }
