@@ -6,7 +6,6 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
 import TaskModalForm from './taskDetailForm';
-import authorize from '@/components/Authorized/Secured';
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,

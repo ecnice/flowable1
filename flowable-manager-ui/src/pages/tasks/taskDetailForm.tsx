@@ -175,11 +175,13 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
               <div className={styles.handelTask}>
-                <Button onClick={this.complete}>审批</Button>
-                <Button>转办</Button>
+                <Button type="primary" onClick={this.complete}>
+                  审批
+                </Button>
+                {/*<Button>转办</Button>
                 <Button>委派</Button>
                 <Button>驳回</Button>
-                <Button>终止</Button>
+                <Button>终止</Button>*/}
               </div>
             </Card>
           </React.Fragment>

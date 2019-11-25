@@ -47,14 +47,13 @@ public class ApiFormDetailReource extends BaseResource{
     @GetMapping("/commentsByProcessInstanceId")
     public List<FlowCommentVo> commentsByProcessInstanceId(String processInstanceId) {
         List<FlowCommentVo> datas = flowableCommentService.getFlowCommentVosByProcessInstanceId(processInstanceId);
-        for(int i=0; i<10;i++) {
-            FlowCommentVo flowCommentVo = new FlowCommentVo("00000001", processInstanceId, "军哥提交了一个请假的流程", CommentTypeEnum.TJ.toString());
-            flowCommentVo.setUserName("军哥");
-            flowCommentVo.setTime(DateUtil.addDate(new Date(),-i));
-            flowCommentVo.setTypeName(CommentTypeEnum.getEnumMsgByType(flowCommentVo.getType()));
-            datas.add(flowCommentVo);
-        }
-
+//        for(int i=0; i<10;i++) {
+//            FlowCommentVo flowCommentVo = new FlowCommentVo("00000001", processInstanceId, "军哥提交了一个请假的流程", CommentTypeEnum.TJ.toString());
+//            flowCommentVo.setUserName("军哥");
+//            flowCommentVo.setTime(DateUtil.addDate(new Date(),-i));
+//            flowCommentVo.setTypeName(CommentTypeEnum.getEnumMsgByType(flowCommentVo.getType()));
+//            datas.add(flowCommentVo);
+//        }
         return datas;
     }
 
