@@ -1,7 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
-import { addComment, listByProcessInstanceId } from '@/pages/tasks/services/FormDetailService';
+import { commentsByProcessInstanceId } from '@/pages/tasks/services/FormDetailService';
 
 export interface FormDetailModelState {
   commentList?: [];
@@ -25,7 +25,7 @@ const FormDetailModel: FormDetailModelType = {
   },
   effects: {
     *fetchCommentList({ payload }, { call, put }) {
-      const response = yield call(listByProcessInstanceId, payload);
+      const response = yield call(commentsByProcessInstanceId, payload);
       yield put({
         type: 'saveCommentList',
         payload: response,

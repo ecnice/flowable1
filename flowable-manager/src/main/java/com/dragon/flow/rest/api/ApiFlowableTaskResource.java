@@ -55,7 +55,7 @@ public class ApiFlowableTaskResource extends BaseResource {
      */
     @GetMapping(value = "/get-applying-tasks")
     public PagerModel<TaskVo> getApplyingTasks(TaskQueryVo params, Query query) {
-        setUserCode(params);
+        params.setUserCode(this.getLoginUser().getId());
         PagerModel<TaskVo> pm = flowableTaskService.getApplyingTasks(params, query);
         return pm;
     }
@@ -69,7 +69,7 @@ public class ApiFlowableTaskResource extends BaseResource {
      */
     @GetMapping(value = "/get-applyed-tasks")
     public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query query) {
-        setUserCode(params);
+        params.setUserCode(this.getLoginUser().getId());
         PagerModel<TaskVo> pm = flowableTaskService.getApplyedTasks(params, query);
         return pm;
     }
@@ -88,47 +88,7 @@ public class ApiFlowableTaskResource extends BaseResource {
         return pm;
     }
 
-    /**
-     * 审批任务
-     * @param params 参数
-     * @return
-     */
-    @PostMapping(value = "/complete")
-    public ReturnVo<String> complete(CompleteTaskVo params) {
-        ReturnVo<String> returnVo = null;
-        params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.complete(params);
-        return returnVo;
-    }
 
-    private void setUserCode(TaskQueryVo params) {
-        params.setUserCode(this.getLoginUser().getId());
-    }
-    /**
-     * 转办
-     * @param params 参数
-     * @return
-     */
-    @PostMapping(value = "/turnTask")
-    public ReturnVo<String> turnTask(TurnTaskVo params){
-        ReturnVo<String> returnVo = null;
-        params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.turnTask(params);
-        return returnVo;
-    }
-
-    /**
-     * 委派
-     * @param params 参数
-     * @return
-     */
-    @PostMapping(value = "/delegateTask")
-    public ReturnVo<String> delegateTask(DelegateTaskVo params){
-        ReturnVo<String> returnVo = null;
-        params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.delegateTask(params);
-        return returnVo;
-    }
 
     /**
      * 查询表单详情
