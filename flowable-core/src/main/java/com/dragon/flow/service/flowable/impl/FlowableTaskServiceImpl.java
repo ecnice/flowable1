@@ -14,18 +14,12 @@ import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
-import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.dragon.flow.dao.flowable.IFlowableTaskDao;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author : bruce.liu

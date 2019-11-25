@@ -3,13 +3,13 @@ package com.dragon.flow.service.flowable.impl;
 import com.dragon.flow.dao.flowable.IFlowableProcessInstanceDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
+import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
-import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
@@ -50,7 +50,7 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Autowired
     private HistoryService historyService;
     @Autowired
-    private RepositoryService repositoryService;
+    private IFlowableBpmnModelService flowableBpmnModelService;
     @Autowired
     private IFlowableProcessInstanceDao flowableProcessInstanceDao;
     @Autowired
@@ -114,7 +114,7 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
             historicEnds.forEach(historicActivityInstance -> finalActiveActivityIds.add(historicActivityInstance.getActivityId()));
         }
         //4. 获取bpmnModel对象
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        BpmnModel bpmnModel = flowableBpmnModelService.getBpmnModelByProcessDefId(processDefinitionId);
         //5. 生成图片流
         InputStream inputStream = flowProcessDiagramGenerator.generateDiagram(bpmnModel, activeActivityIds, highLightedFlows);
         //6. 转化成byte便于网络传输
