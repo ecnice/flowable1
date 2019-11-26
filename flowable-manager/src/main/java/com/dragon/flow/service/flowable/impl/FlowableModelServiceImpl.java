@@ -12,6 +12,7 @@ import org.flowable.cmmn.converter.CmmnXmlConverter;
 import org.flowable.cmmn.editor.json.converter.CmmnJsonConverter;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
+import org.flowable.idm.api.User;
 import org.flowable.ui.common.security.SecurityUtils;
 import org.flowable.ui.common.service.exception.BadRequestException;
 import org.flowable.ui.common.util.XmlUtil;
@@ -29,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStreamReader;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author : bruce.liu
@@ -78,7 +81,25 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 model.setName(name);
                 model.setDescription(description);
                 model.setModelType(AbstractModel.MODEL_TYPE_BPMN);
-                Model newModel = modelService.createModel(model, modelNode.toString(), SecurityUtils.getCurrentUserObject());
+
+                User createdBy = SecurityUtils.getCurrentUserObject();
+                Model newModel = new Model();
+                List<Model> models = modelRepository.findByKeyAndType(model.getKey(), model.getModelType());
+                if (CollectionUtils.isNotEmpty(models)) {
+                    Model updateModel = models.get(0);
+                    newModel.setId(updateModel.getId());
+                }
+                newModel.setName(model.getName());
+                newModel.setKey(model.getKey());
+                newModel.setModelType(model.getModelType());
+                newModel.setCreated(Calendar.getInstance().getTime());
+                newModel.setCreatedBy(createdBy.getId());
+                newModel.setDescription(model.getDescription());
+                newModel.setModelEditorJson(modelNode.toString());
+                newModel.setLastUpdated(Calendar.getInstance().getTime());
+                newModel.setLastUpdatedBy(createdBy.getId());
+                newModel.setTenantId(model.getTenantId());
+                newModel = modelService.createModel(newModel, SecurityUtils.getCurrentUserObject());
                 return new ModelRepresentation(newModel);
             } catch (BadRequestException e) {
                 throw e;

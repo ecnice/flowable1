@@ -59,7 +59,6 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
 
 
-
     @Override
     public ReturnVo<ProcessInstance> startProcessInstanceByKey(StartProcessInstanceVo params) {
         ReturnVo<ProcessInstance> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
@@ -89,7 +88,7 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
 
     @Override
     public byte[] createImage(String processInstanceId) {
-//1.获取当前的流程实例
+        //1.获取当前的流程实例
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         String processDefinitionId = null;
         List<String> activeActivityIds = new ArrayList<>();

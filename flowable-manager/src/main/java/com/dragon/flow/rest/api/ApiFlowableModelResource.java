@@ -1,5 +1,6 @@
 package com.dragon.flow.rest.api;
 
+import com.dragon.flow.service.flowable.IFlowableModelService;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.vo.ReturnVo;
@@ -14,6 +15,7 @@ import org.flowable.ui.common.service.exception.BadRequestException;
 import org.flowable.ui.common.util.XmlUtil;
 import org.flowable.ui.modeler.domain.AbstractModel;
 import org.flowable.ui.modeler.domain.Model;
+import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.flowable.ui.modeler.service.FlowableModelQueryService;
 import org.flowable.ui.modeler.serviceapi.ModelService;
 import org.slf4j.Logger;
@@ -42,11 +44,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/rest/model")
-public class ApiFlowableModelResource extends BaseResource{
+public class ApiFlowableModelResource extends BaseResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFlowableModelResource.class);
     protected BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
     @Autowired
-    private FlowableModelQueryService modelQueryService;
+    private IFlowableModelService flowableModelService;
     @Autowired
     private ModelService modelService;
     @Autowired
@@ -69,9 +71,11 @@ public class ApiFlowableModelResource extends BaseResource{
     }
 
     @PostMapping(value = "/import-process-model")
-    public ReturnVo<String> importProcessModel(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+    public ReturnVo<String> importProcessModel(@RequestParam("file") MultipartFile file) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        modelQueryService.importProcessModel(request, file);
+        ModelRepresentation model = new ModelRepresentation();
+        model.setTenantId("flow");
+        flowableModelService.importProcessModel(file, model);
         return returnVo;
     }
 
@@ -155,7 +159,7 @@ public class ApiFlowableModelResource extends BaseResource{
     @GetMapping(value = "/loadPngByModelId/{modelId}")
     public void loadPngByModelId(@PathVariable String modelId, HttpServletResponse response) {
         Model model = modelService.getModel(modelId);
-        BpmnModel bpmnModel = modelService.getBpmnModel(model,new HashMap<>(),new HashMap<>());
+        BpmnModel bpmnModel = modelService.getBpmnModel(model, new HashMap<>(), new HashMap<>());
         DefaultProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
         InputStream is = processDiagramGenerator.generateDiagram(bpmnModel, "png", Collections.<String>emptyList(), Collections.<String>emptyList(),
                 activityFontName, labelFontName, annotationFontName,
