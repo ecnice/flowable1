@@ -4,7 +4,7 @@ import com.dragon.flow.cmd.AddCommentCmd;
 import com.dragon.flow.dao.flowable.IFlowableCommentDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
-import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
+import com.dragon.flow.vo.flowable.ret.CommentVo;
 import org.flowable.engine.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class FlowableCommentServiceImpl implements IFlowableCommentService {
     private ManagementService managementService;
 
     @Override
-    public void addComment(FlowCommentVo comment) {
+    public void addComment(CommentVo comment) {
         managementService.executeCommand(new AddCommentCmd(comment.getTaskId(), comment.getUserId(), comment.getProcessInstanceId(),
                 comment.getType(), comment.getMessage()));
     }
 
     @Override
-    public List<FlowCommentVo> getFlowCommentVosByProcessInstanceId(String processInstanceId) {
-        List<FlowCommentVo> datas = flowableCommentDao.getFlowCommentVosByProcessInstanceId(processInstanceId);
+    public List<CommentVo> getFlowCommentVosByProcessInstanceId(String processInstanceId) {
+        List<CommentVo> datas = flowableCommentDao.getFlowCommentVosByProcessInstanceId(processInstanceId);
         datas.forEach(commentVo -> {
             commentVo.setTypeName(CommentTypeEnum.getEnumMsgByType(commentVo.getType()));
         });

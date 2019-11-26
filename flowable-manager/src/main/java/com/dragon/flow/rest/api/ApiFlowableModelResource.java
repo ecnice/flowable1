@@ -1,5 +1,6 @@
 package com.dragon.flow.rest.api;
 
+import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableModelService;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
@@ -8,8 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
+import org.flowable.engine.IdentityService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.idm.api.IdmIdentityService;
+import org.flowable.idm.api.User;
 import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.ui.common.service.exception.BadRequestException;
 import org.flowable.ui.common.util.XmlUtil;
@@ -53,12 +57,10 @@ public class ApiFlowableModelResource extends BaseResource {
     private ModelService modelService;
     @Autowired
     private RepositoryService repositoryService;
-    @Value("${flowable.activityFontName}")
-    private String activityFontName;
-    @Value("${flowable.labelFontName}")
-    private String labelFontName;
-    @Value("${flowable.annotationFontName}")
-    private String annotationFontName;
+    @Autowired
+    private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
+    @Autowired
+    private IdentityService identityService;
 
 
     @GetMapping(value = "/page-model")
@@ -66,6 +68,10 @@ public class ApiFlowableModelResource extends BaseResource {
         ReturnVo<PagerModel<AbstractModel>> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         List<AbstractModel> datas = modelService.getModelsByModelType(AbstractModel.MODEL_TYPE_BPMN);
         PagerModel<AbstractModel> pm = new PagerModel<>(datas.size(), datas);
+        pm.getData().forEach(abstractModel -> {
+            User user = identityService.createUserQuery().userId(abstractModel.getCreatedBy()).singleResult();
+            abstractModel.setCreatedBy(user.getFirstName());
+        });
         returnVo.setData(pm);
         return returnVo;
     }
@@ -160,10 +166,7 @@ public class ApiFlowableModelResource extends BaseResource {
     public void loadPngByModelId(@PathVariable String modelId, HttpServletResponse response) {
         Model model = modelService.getModel(modelId);
         BpmnModel bpmnModel = modelService.getBpmnModel(model, new HashMap<>(), new HashMap<>());
-        DefaultProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
-        InputStream is = processDiagramGenerator.generateDiagram(bpmnModel, "png", Collections.<String>emptyList(), Collections.<String>emptyList(),
-                activityFontName, labelFontName, annotationFontName,
-                null, 1.0, true);
+        InputStream is = flowProcessDiagramGenerator.generateDiagram(bpmnModel);
         try {
             response.setHeader("Content-Type", "image/png");
             byte[] b = new byte[1024];

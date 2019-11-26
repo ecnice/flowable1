@@ -8,7 +8,7 @@ import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
-import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
+import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
@@ -21,7 +21,6 @@ import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.IdentityService;
-import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -72,10 +71,10 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
                 .start();
         returnVo.setData(processInstance);
         //添加备注
-        FlowCommentVo flowCommentVo = new FlowCommentVo(params.getCurrentUserCode(),
+        CommentVo commentVo = new CommentVo(params.getCurrentUserCode(),
                 processInstance.getProcessInstanceId(), params.getFormName() + "提交",
                 CommentTypeEnum.TJ.toString());
-        flowableCommentService.addComment(flowCommentVo);
+        flowableCommentService.addComment(commentVo);
         return returnVo;
     }
 

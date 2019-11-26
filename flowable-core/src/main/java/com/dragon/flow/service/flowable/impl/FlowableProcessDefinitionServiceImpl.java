@@ -1,6 +1,14 @@
 package com.dragon.flow.service.flowable.impl;
 
+import com.dragon.flow.dao.flowable.IFlowableProcessDefinitionDao;
 import com.dragon.flow.service.flowable.IFlowableProcessDefinitionService;
+import com.dragon.flow.vo.flowable.ProcessDefinitionQueryVo;
+import com.dragon.flow.vo.flowable.ret.ProcessDefinitionVo;
+import com.dragon.tools.pager.PagerModel;
+import com.dragon.tools.pager.Query;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +24,16 @@ import org.springframework.stereotype.Service;
 public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDefinitionService {
 
     @Autowired
+    private IFlowableProcessDefinitionDao flowableProcessDefinitionDao;
+    @Autowired
     private RepositoryService repositoryService;
+
+    @Override
+    public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params,Query query) {
+        PageHelper.startPage(query.getPageNum(), query.getPageSize());
+        Page<ProcessDefinitionVo> pagerModel = flowableProcessDefinitionDao.getPagerModel(params);
+        return new PagerModel<>(pagerModel.getTotal(), pagerModel.getResult());
+    }
 
 
 }

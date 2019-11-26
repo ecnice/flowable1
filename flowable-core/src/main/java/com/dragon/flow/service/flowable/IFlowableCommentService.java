@@ -1,6 +1,6 @@
 package com.dragon.flow.service.flowable;
 
-import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
+import com.dragon.flow.vo.flowable.ret.CommentVo;
 
 import java.util.List;
 
@@ -16,13 +16,13 @@ public interface IFlowableCommentService {
      * 添加备注
      * @param comment 参数
      */
-    public void addComment(FlowCommentVo comment) ;
+    public void addComment(CommentVo comment) ;
 
     /**
      * 通过流程实例id获取审批意见列表
      * @param processInstanceId 流程实例id
      * @return
      */
-    public List<FlowCommentVo> getFlowCommentVosByProcessInstanceId(String processInstanceId) ;
+    public List<CommentVo> getFlowCommentVosByProcessInstanceId(String processInstanceId) ;
 
 }

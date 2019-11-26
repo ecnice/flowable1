@@ -9,7 +9,7 @@ import java.util.Date;
  * @Since:19:24 2019/11/24
  * 爱拼才会赢 2019 ~ 2030 版权所有
  */
-public class FlowCommentVo implements Serializable {
+public class CommentVo implements Serializable {
     /**
      * 任务id
      */
@@ -54,14 +54,14 @@ public class FlowCommentVo implements Serializable {
      * 评论全信息
      */
     private String fullMsg;
-    public FlowCommentVo(){}
-    public FlowCommentVo(String userId, String processInstanceId, String message, String type) {
+    public CommentVo(){}
+    public CommentVo(String userId, String processInstanceId, String message, String type) {
         this.userId = userId;
         this.processInstanceId = processInstanceId;
         this.message = message;
         this.type = type;
     }
-    public FlowCommentVo(String taskId, String userId, String processInstanceId, String message, String type) {
+    public CommentVo(String taskId, String userId, String processInstanceId, String message, String type) {
         this.taskId = taskId;
         this.userId = userId;
         this.processInstanceId = processInstanceId;

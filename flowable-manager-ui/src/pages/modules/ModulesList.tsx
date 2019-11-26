@@ -60,7 +60,7 @@ class ModulesList extends Component<any, any> {
         title: '操作',
         key: 'operation',
         // fixed: 'right',
-        width: 200,
+        width: 250,
         render: (text, record) =>
           modules.length >= 1 ? (
             <div>
@@ -89,7 +89,7 @@ class ModulesList extends Component<any, any> {
       },
       {
         title: 'Key',
-        width: 100,
+        width: 80,
         dataIndex: 'key',
         key: 'key',
       },
@@ -103,13 +103,13 @@ class ModulesList extends Component<any, any> {
         title: '描述',
         dataIndex: 'comment',
         key: 'comment',
-        width: 150,
+        width: 100,
       },
       {
         title: '创建人',
         dataIndex: 'createdBy',
         key: 'createdBy',
-        width: 150,
+        width: 80,
       },
       {
         title: '创建时间',

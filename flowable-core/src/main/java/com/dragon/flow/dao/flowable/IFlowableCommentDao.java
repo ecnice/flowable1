@@ -1,6 +1,6 @@
 package com.dragon.flow.dao.flowable;
 
-import com.dragon.flow.vo.flowable.ret.FlowCommentVo;
+import com.dragon.flow.vo.flowable.ret.CommentVo;
 
 import java.util.List;
 
@@ -17,6 +17,6 @@ public interface IFlowableCommentDao {
      * @param ProcessInstanceId 流程实例id
      * @return
      */
-    public List<FlowCommentVo> getFlowCommentVosByProcessInstanceId(String ProcessInstanceId);
+    public List<CommentVo> getFlowCommentVosByProcessInstanceId(String ProcessInstanceId);
 
 }

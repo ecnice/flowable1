@@ -110,6 +110,13 @@ export default {
               hideChildrenInMenu: true,
             },
             {
+              path: '/defintions',
+              name: '定义管理',
+              icon: 'smile',
+              component: './definition/DefinitionList',
+              hideChildrenInMenu: true,
+            },
+            {
               path: '/tasks',
               name: '任务管理',
               icon: 'smile',

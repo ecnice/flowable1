@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dragon.flow.dao.flowable.IFlowableProcessDefinitionDao">
+    <select id="getPagerModel" parameterType="com.dragon.flow.vo.flowable.ProcessDefinitionQueryVo"
+            resultType="com.dragon.flow.vo.flowable.ret.ProcessDefinitionVo">
+      SELECT
+        t.CATEGORY_ AS category,
+        t.ID_ AS id,
+        t.NAME_ AS NAME,
+        t.KEY_ AS modelKey,
+        t.RESOURCE_NAME_ AS resourceName,
+        t.VERSION_ AS version,
+        t.DEPLOYMENT_ID_ AS deploymentId,
+        t.TENANT_ID_ AS tenantId
+    FROM
+        act_re_procdef t
+    <where>
+        <if test="name!=null and name!=''">
+           and t.NAME_ LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="modelKey!=null and modelKey!=''">
+            or t.KEY_ LIKE CONCAT('%',#{modelKey},'%')
+        </if>
+    </where>
+    ORDER BY
+        t.VERSION_ DESC
+    </select>
+</mapper>
