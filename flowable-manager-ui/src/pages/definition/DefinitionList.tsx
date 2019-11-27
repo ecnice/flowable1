@@ -1,11 +1,10 @@
-import {Card, Button, Input, Table, Form, Row, Col} from 'antd';
-import React, {Component} from 'react';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
-import {connect} from 'dva';
-import { FormComponentProps } from "antd/lib/form/Form";
-import styles from "./styles.less";
-import {Dispatch} from "redux";
-
+import { Card, Button, Input, Table, Form, Row, Col } from 'antd';
+import React, { Component } from 'react';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { connect } from 'dva';
+import { FormComponentProps } from 'antd/lib/form/Form';
+import styles from './styles.less';
+import { Dispatch } from 'redux';
 const FormItem = Form.Item;
 
 interface DefinitionListProps extends FormComponentProps {
@@ -14,7 +13,8 @@ interface DefinitionListProps extends FormComponentProps {
   loading: boolean;
   dispatch: Dispatch<any>;
 }
-@connect(({definition, loading}: any) => ({
+
+@connect(({ definition, loading }: any) => ({
   loading: loading.models.definition,
   data: definition.data,
   total: definition.total,
@@ -30,7 +30,7 @@ class DefinitionList extends Component<DefinitionListProps> {
 
   //查询列表
   componentWillMount() {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'definition/fetchList',
       payload: {
@@ -42,21 +42,21 @@ class DefinitionList extends Component<DefinitionListProps> {
 
   //回掉
   callback = () => {
-    const {dispatch} = this.props;
-    const {pageNum, pageSize, formValues} = this.state;
+    const { dispatch } = this.props;
+    const { pageNum, pageSize, formValues } = this.state;
     this.setState({
       selectedRows: [],
       selectedRowKeys: [],
     });
     dispatch({
       type: 'leave/fetch',
-      payload: {...formValues, pageNum: pageNum, pageSize: pageSize},
+      payload: { ...formValues, pageNum: pageNum, pageSize: pageSize },
     });
   };
   //分页点击
   changePage = (page: number) => {
-    const {dispatch} = this.props;
-    const {pageSize, formValues} = this.state;
+    const { dispatch } = this.props;
+    const { pageSize, formValues } = this.state;
     this.setState(
       {
         pageNum: page,
@@ -64,15 +64,15 @@ class DefinitionList extends Component<DefinitionListProps> {
       () => {
         dispatch({
           type: 'definition/fetchList',
-          payload: {...formValues, pageNum: page, pageSize: pageSize},
+          payload: { ...formValues, pageNum: page, pageSize: pageSize },
         });
       },
     );
   };
   //修改pagesize
   changePageSize = (current: number, size: number) => {
-    const {dispatch} = this.props;
-    const {formValues} = this.state;
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
 
     this.setState(
       {
@@ -82,7 +82,7 @@ class DefinitionList extends Component<DefinitionListProps> {
       () => {
         dispatch({
           type: 'definition/fetchList',
-          payload: {...formValues, pageNum: current, pageSize: size},
+          payload: { ...formValues, pageNum: current, pageSize: size },
         });
       },
     );
@@ -95,62 +95,69 @@ class DefinitionList extends Component<DefinitionListProps> {
   //查询
   handleSearch = (e: any) => {
     e.preventDefault();
-    const {dispatch, form} = this.props;
-    const {pageSize} = this.state;
+    const { dispatch, form } = this.props;
+    const { pageSize } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue,
-        pageSize
+        pageSize,
       };
-      this.setState({
-        formValues: values,
-        selectedRows: [],
-        selectedRowKeys: [],
-      }, () => {
-        dispatch({
-          type: 'definition/fetchList',
-          payload: values,
-        });
-      });
+      this.setState(
+        {
+          formValues: values,
+          selectedRows: [],
+          selectedRowKeys: [],
+        },
+        () => {
+          dispatch({
+            type: 'definition/fetchList',
+            payload: values,
+          });
+        },
+      );
     });
   };
   //重置
   handleFormReset = () => {
-    const {form, dispatch} = this.props;
+    const { form, dispatch } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {},
-      selectedRows: [],
-      selectedRowKeys: [],
-      pageSize: 10
-    }, () => {
-      dispatch({
-        type: 'definition/fetchList',
-        payload: {pageNum: 1, pageSize: 10},
-      });
-    });
-
+    this.setState(
+      {
+        formValues: {},
+        selectedRows: [],
+        selectedRowKeys: [],
+        pageSize: 10,
+      },
+      () => {
+        dispatch({
+          type: 'definition/fetchList',
+          payload: { pageNum: 1, pageSize: 10 },
+        });
+      },
+    );
   };
   renderSearchForm = () => {
-    let a=this.props.form;
-    debugger;
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{md: 8, lg: 24, xl: 48}}>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8}>
-            <FormItem label="名称">{getFieldDecorator('name')(<Input placeholder="请输入名称"/>)}</FormItem>
+            <FormItem label="名称">
+              {getFieldDecorator('name')(<Input placeholder="请输入名称" />)}
+            </FormItem>
           </Col>
           <Col md={8}>
-            <FormItem label="key">{getFieldDecorator('modelKey')(<Input placeholder="请输入key"/>)}</FormItem>
+            <FormItem label="key">
+              {getFieldDecorator('modelKey')(<Input placeholder="请输入key" />)}
+            </FormItem>
           </Col>
           <Col md={8}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
             </span>
@@ -158,11 +165,11 @@ class DefinitionList extends Component<DefinitionListProps> {
         </Row>
       </Form>
     );
-  }
+  };
 
   render() {
-    const {data, loading, total} = this.props;
-    const {selectedRowKeys, pageNum} = this.state;
+    const { data, loading, total } = this.props;
+    const { selectedRowKeys, pageNum } = this.state;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -224,7 +231,7 @@ class DefinitionList extends Component<DefinitionListProps> {
     return (
       <PageHeaderWrapper title={''}>
         <Card bordered={false}>
-          <div style={{height: '100%'}}>
+          <div style={{ height: '100%' }}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
 
             <Table
@@ -241,4 +248,5 @@ class DefinitionList extends Component<DefinitionListProps> {
     );
   }
 }
+
 export default Form.create<DefinitionListProps>()(DefinitionList);
