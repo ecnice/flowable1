@@ -23,5 +23,10 @@ public interface IFlowableProcessDefinitionService {
      * @return
      */
     public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params,Query query) ;
-
+    /**
+     * 通过流程定义id获取流程定义的信息
+     * @param processDefinitionId 流程定义id
+     * @return
+     */
+    public ProcessDefinitionVo getById(String processDefinitionId) ;
 }

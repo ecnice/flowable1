@@ -89,8 +89,8 @@ class DefinitionList extends Component<DefinitionListProps> {
     );
   };
 
-  processFile(deploymentId: string, modelKey: string, type: string) {
-    window.open(`/server/rest/definition/processFile/${type}/${modelKey}/${deploymentId}`);
+  processFile(id: string, type: string) {
+    window.open(`/server/rest/definition/processFile/${type}/${id}`);
   }
 
   //删除流程定义
@@ -210,11 +210,9 @@ class DefinitionList extends Component<DefinitionListProps> {
         width: 100,
         render: (text: string, record: any) => (
           <span>
-            <a onClick={() => this.processFile(record.deploymentId, record.modelKey, 'xml')}>XML</a>
+            <a onClick={() => this.processFile(record.id, 'xml')}>XML</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <a onClick={() => this.processFile(record.deploymentId, record.modelKey, 'img')}>
-              流程图
-            </a>
+            <a onClick={() => this.processFile(record.id, 'img')}>流程图</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <Popconfirm
               title="删除吗?"

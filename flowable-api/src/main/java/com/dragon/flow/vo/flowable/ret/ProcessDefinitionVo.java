@@ -18,6 +18,7 @@ public class ProcessDefinitionVo implements Serializable {
     protected String category;
     protected String deploymentId;
     protected String resourceName;
+    protected String dgrmResourceName;
     protected String tenantId;
     public String getId() {
         return id;
@@ -81,5 +82,13 @@ public class ProcessDefinitionVo implements Serializable {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public String getDgrmResourceName() {
+        return dgrmResourceName;
+    }
+
+    public void setDgrmResourceName(String dgrmResourceName) {
+        this.dgrmResourceName = dgrmResourceName;
     }
 }

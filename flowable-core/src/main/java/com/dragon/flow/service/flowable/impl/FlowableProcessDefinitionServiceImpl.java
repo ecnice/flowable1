@@ -8,8 +8,6 @@ import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.engine.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +23,6 @@ public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDef
 
     @Autowired
     private IFlowableProcessDefinitionDao flowableProcessDefinitionDao;
-    @Autowired
-    private RepositoryService repositoryService;
 
     @Override
     public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params,Query query) {
@@ -35,5 +31,8 @@ public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDef
         return new PagerModel<>(pagerModel.getTotal(), pagerModel.getResult());
     }
 
-
+    @Override
+    public ProcessDefinitionVo getById(String processDefinitionId) {
+        return flowableProcessDefinitionDao.getById(processDefinitionId);
+    }
 }
