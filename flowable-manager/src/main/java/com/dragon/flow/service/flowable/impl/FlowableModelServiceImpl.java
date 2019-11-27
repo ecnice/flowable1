@@ -83,6 +83,7 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 model.setModelType(AbstractModel.MODEL_TYPE_BPMN);
 
                 User createdBy = SecurityUtils.getCurrentUserObject();
+                //查询是否已经存在流程模板
                 Model newModel = new Model();
                 List<Model> models = modelRepository.findByKeyAndType(model.getKey(), model.getModelType());
                 if (CollectionUtils.isNotEmpty(models)) {
