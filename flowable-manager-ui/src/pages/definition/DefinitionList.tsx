@@ -1,23 +1,36 @@
-import { Card, Button, Input, Table, Form } from 'antd';
-import React, { PureComponent } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'dva';
+import {Card, Button, Input, Table, Form, Row, Col} from 'antd';
+import React, {Component} from 'react';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {connect} from 'dva';
+import { FormComponentProps } from "antd/lib/form/Form";
+import styles from "./styles.less";
+import {Dispatch} from "redux";
+
 const FormItem = Form.Item;
-@connect(({ definition, loading }: any) => ({
+
+interface DefinitionListProps extends FormComponentProps {
+  data: Array<any>;
+  total: number;
+  loading: boolean;
+  dispatch: Dispatch<any>;
+}
+@connect(({definition, loading}: any) => ({
   loading: loading.models.definition,
   data: definition.data,
   total: definition.total,
 }))
-class DefinitionList extends PureComponent<any, any> {
+class DefinitionList extends Component<DefinitionListProps> {
   state = {
     pageNum: 1,
     pageSize: 10,
     selectedRows: [], //选择项
     selectedRowKeys: [], //选择项（key）
+    formValues: {}, //查询数据
   };
+
   //查询列表
   componentWillMount() {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'definition/fetchList',
       payload: {
@@ -26,23 +39,24 @@ class DefinitionList extends PureComponent<any, any> {
       },
     });
   }
+
   //回掉
   callback = () => {
-    const { dispatch } = this.props;
-    const { pageNum, pageSize } = this.state;
+    const {dispatch} = this.props;
+    const {pageNum, pageSize, formValues} = this.state;
     this.setState({
       selectedRows: [],
       selectedRowKeys: [],
     });
     dispatch({
-      type: 'definition/fetchList',
-      payload: { pageNum: pageNum, pageSize: pageSize },
+      type: 'leave/fetch',
+      payload: {...formValues, pageNum: pageNum, pageSize: pageSize},
     });
   };
   //分页点击
   changePage = (page: number) => {
-    const { dispatch } = this.props;
-    const { pageSize } = this.state;
+    const {dispatch} = this.props;
+    const {pageSize, formValues} = this.state;
     this.setState(
       {
         pageNum: page,
@@ -50,14 +64,16 @@ class DefinitionList extends PureComponent<any, any> {
       () => {
         dispatch({
           type: 'definition/fetchList',
-          payload: { pageNum: page, pageSize: pageSize },
+          payload: {...formValues, pageNum: page, pageSize: pageSize},
         });
       },
     );
   };
   //修改pagesize
   changePageSize = (current: number, size: number) => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
+    const {formValues} = this.state;
+
     this.setState(
       {
         pageNum: current,
@@ -66,7 +82,7 @@ class DefinitionList extends PureComponent<any, any> {
       () => {
         dispatch({
           type: 'definition/fetchList',
-          payload: { pageNum: current, pageSize: size },
+          payload: {...formValues, pageNum: current, pageSize: size},
         });
       },
     );
@@ -76,22 +92,77 @@ class DefinitionList extends PureComponent<any, any> {
     window.open(`/server/rest/definition/processFile/${type}/${id}`);
   }
 
-  // 查询
-  handleSearch(e) {
-    // 禁止默认行为
-    // e.preventDefault();
-    // // 获取 form 表单的值
-    // console.log(this.props.form.getFieldsValue());
-  }
+  //查询
+  handleSearch = (e: any) => {
+    e.preventDefault();
+    const {dispatch, form} = this.props;
+    const {pageSize} = this.state;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const values = {
+        ...fieldsValue,
+        pageSize
+      };
+      this.setState({
+        formValues: values,
+        selectedRows: [],
+        selectedRowKeys: [],
+      }, () => {
+        dispatch({
+          type: 'definition/fetchList',
+          payload: values,
+        });
+      });
+    });
+  };
+  //重置
+  handleFormReset = () => {
+    const {form, dispatch} = this.props;
+    form.resetFields();
+    this.setState({
+      formValues: {},
+      selectedRows: [],
+      selectedRowKeys: [],
+      pageSize: 10
+    }, () => {
+      dispatch({
+        type: 'definition/fetchList',
+        payload: {pageNum: 1, pageSize: 10},
+      });
+    });
 
-  // 重置
-  handleFormReset() {
-    //this.props.form.resetFields();
+  };
+  renderSearchForm = () => {
+    let a=this.props.form;
+    debugger;
+    const {getFieldDecorator} = this.props.form;
+    return (
+      <Form onSubmit={this.handleSearch} layout="inline">
+        <Row gutter={{md: 8, lg: 24, xl: 48}}>
+          <Col md={8}>
+            <FormItem label="名称">{getFieldDecorator('name')(<Input placeholder="请输入名称"/>)}</FormItem>
+          </Col>
+          <Col md={8}>
+            <FormItem label="key">{getFieldDecorator('modelKey')(<Input placeholder="请输入key"/>)}</FormItem>
+          </Col>
+          <Col md={8}>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>
+                重置
+              </Button>
+            </span>
+          </Col>
+        </Row>
+      </Form>
+    );
   }
 
   render() {
-    const { data, loading, total } = this.props;
-    const { selectedRowKeys, pageNum } = this.state;
+    const {data, loading, total} = this.props;
+    const {selectedRowKeys, pageNum} = this.state;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -111,6 +182,7 @@ class DefinitionList extends PureComponent<any, any> {
         });
       },
     };
+
     const columns = [
       {
         title: '操作',
@@ -152,43 +224,9 @@ class DefinitionList extends PureComponent<any, any> {
     return (
       <PageHeaderWrapper title={''}>
         <Card bordered={false}>
-          <div style={{ height: '100%' }}>
-            <div>
-              <span>
-                <Form layout="inline" onSubmit={this.handleSearch.bind(this)}>
-                  <FormItem
-                    key="name"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    label="名称"
-                  >
-                    <Input style={{ width: 170 }} placeholder="请输入姓名" />
-                  </FormItem>
-                  <FormItem
-                    key="modelKey"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    label="KEY"
-                  >
-                    <Input style={{ width: 170 }} placeholder="请输入KEY" />
-                  </FormItem>
-                  <FormItem wrapperCol={{ span: 16, offset: 12 }}>
-                    <Button icon="search" type="primary" htmlType="submit">
-                      查询
-                    </Button>
-                  </FormItem>
-                  <FormItem wrapperCol={{ span: 16, offset: 12 }}>
-                    <Button
-                      icon="sync"
-                      style={{ marginLeft: 8 }}
-                      onClick={this.handleFormReset.bind(this)}
-                    >
-                      重置
-                    </Button>
-                  </FormItem>
-                </Form>
-              </span>
-            </div>
+          <div style={{height: '100%'}}>
+            <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
+
             <Table
               bordered
               rowKey="id"
@@ -203,5 +241,4 @@ class DefinitionList extends PureComponent<any, any> {
     );
   }
 }
-
-export default DefinitionList;
+export default Form.create<DefinitionListProps>()(DefinitionList);
