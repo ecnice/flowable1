@@ -1,15 +1,15 @@
 package com.dragon.flow.rest.api;
 
-import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
-import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import com.dragon.flow.service.flowable.IFlowableProcessDefinitionService;
 import com.dragon.flow.vo.flowable.ProcessDefinitionQueryVo;
 import com.dragon.flow.vo.flowable.ret.ProcessDefinitionVo;
+import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
-import org.flowable.bpmn.model.BpmnModel;
+import com.dragon.tools.vo.ReturnVo;
+import org.apache.el.parser.BooleanNode;
 import org.flowable.common.engine.impl.util.IoUtil;
-import org.flowable.ui.modeler.serviceapi.ModelService;
+import org.flowable.engine.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +32,13 @@ public class ApiFlowableProcessDefinitionResource extends BaseResource {
     @Autowired
     private IFlowableProcessDefinitionService flowableProcessDefinitionService;
     @Autowired
-    private IFlowableBpmnModelService flowableBpmnModelService;
-    @Autowired
-    private ModelService modelService;
-    @Autowired
-    private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
+    private RepositoryService repositoryService;
 
     /**
      * 分页查询流程定义列表
+     *
      * @param params 参数
-     * @param query 分页
+     * @param query  分页
      * @return
      */
     @PostMapping(value = "/page-model")
@@ -51,22 +48,36 @@ public class ApiFlowableProcessDefinitionResource extends BaseResource {
     }
 
     /**
-     * 通过id和类型获取图片
-     * @param id 流程定义id
-     * @param type 类型
-     * @param response response
+     * 删除流程定义
+     *
+     * @param deploymentId 部署id
      */
-    @GetMapping(value = "/processFile/{type}/{id}")
-    public void processFile(@PathVariable String id,@PathVariable String type, HttpServletResponse response) {
+    @PostMapping(value = "/deleteDeployment")
+    public ReturnVo<String> deleteDeployment(String deploymentId) {
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"OK");
+        repositoryService.deleteDeployment(deploymentId,true);
+        return returnVo;
+    }
+
+    /**
+     * 通过id和类型获取图片
+     *
+     * @param deploymentId 部署id
+     * @param type         类型
+     * @param response     response
+     */
+    @GetMapping(value = "/processFile/{type}/{modelKey}/{deploymentId}")
+    public void processFile(@PathVariable String deploymentId, @PathVariable String modelKey,
+                            @PathVariable String type, HttpServletResponse response) {
         try {
-            BpmnModel bpmnModel = flowableBpmnModelService.getBpmnModelByProcessDefId(id);
             byte[] b = null;
-            if (type.equals("xml")){
+            if (type.equals("xml")) {
                 response.setHeader("Content-type", "text/xml;charset=UTF-8");
-                b = modelService.getBpmnXML(bpmnModel);
-            }else {
+                InputStream inputStream = repositoryService.getResourceAsStream(deploymentId, modelKey + ".bpmn");
+                b = IoUtil.readInputStream(inputStream, "image inputStream name");
+            } else {
                 response.setHeader("Content-Type", "image/png");
-                InputStream inputStream = flowProcessDiagramGenerator.generateDiagram(bpmnModel);
+                InputStream inputStream = repositoryService.getResourceAsStream(deploymentId, modelKey + "." + modelKey + ".png");
                 b = IoUtil.readInputStream(inputStream, "image inputStream name");
             }
             response.getOutputStream().write(b);
@@ -75,8 +86,4 @@ public class ApiFlowableProcessDefinitionResource extends BaseResource {
             e.printStackTrace();
         }
     }
-
-
-
-
 }

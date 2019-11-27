@@ -1,10 +1,11 @@
-import { Card, Button, Input, Table, Form, Row, Col } from 'antd';
+import { Card, Button, Input, Table, Form, Row, Col, Popconfirm, Icon } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import styles from './styles.less';
 import { Dispatch } from 'redux';
+
 const FormItem = Form.Item;
 
 interface DefinitionListProps extends FormComponentProps {
@@ -49,7 +50,7 @@ class DefinitionList extends Component<DefinitionListProps> {
       selectedRowKeys: [],
     });
     dispatch({
-      type: 'leave/fetch',
+      type: 'definition/fetchList',
       payload: { ...formValues, pageNum: pageNum, pageSize: pageSize },
     });
   };
@@ -88,9 +89,21 @@ class DefinitionList extends Component<DefinitionListProps> {
     );
   };
 
-  processFile(id: string, type: string) {
-    window.open(`/server/rest/definition/processFile/${type}/${id}`);
+  processFile(deploymentId: string, modelKey: string, type: string) {
+    window.open(`/server/rest/definition/processFile/${type}/${modelKey}/${deploymentId}`);
   }
+
+  //删除流程定义
+  deleteDeployment = (deploymentId: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'definition/deleteDeployment',
+      payload: {
+        deploymentId: deploymentId,
+      },
+      callback: this.callback,
+    });
+  };
 
   //查询
   handleSearch = (e: any) => {
@@ -197,9 +210,19 @@ class DefinitionList extends Component<DefinitionListProps> {
         width: 100,
         render: (text: string, record: any) => (
           <span>
-            <a onClick={() => this.processFile(record.id, 'xml')}>XML</a>
+            <a onClick={() => this.processFile(record.deploymentId, record.modelKey, 'xml')}>XML</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <a onClick={() => this.processFile(record.id, 'img')}>流程图</a>
+            <a onClick={() => this.processFile(record.deploymentId, record.modelKey, 'img')}>
+              流程图
+            </a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Popconfirm
+              title="删除吗?"
+              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+              onConfirm={() => this.deleteDeployment(record.deploymentId)}
+            >
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },
@@ -233,7 +256,6 @@ class DefinitionList extends Component<DefinitionListProps> {
         <Card bordered={false}>
           <div style={{ height: '100%' }}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-
             <Table
               bordered
               rowKey="id"
