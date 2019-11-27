@@ -35,7 +35,7 @@ class DefinitionList extends PureComponent<any, any> {
       selectedRowKeys: [],
     });
     dispatch({
-      type: 'leave/fetch',
+      type: 'definition/fetchList',
       payload: { pageNum: pageNum, pageSize: pageSize },
     });
   };
@@ -76,6 +76,19 @@ class DefinitionList extends PureComponent<any, any> {
     window.open(`/server/rest/definition/processFile/${type}/${id}`);
   }
 
+  // 查询
+  handleSearch(e) {
+    // 禁止默认行为
+    // e.preventDefault();
+    // // 获取 form 表单的值
+    // console.log(this.props.form.getFieldsValue());
+  }
+
+  // 重置
+  handleFormReset() {
+    //this.props.form.resetFields();
+  }
+
   render() {
     const { data, loading, total } = this.props;
     const { selectedRowKeys, pageNum } = this.state;
@@ -97,16 +110,6 @@ class DefinitionList extends PureComponent<any, any> {
           selectedRowKeys: selectedRowKeys,
         });
       },
-    };
-    const formItems = () => {
-      return [
-        <FormItem key="name" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="名称">
-          {<Input style={{ width: 170 }} placeholder="请输入姓名" />}
-        </FormItem>,
-        <FormItem key="modelKey" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="key">
-          {<Input style={{ width: 170 }} placeholder="请输入KEY" />}
-        </FormItem>,
-      ];
     };
     const columns = [
       {
@@ -152,10 +155,38 @@ class DefinitionList extends PureComponent<any, any> {
           <div style={{ height: '100%' }}>
             <div>
               <span>
-                {formItems}
-                <Button icon="plus-circle" type="primary" loading={loading}>
-                  查询
-                </Button>
+                <Form layout="inline" onSubmit={this.handleSearch.bind(this)}>
+                  <FormItem
+                    key="name"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    label="名称"
+                  >
+                    <Input style={{ width: 170 }} placeholder="请输入姓名" />
+                  </FormItem>
+                  <FormItem
+                    key="modelKey"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    label="KEY"
+                  >
+                    <Input style={{ width: 170 }} placeholder="请输入KEY" />
+                  </FormItem>
+                  <FormItem wrapperCol={{ span: 16, offset: 12 }}>
+                    <Button icon="search" type="primary" htmlType="submit">
+                      查询
+                    </Button>
+                  </FormItem>
+                  <FormItem wrapperCol={{ span: 16, offset: 12 }}>
+                    <Button
+                      icon="sync"
+                      style={{ marginLeft: 8 }}
+                      onClick={this.handleFormReset.bind(this)}
+                    >
+                      重置
+                    </Button>
+                  </FormItem>
+                </Form>
               </span>
             </div>
             <Table
