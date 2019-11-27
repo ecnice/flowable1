@@ -37,10 +37,11 @@ const FormDetailModel: FormDetailModelType = {
         payload: response,
       });
     },
-    *fetchComplete({ payload }, { call, put }) {
+    *fetchComplete({ payload, callback }, { call, put }) {
       const response = yield call(complete, payload);
       if (response.code === '100') {
         message.success(response.msg);
+        callback();
         yield put({
           type: 'tasks/showHandleTaskModal',
           payload: {

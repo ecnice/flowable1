@@ -88,6 +88,13 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
   };
 
+  callback = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tasks/fetchApplyingTasks',
+    });
+  };
+
   //审批
   complete = () => {
     if (this.state.note) {
@@ -100,6 +107,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
           processInstanceId: formInfo.processInstanceId,
           type: 'SP',
         },
+        callback: this.callback,
       });
     } else {
       message.warn('请填写意见!');

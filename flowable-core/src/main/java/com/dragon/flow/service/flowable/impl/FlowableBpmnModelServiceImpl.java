@@ -1,10 +1,21 @@
 package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
-import org.flowable.bpmn.model.BpmnModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.flowable.bpmn.model.*;
+import org.flowable.bpmn.model.Process;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
+import org.flowable.engine.TaskService;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author : bruce.liu
@@ -22,5 +33,18 @@ public class FlowableBpmnModelServiceImpl implements IFlowableBpmnModelService {
     @Override
     public BpmnModel getBpmnModelByProcessDefId(String processDefId) {
         return repositoryService.getBpmnModel(processDefId);
+    }
+
+    public List<FlowNode> findFlowNodes(String processDefId) {
+        List<FlowNode> flowNodes = new ArrayList<>();
+        BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);
+        Process process = bpmnModel.getMainProcess();
+        Collection<FlowElement> list = process.getFlowElements();
+        list.forEach(flowElement -> {
+            if (flowElement instanceof FlowNode) {
+                flowNodes.add((FlowNode) flowElement);
+            }
+        });
+        return flowNodes;
     }
 }
