@@ -14,21 +14,33 @@ flowable学习
 
 
 #### 使用说明
-
-1.  本项目是大家的心血,希望大家支持
-2.  xxxx
-3.  xxxx
+*由于群里有些朋友对这个flowable还不是 很熟悉，在群里的小伙伴的建议下，我制作一个开源的项目源码，一共大家学习和交流，希望对有帮助，少走弯路  如果有不懂的问题可以入群：633168411  里面都是一些热心肠的人*
+## 项目地址：https://gitee.com/lwj/flowable.git
+1、导入数据库  所有的密码都是test  账号是00000001到0000004
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128112800979.png)
+2、运行rest 服务
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128112843709.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+3、运行前端页面 npm run start:no-mock
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128112935187.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4、效果如下
+4.1、模板管理
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113038267.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4.2、流程定义管理
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113205374.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4.3、任务管理
+4.3.1、待办列表
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113356425.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4.3.2、办理任务
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113456305.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4.3.3、已办任务列表
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113526767.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+4.3.4、我发起流程
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113559735.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+5、请假表单绑定流程
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113646402.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113702634.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
+*由于水平有限，如果有什么写的有问题的地方，请及时联系我，我会一步步的把这些年的经验都分享出来*
 
 #### 参与贡献
 
 1.  热水 天道酬勤 浩然 小徐
-
-
-#### 码云特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  博客 [https://blog.csdn.net/liuwenjun05101](https://blog.csdn.net/liuwenjun05101)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5.  码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

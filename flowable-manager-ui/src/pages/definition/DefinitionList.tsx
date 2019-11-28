@@ -74,7 +74,6 @@ class DefinitionList extends Component<DefinitionListProps> {
   changePageSize = (current: number, size: number) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-
     this.setState(
       {
         pageNum: current,
