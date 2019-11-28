@@ -6,3 +6,10 @@ export async function pageModel(params: any): Promise<any> {
     params: params,
   });
 }
+
+export async function deleteProcessInstanceById(params: any): Promise<any> {
+  const url = '/server/rest/processInstance/deleteProcessInstanceById/' + params.processInstanceId;
+  return request(url, {
+    method: 'GET',
+  });
+}

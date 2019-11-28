@@ -43,4 +43,11 @@ public interface IFlowableProcessInstanceService {
      * @return
      */
     public byte[] createImage(String processInstanceId);
+
+    /**
+     * 删除流程实例
+     * @param processInstanceId 流程实例id
+     * @return
+     */
+    public ReturnVo<String> deleteProcessInstanceById(String processInstanceId);
 }

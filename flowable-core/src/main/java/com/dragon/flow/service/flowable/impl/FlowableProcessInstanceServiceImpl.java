@@ -1,5 +1,6 @@
 package com.dragon.flow.service.flowable.impl;
 
+import com.dragon.flow.cmd.processinstance.DeleteFlowableProcessInstanceCmd;
 import com.dragon.flow.dao.flowable.IFlowableProcessInstanceDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
@@ -21,12 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
-import org.flowable.engine.HistoryService;
-import org.flowable.engine.IdentityService;
-import org.flowable.engine.RuntimeService;
-import org.flowable.engine.TaskService;
+import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
@@ -53,6 +52,8 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     private IdentityService identityService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private ManagementService managementService;
     @Autowired
     private IFlowableBpmnModelService flowableBpmnModelService;
     @Autowired
@@ -132,5 +133,20 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
         //6. 转化成byte便于网络传输
         byte[] datas = IoUtil.readInputStream(inputStream, "image inputStream name");
         return datas;
+    }
+
+    @Override
+    public ReturnVo<String> deleteProcessInstanceById(String processInstanceId) {
+        ReturnVo<String> returnVo = null;
+        long count = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).count();
+        if (count > 0){
+            DeleteFlowableProcessInstanceCmd cmd = new DeleteFlowableProcessInstanceCmd(processInstanceId,"删除流程实例",true) ;
+            managementService.executeCommand(cmd);
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"删除成功");
+        }else {
+            historyService.deleteHistoricProcessInstance(processInstanceId);
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"删除成功");
+        }
+        return returnVo;
     }
 }

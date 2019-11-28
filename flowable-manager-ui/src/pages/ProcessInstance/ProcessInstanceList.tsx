@@ -1,4 +1,4 @@
-import { Card, Button, Input, Table, Form, Row, Col, Modal, message } from 'antd';
+import { Card, Button, Input, Table, Form, Row, Col, Modal, message, Icon, Popconfirm } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
@@ -46,6 +46,7 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
 
   //回掉
   callback = () => {
+    debugger;
     const { dispatch } = this.props;
     const { pageNum, pageSize, formValues } = this.state;
     this.setState({
@@ -186,9 +187,31 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
     });
   };
 
+  //删除流程
+  deleteProcess = (processInstanceId: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'processInstance/deleteProcessInstanceById',
+      payload: {
+        processInstanceId: processInstanceId,
+      },
+      callback: this.callback,
+    });
+  };
+
   //终止流程
   stopProcess = (processInstanceId: string) => {
-    message.warn('暂时没做');
+    message.warn('终止流程');
+  };
+
+  //挂起流程
+  suspendProcess = (processInstanceId: string) => {
+    message.warn('挂起流程');
+  };
+
+  //激活流程
+  activateProcess = (processInstanceId: string) => {
+    message.warn('激活流程');
   };
 
   render() {
@@ -218,12 +241,24 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
       {
         title: '操作',
         key: 'action',
-        width: 150,
+        width: 200,
         render: (text: string, record: any) => (
           <span>
             <a onClick={() => this.processImage(record.processInstanceId)}>跟踪</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a onClick={() => this.stopProcess(record.processInstanceId)}>终止</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a onClick={() => this.suspendProcess(record.processInstanceId)}>挂起</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a onClick={() => this.activateProcess(record.processInstanceId)}>解挂</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Popconfirm
+              title="删除吗?"
+              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+              onConfirm={() => this.deleteProcess(record.processInstanceId)}
+            >
+              <a>删除</a>
+            </Popconfirm>
             &nbsp;&nbsp;&nbsp;&nbsp;
           </span>
         ),
@@ -241,7 +276,7 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
       {
         title: '系统',
         dataIndex: 'systemSn',
-        width: 150,
+        width: 100,
       },
       {
         title: '发起人',
@@ -251,13 +286,13 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
       {
         title: '发起时间',
         dataIndex: 'startTime',
-        width: 150,
+        width: 100,
         render: (val: any) => (val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : ''),
       },
       {
         title: '结束时间',
         dataIndex: 'endTime',
-        width: 150,
+        width: 100,
         render: (val: any) =>
           val ? <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span> : '未结束',
       },

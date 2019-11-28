@@ -1,6 +1,10 @@
+import { message } from 'antd';
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { pageModel } from '@/pages/processInstance/services/ProcessInstanceService.ts';
+import {
+  pageModel,
+  deleteProcessInstanceById,
+} from '@/pages/processInstance/services/ProcessInstanceService.ts';
 
 export interface ProcessInstanceModelState {
   data: [];
@@ -12,6 +16,7 @@ export interface ProcessInstanceModelType {
   state: ProcessInstanceModelState;
   effects: {
     fetchList: Effect;
+    deleteProcessInstanceById: Effect;
   };
   reducers: {
     list: Reducer<ProcessInstanceModelState>;
@@ -31,6 +36,15 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
         type: 'list',
         payload: response,
       });
+    },
+    *deleteProcessInstanceById({ payload, callback }, { call, put }) {
+      const response = yield call(deleteProcessInstanceById, payload);
+      if (response.code == '100') {
+        message.success(response.msg);
+        callback();
+      } else {
+        message.error(response.msg);
+      }
     },
   },
   reducers: {
