@@ -27,8 +27,8 @@ public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDef
     @Override
     public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params,Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
-        Page<ProcessDefinitionVo> pagerModel = flowableProcessDefinitionDao.getPagerModel(params);
-        return new PagerModel<>(pagerModel.getTotal(), pagerModel.getResult());
+        Page<ProcessDefinitionVo> page = flowableProcessDefinitionDao.getPagerModel(params);
+        return new PagerModel<>(page);
     }
 
     @Override

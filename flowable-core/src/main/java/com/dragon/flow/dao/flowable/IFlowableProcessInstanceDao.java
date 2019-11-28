@@ -18,9 +18,9 @@ import org.springframework.stereotype.Repository;
 public interface IFlowableProcessInstanceDao {
 
     /**
-     * 通过条件查询我发起的流程实例VO对象
+     * 通过条件查询流程实例VO对象列表
      * @param params 参数
      * @return
      */
-    public Page<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params) ;
+    public Page<ProcessInstanceVo> getPagerModel(ProcessInstanceQueryVo params);
 }

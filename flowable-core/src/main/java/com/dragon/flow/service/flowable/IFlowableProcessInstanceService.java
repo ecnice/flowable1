@@ -22,7 +22,13 @@ public interface IFlowableProcessInstanceService {
      * @return
      */
     public ReturnVo<ProcessInstance> startProcessInstanceByKey(StartProcessInstanceVo startProcessInstanceVo) ;
-
+    /**
+     * 查询流程实例列表
+     * @param params 参数
+     * @param query 分页参数
+     * @return
+     */
+    public PagerModel<ProcessInstanceVo> getPagerModel(ProcessInstanceQueryVo params, Query query) ;
     /**
      * 查询我发起的流程实例
      * @param params 参数

@@ -54,7 +54,7 @@ public class LeaveServiceImpl implements ILeaveService {
 			throws Exception {
 		PageHelper.startPage(query.getPageNum(),query.getPageSize());
 		Page<Leave> page = this.LeaveDao.getPagerModelByQuery(Leave);
-		return new PagerModel<Leave>(page);
+		return new PagerModel<>(page);
 	}
 
 	@Override

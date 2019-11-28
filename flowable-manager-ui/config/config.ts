@@ -117,6 +117,13 @@ export default {
               hideChildrenInMenu: true,
             },
             {
+              path: '/processInstance',
+              name: '实例管理',
+              icon: 'smile',
+              component: './processInstance/ProcessInstanceList',
+              hideChildrenInMenu: true,
+            },
+            {
               path: '/tasks',
               name: '任务管理',
               icon: 'smile',

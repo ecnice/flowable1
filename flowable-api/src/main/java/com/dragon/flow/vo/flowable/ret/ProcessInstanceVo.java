@@ -17,6 +17,10 @@ public class ProcessInstanceVo implements Serializable {
      */
     private String processInstanceId;
     /**
+     * 流程定义id
+     */
+    private String processDefinitionId;
+    /**
      * 表单名称
      */
     private String formName;
@@ -119,5 +123,13 @@ public class ProcessInstanceVo implements Serializable {
 
     public void setStarterId(String starterId) {
         this.starterId = starterId;
+    }
+
+    public String getProcessDefinitionId() {
+        return processDefinitionId;
+    }
+
+    public void setProcessDefinitionId(String processDefinitionId) {
+        this.processDefinitionId = processDefinitionId;
     }
 }

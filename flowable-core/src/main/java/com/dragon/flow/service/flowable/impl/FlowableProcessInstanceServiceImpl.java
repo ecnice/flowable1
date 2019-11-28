@@ -16,15 +16,20 @@ import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.IdentityService;
 import org.flowable.engine.RuntimeService;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.idm.api.User;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +62,12 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Autowired
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
 
+    @Override
+    public PagerModel<ProcessInstanceVo> getPagerModel(ProcessInstanceQueryVo params, Query query) {
+        PageHelper.startPage(query.getPageNum(), query.getPageSize());
+        Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getPagerModel(params);
+        return new PagerModel<>(myProcesses);
+    }
 
     @Override
     public ReturnVo<ProcessInstance> startProcessInstanceByKey(StartProcessInstanceVo params) {
@@ -81,8 +92,11 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Override
     public PagerModel<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
-        Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getMyProcessInstances(params);
-        return new PagerModel<>(myProcesses.getTotal(), myProcesses.getResult());
+        if (StringUtils.isNotBlank(params.getUserCode())){
+            Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getPagerModel(params);
+            return new PagerModel<>(myProcesses);
+        }
+        return null;
     }
 
     @Override

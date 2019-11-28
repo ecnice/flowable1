@@ -91,13 +91,13 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     public PagerModel<TaskVo> getApplyingTasks(TaskQueryVo params, Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
         Page<TaskVo> applyingTasks = flowableTaskDao.getApplyingTasks(params);
-        return new PagerModel<>(applyingTasks.getTotal(), applyingTasks.getResult());
+        return new PagerModel<>(applyingTasks);
     }
 
     @Override
     public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
-        Page<TaskVo> applyingTasks = flowableTaskDao.getApplyedTasks(params);
-        return new PagerModel<>(applyingTasks.getTotal(), applyingTasks.getResult());
+        Page<TaskVo> applyedTasks = flowableTaskDao.getApplyedTasks(params);
+        return new PagerModel<>(applyedTasks);
     }
 }
