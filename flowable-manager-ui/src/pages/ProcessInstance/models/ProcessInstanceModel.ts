@@ -5,6 +5,7 @@ import {
   pageModel,
   deleteProcessInstanceById,
   saProcessInstanceById,
+  stopProcess,
 } from '@/pages/processInstance/services/ProcessInstanceService.ts';
 
 export interface ProcessInstanceModelState {
@@ -19,6 +20,7 @@ export interface ProcessInstanceModelType {
     fetchList: Effect;
     deleteProcessInstanceById: Effect;
     saProcessInstanceById: Effect;
+    stopProcess: Effect;
   };
   reducers: {
     list: Reducer<ProcessInstanceModelState>;
@@ -51,6 +53,16 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
     *saProcessInstanceById({ payload, callback }, { call, put }) {
       debugger;
       const response = yield call(saProcessInstanceById, payload);
+      if (response.code == '100') {
+        message.success(response.msg);
+        callback();
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *stopProcess({ payload, callback }, { call, put }) {
+      debugger;
+      const response = yield call(stopProcess, payload);
       if (response.code == '100') {
         message.success(response.msg);
         callback();

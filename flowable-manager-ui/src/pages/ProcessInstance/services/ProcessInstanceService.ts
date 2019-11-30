@@ -14,6 +14,13 @@ export async function deleteProcessInstanceById(params: any): Promise<any> {
   });
 }
 
+export async function stopProcess(params: any): Promise<any> {
+  return request('/server/rest/processInstance/stopProcess/', {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function saProcessInstanceById(params: any): Promise<any> {
   const url = '/server/rest/processInstance/saProcessInstanceById';
   return request(url, {

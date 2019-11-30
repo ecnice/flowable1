@@ -200,7 +200,16 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
   };
 
   //终止流程
-  stopProcess = (processInstanceId: string) => {};
+  stopProcess = (processInstanceId: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'processInstance/stopProcess',
+      payload: {
+        processInstanceId: processInstanceId,
+      },
+      callback: this.callback,
+    });
+  };
   //挂起和激活流程实例
   saProcessInstanceById = (suspensionState: number, id: string) => {
     const { dispatch } = this.props;
@@ -246,7 +255,17 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
           <span>
             <a onClick={() => this.processImage(record.processInstanceId)}>跟踪</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <a onClick={() => this.stopProcess(record.processInstanceId)}>终止</a>
+            {record.endTime == null ? (
+              <Popconfirm
+                title="终止吗?"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                onConfirm={() => this.stopProcess(record.processInstanceId)}
+              >
+                <a>终止</a>
+              </Popconfirm>
+            ) : (
+              ''
+            )}
             &nbsp;&nbsp;&nbsp;&nbsp;
             {record.endTime == null ? (
               record.suspensionState == 1 ? (

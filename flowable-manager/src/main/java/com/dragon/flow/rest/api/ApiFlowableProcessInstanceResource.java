@@ -1,6 +1,7 @@
 package com.dragon.flow.rest.api;
 
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
+import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.common.ReturnCode;
@@ -61,6 +62,26 @@ public class ApiFlowableProcessInstanceResource extends BaseResource {
     @PostMapping(value = "/saProcessInstanceById")
     public ReturnVo<String> saProcessInstanceById(String id, int suspensionState) {
         ReturnVo<String> returnVo = flowableProcessInstanceService.suspendOrActivateProcessInstanceById(id, suspensionState);
+        return returnVo;
+    }
+
+    /**
+     * 终止
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/stopProcess")
+    public ReturnVo<String> stopProcess(EndVo params) {
+        boolean flag = this.isSuspended(params.getProcessInstanceId());
+        ReturnVo<String> returnVo = null;
+        if (flag){
+            params.setMessage("后台执行终止");
+            params.setUserCode(this.getLoginUser().getId());
+            returnVo = flowableProcessInstanceService.stopProcessInstanceById(params);
+        }else{
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"流程已挂起，请联系管理员激活!");
+        }
         return returnVo;
     }
 
