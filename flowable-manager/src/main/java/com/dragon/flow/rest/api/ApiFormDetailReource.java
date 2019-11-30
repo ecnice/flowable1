@@ -56,8 +56,14 @@ public class ApiFormDetailReource extends BaseResource {
      */
     @PostMapping(value = "/complete")
     public ReturnVo<String> complete(CompleteTaskVo params) {
-        params.setUserCode(this.getLoginUser().getId());
-        ReturnVo<String> returnVo = flowableTaskService.complete(params);
+        boolean flag = this.isSuspended(params.getProcessInstanceId());
+        ReturnVo<String> returnVo = null;
+        if (flag){
+            params.setUserCode(this.getLoginUser().getId());
+            returnVo = flowableTaskService.complete(params);
+        }else{
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"流程已挂起，请联系管理员激活!");
+        }
         return returnVo;
     }
 
@@ -69,8 +75,14 @@ public class ApiFormDetailReource extends BaseResource {
      */
     @PostMapping(value = "/stopProcess")
     public ReturnVo<String> stopProcess(EndVo params) {
-        params.setUserCode(this.getLoginUser().getId());
-        ReturnVo<String> returnVo = flowableProcessInstanceService.stopProcessInstanceById(params);
+        boolean flag = this.isSuspended(params.getProcessInstanceId());
+        ReturnVo<String> returnVo = null;
+        if (flag){
+            params.setUserCode(this.getLoginUser().getId());
+            returnVo = flowableProcessInstanceService.stopProcessInstanceById(params);
+        }else{
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"流程已挂起，请联系管理员激活!");
+        }
         return returnVo;
     }
 

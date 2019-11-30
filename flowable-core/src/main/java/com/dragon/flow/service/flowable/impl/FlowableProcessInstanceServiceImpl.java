@@ -192,24 +192,13 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
             List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
             String endId = endNodes.get(0).getId();
             String processInstanceId = endVo.getProcessInstanceId();
-            long count = runtimeService.createExecutionQuery().parentId(endVo.getProcessInstanceId()).count();
-            //2、终止
-            if (count > 0) {
-                //2.1、多实例或者并行节点的终止
-                List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
-                List<String> executionIds = new ArrayList<>();
-                executions.forEach(execution -> executionIds.add(execution.getId()));
-                runtimeService.createChangeActivityStateBuilder()
-                        .moveExecutionsToSingleActivityId(executionIds, endId)
-                        .changeState();
-            } else {
-                //2.2 简单的终止
-                List<String> currentActivityIds = runtimeService.getActiveActivityIds(processInstanceId);
-                runtimeService.createChangeActivityStateBuilder()
-                        .processInstanceId(endVo.getProcessInstanceId())
-                        .moveActivityIdsToSingleActivityId(currentActivityIds, endId)
-                        .changeState();
-            }
+            //2、终止多实例或者并行节点的终止
+            List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
+            List<String> executionIds = new ArrayList<>();
+            executions.forEach(execution -> executionIds.add(execution.getId()));
+            runtimeService.createChangeActivityStateBuilder()
+                    .moveExecutionsToSingleActivityId(executionIds, endId)
+                    .changeState();
         }
         return returnVo;
     }

@@ -200,9 +200,7 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
   };
 
   //终止流程
-  stopProcess = (processInstanceId: string) => {
-    message.warn('终止流程');
-  };
+  stopProcess = (processInstanceId: string) => {};
   //挂起和激活流程实例
   saProcessInstanceById = (suspensionState: number, id: string) => {
     const { dispatch } = this.props;

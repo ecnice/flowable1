@@ -42,8 +42,6 @@ public class ApiFlowableTaskResource extends BaseResource {
     @Autowired
     private ILeaveService leaveService;
     @Autowired
-    private RuntimeService runtimeService;
-    @Autowired
     private HistoryService historyService;
 
     /**
