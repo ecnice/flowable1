@@ -7,6 +7,7 @@ import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
+import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.CommentVo;
@@ -21,11 +22,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
+import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
@@ -51,6 +54,8 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Autowired
     private IdentityService identityService;
     @Autowired
+    private TaskService taskService;
+    @Autowired
     private HistoryService historyService;
     @Autowired
     private ManagementService managementService;
@@ -66,13 +71,25 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Override
     public PagerModel<ProcessInstanceVo> getPagerModel(ProcessInstanceQueryVo params, Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
-        Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getPagerModel(params);
-        return new PagerModel<>(myProcesses);
+        Page<ProcessInstanceVo> page = flowableProcessInstanceDao.getPagerModel(params);
+        page.forEach(processInstanceVo -> {
+            if (processInstanceVo.getEndTime() == null) {
+                ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                        .processInstanceId(processInstanceVo.getProcessInstanceId())
+                        .singleResult();
+                if (processInstance.isSuspended()) {
+                    processInstanceVo.setSuspensionState(2);
+                } else {
+                    processInstanceVo.setSuspensionState(1);
+                }
+            }
+        });
+        return new PagerModel<>(page);
     }
 
     @Override
     public ReturnVo<ProcessInstance> startProcessInstanceByKey(StartProcessInstanceVo params) {
-        ReturnVo<ProcessInstance> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
+        ReturnVo<ProcessInstance> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "启动成功");
         identityService.setAuthenticatedUserId(params.getCurrentUserCode());
         ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder()
                 .processDefinitionKey(params.getProcessDefinitionKey().trim())
@@ -93,7 +110,7 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Override
     public PagerModel<ProcessInstanceVo> getMyProcessInstances(ProcessInstanceQueryVo params, Query query) {
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
-        if (StringUtils.isNotBlank(params.getUserCode())){
+        if (StringUtils.isNotBlank(params.getUserCode())) {
             Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getPagerModel(params);
             return new PagerModel<>(myProcesses);
         }
@@ -139,13 +156,60 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     public ReturnVo<String> deleteProcessInstanceById(String processInstanceId) {
         ReturnVo<String> returnVo = null;
         long count = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).count();
-        if (count > 0){
-            DeleteFlowableProcessInstanceCmd cmd = new DeleteFlowableProcessInstanceCmd(processInstanceId,"删除流程实例",true) ;
+        if (count > 0) {
+            DeleteFlowableProcessInstanceCmd cmd = new DeleteFlowableProcessInstanceCmd(processInstanceId, "删除流程实例", true);
             managementService.executeCommand(cmd);
-            returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"删除成功");
-        }else {
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "删除成功");
+        } else {
             historyService.deleteHistoricProcessInstance(processInstanceId);
-            returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"删除成功");
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "删除成功");
+        }
+        return returnVo;
+    }
+
+    @Override
+    public ReturnVo<String> suspendOrActivateProcessInstanceById(String processInstanceId, Integer suspensionState) {
+        ReturnVo<String> returnVo = null;
+        if (suspensionState == 1) {
+            runtimeService.suspendProcessInstanceById(processInstanceId);
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "挂起成功");
+        } else {
+            runtimeService.activateProcessInstanceById(processInstanceId);
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "激活成功");
+        }
+        return returnVo;
+    }
+
+    @Override
+    public ReturnVo<String> stopProcessInstanceById(EndVo endVo) {
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "终止成功");
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(endVo.getProcessInstanceId()).singleResult();
+        if (processInstance != null) {
+            //1、添加审批记录
+            CommentVo commentVo = new CommentVo(endVo.getUserCode(), endVo.getProcessInstanceId(), endVo.getMessage(),
+                    CommentTypeEnum.LCZZ.toString());
+            flowableCommentService.addComment(commentVo);
+            List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
+            String endId = endNodes.get(0).getId();
+            String processInstanceId = endVo.getProcessInstanceId();
+            long count = runtimeService.createExecutionQuery().parentId(endVo.getProcessInstanceId()).count();
+            //2、终止
+            if (count > 0) {
+                //2.1、多实例或者并行节点的终止
+                List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
+                List<String> executionIds = new ArrayList<>();
+                executions.forEach(execution -> executionIds.add(execution.getId()));
+                runtimeService.createChangeActivityStateBuilder()
+                        .moveExecutionsToSingleActivityId(executionIds, endId)
+                        .changeState();
+            } else {
+                //2.2 简单的终止
+                List<String> currentActivityIds = runtimeService.getActiveActivityIds(processInstanceId);
+                runtimeService.createChangeActivityStateBuilder()
+                        .processInstanceId(endVo.getProcessInstanceId())
+                        .moveActivityIdsToSingleActivityId(currentActivityIds, endId)
+                        .changeState();
+            }
         }
         return returnVo;
     }

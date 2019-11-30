@@ -10,6 +10,7 @@
         t.KEY_ AS modelKey,
         t.RESOURCE_NAME_ AS resourceName,
         t.DGRM_RESOURCE_NAME_ as dgrmResourceName,
+        t.SUSPENSION_STATE_ as suspensionState,
         t.VERSION_ AS version,
         t.DEPLOYMENT_ID_ AS deploymentId,
         t.TENANT_ID_ AS tenantId
@@ -26,6 +27,7 @@
         t.KEY_ AS modelKey,
         t.RESOURCE_NAME_ AS resourceName,
         t.DGRM_RESOURCE_NAME_ as dgrmResourceName,
+        t.SUSPENSION_STATE_ as suspensionState,
         t.VERSION_ AS version,
         t.DEPLOYMENT_ID_ AS deploymentId,
         t.TENANT_ID_ AS tenantId

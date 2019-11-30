@@ -4,6 +4,7 @@ import { Reducer } from 'redux';
 import {
   pageModel,
   deleteProcessInstanceById,
+  saProcessInstanceById,
 } from '@/pages/processInstance/services/ProcessInstanceService.ts';
 
 export interface ProcessInstanceModelState {
@@ -17,6 +18,7 @@ export interface ProcessInstanceModelType {
   effects: {
     fetchList: Effect;
     deleteProcessInstanceById: Effect;
+    saProcessInstanceById: Effect;
   };
   reducers: {
     list: Reducer<ProcessInstanceModelState>;
@@ -39,6 +41,16 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
     },
     *deleteProcessInstanceById({ payload, callback }, { call, put }) {
       const response = yield call(deleteProcessInstanceById, payload);
+      if (response.code == '100') {
+        message.success(response.msg);
+        callback();
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *saProcessInstanceById({ payload, callback }, { call, put }) {
+      debugger;
+      const response = yield call(saProcessInstanceById, payload);
       if (response.code == '100') {
         message.success(response.msg);
         callback();

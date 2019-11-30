@@ -13,3 +13,11 @@ export async function deleteProcessInstanceById(params: any): Promise<any> {
     method: 'GET',
   });
 }
+
+export async function saProcessInstanceById(params: any): Promise<any> {
+  const url = '/server/rest/processInstance/saProcessInstanceById';
+  return request(url, {
+    method: 'POST',
+    params: params,
+  });
+}

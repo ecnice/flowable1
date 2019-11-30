@@ -34,6 +34,7 @@ interface IProps extends FormComponentProps {
   commentList: [];
   dispatch?: any;
   formatCommentList: [];
+  callBack?: Function;
 }
 
 @connect(({ formDetail, tasks, loading }: any) => ({
@@ -88,17 +89,10 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
   };
 
-  callback = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tasks/fetchApplyingTasks',
-    });
-  };
-
   //审批
   complete = () => {
     if (this.state.note) {
-      const { dispatch, formInfo } = this.props;
+      const { dispatch, formInfo, callBack } = this.props;
       dispatch({
         type: 'formDetail/fetchComplete',
         payload: {
@@ -107,7 +101,23 @@ class TaskDetailForm extends PureComponent<IProps, any> {
           processInstanceId: formInfo.processInstanceId,
           type: 'SP',
         },
-        callback: this.callback,
+        callback: callBack,
+      });
+    } else {
+      message.warn('请填写意见!');
+    }
+  };
+
+  stopProcess = () => {
+    if (this.state.note) {
+      const { dispatch, formInfo, callBack } = this.props;
+      dispatch({
+        type: 'formDetail/fetchStopProcess',
+        payload: {
+          message: this.state.note,
+          processInstanceId: formInfo.processInstanceId,
+        },
+        callback: callBack,
       });
     } else {
       message.warn('请填写意见!');
@@ -125,7 +135,6 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       loading,
       commentList,
     } = this.props;
-    debugger;
     const formItems = () => {
       const id = record ? record.id : null;
       form.getFieldDecorator('id', {
@@ -185,6 +194,9 @@ class TaskDetailForm extends PureComponent<IProps, any> {
               <div className={styles.handelTask}>
                 <Button type="primary" onClick={this.complete}>
                   审批
+                </Button>
+                <Button type="primary" onClick={this.stopProcess}>
+                  终止
                 </Button>
                 {/*<Button>转办</Button>
                 <Button>委派</Button>

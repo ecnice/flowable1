@@ -6,6 +6,7 @@ import {
   commentsByProcessInstanceId,
   complete,
   image,
+  stopProcess,
 } from '@/pages/tasks/services/FormDetailService';
 
 export interface FormDetailModelState {
@@ -42,13 +43,15 @@ const FormDetailModel: FormDetailModelType = {
       if (response.code === '100') {
         message.success(response.msg);
         callback();
-        yield put({
-          type: 'tasks/showHandleTaskModal',
-          payload: {
-            modalTitle: '办理任务',
-            modalVisible: false,
-          },
-        });
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *fetchStopProcess({ payload, callback }, { call, put }) {
+      const response = yield call(stopProcess, payload);
+      if (response.code === '100') {
+        message.success(response.msg);
+        callback();
       } else {
         message.error(response.msg);
       }

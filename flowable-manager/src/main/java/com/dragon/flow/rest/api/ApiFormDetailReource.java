@@ -5,6 +5,7 @@ import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
+import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
 import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.tools.common.ReturnCode;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/rest/formdetail")
-public class ApiFormDetailReource extends BaseResource{
+public class ApiFormDetailReource extends BaseResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFormDetailReource.class);
     @Autowired
     private IFlowableCommentService flowableCommentService;
@@ -37,6 +38,7 @@ public class ApiFormDetailReource extends BaseResource{
 
     /**
      * 通过流程实例id获取审批意见
+     *
      * @param processInstanceId 流程实例id
      * @return
      */
@@ -48,24 +50,38 @@ public class ApiFormDetailReource extends BaseResource{
 
     /**
      * 审批任务
+     *
      * @param params 参数
      * @return
      */
     @PostMapping(value = "/complete")
     public ReturnVo<String> complete(CompleteTaskVo params) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"OK");
         params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.complete(params);
+        ReturnVo<String> returnVo = flowableTaskService.complete(params);
+        return returnVo;
+    }
+
+    /**
+     * 终止
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/stopProcess")
+    public ReturnVo<String> stopProcess(EndVo params) {
+        params.setUserCode(this.getLoginUser().getId());
+        ReturnVo<String> returnVo = flowableProcessInstanceService.stopProcessInstanceById(params);
         return returnVo;
     }
 
     /**
      * 转办
+     *
      * @param params 参数
      * @return
      */
     @PostMapping(value = "/turnTask")
-    public ReturnVo<String> turnTask(TurnTaskVo params){
+    public ReturnVo<String> turnTask(TurnTaskVo params) {
         ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
         returnVo = flowableTaskService.turnTask(params);
@@ -74,11 +90,12 @@ public class ApiFormDetailReource extends BaseResource{
 
     /**
      * 委派
+     *
      * @param params 参数
      * @return
      */
     @PostMapping(value = "/delegateTask")
-    public ReturnVo<String> delegateTask(DelegateTaskVo params){
+    public ReturnVo<String> delegateTask(DelegateTaskVo params) {
         ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
         returnVo = flowableTaskService.delegateTask(params);

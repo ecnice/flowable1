@@ -57,7 +57,7 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
 
     @Override
     public ReturnVo<String> complete(CompleteTaskVo params) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "审批成功");
         //1.添加审批意见
         CommentVo comment = new CommentVo(params.getTaskId(), params.getUserCode(),
                 params.getProcessInstanceId(), params.getMessage(), params.getType());

@@ -19,6 +19,7 @@ public class ProcessDefinitionVo implements Serializable {
     protected String deploymentId;
     protected String resourceName;
     protected String dgrmResourceName;
+    protected int suspensionState;
     protected String tenantId;
     public String getId() {
         return id;
@@ -90,5 +91,13 @@ public class ProcessDefinitionVo implements Serializable {
 
     public void setDgrmResourceName(String dgrmResourceName) {
         this.dgrmResourceName = dgrmResourceName;
+    }
+
+    public int getSuspensionState() {
+        return suspensionState;
+    }
+
+    public void setSuspensionState(int suspensionState) {
+        this.suspensionState = suspensionState;
     }
 }

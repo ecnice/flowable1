@@ -90,4 +90,15 @@ public class ApiFlowableProcessDefinitionResource extends BaseResource {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 激活或者挂起流程定义
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/saDefinitionById")
+    public ReturnVo<String> saDefinitionById(String id,int suspensionState) {
+        ReturnVo<String> returnVo = returnVo = flowableProcessDefinitionService.suspendOrActivateProcessDefinitionById(id,suspensionState);
+        return returnVo;
+    }
 }

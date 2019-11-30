@@ -49,6 +49,7 @@ class TaskList extends PureComponent<any, any> {
 
   //查询待办
   applying = (payload: any) => {
+    debugger;
     const { dispatch } = this.props;
     dispatch({
       type: 'tasks/fetchApplyingTasks',
@@ -179,19 +180,27 @@ class TaskList extends PureComponent<any, any> {
         processInstanceId: record.processInstanceId,
         businessKey: record.businessKey,
       },
-      callback: this.showHandleTaskModal,
+      callback: () => {
+        this.showFormDetail(true);
+      },
     });
   };
   //打开办理页面
-  showHandleTaskModal = () => {
+  showFormDetail = (modalVisible: boolean) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tasks/showHandleTaskModal',
       payload: {
         modalTitle: '办理任务',
-        modalVisible: true,
+        modalVisible: modalVisible,
       },
     });
+  };
+
+  //回调函数
+  callBack = () => {
+    this.showFormDetail(false);
+    this.applying({ pageNum: 1, pageSize: 10 });
   };
 
   //跟踪流程
@@ -218,7 +227,6 @@ class TaskList extends PureComponent<any, any> {
       showImageModal,
       imgSrc,
     } = this.props;
-    debugger;
     const { applyingPageNum, applyedPageNum, myProcessPageNum, modalTitle } = this.state;
     const applyingPaginationProps = {
       showSizeChanger: true,
@@ -407,11 +415,11 @@ class TaskList extends PureComponent<any, any> {
         <TaskModalForm
           handle={null}
           canHandel={true}
-          handleModalVisible={this.showHandleTaskModal}
           record={formInfo.formInfo}
           formInfo={formInfo}
           modalTitle={modalTitle}
           loading={loading}
+          callBack={this.callBack}
         />
         <Modal
           width={1200}

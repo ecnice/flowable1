@@ -1,6 +1,7 @@
 package com.dragon.flow.service.flowable;
 
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.EndEvent;
 import org.flowable.bpmn.model.FlowNode;
 
 import java.util.List;
@@ -27,4 +28,12 @@ public interface IFlowableBpmnModelService {
      * @return
      */
     public List<FlowNode> findFlowNodes(String processDefId);
+
+    /**
+     * 获取end节点
+     *
+     * @param processDefId 流程定义id
+     * @return FlowElement
+     */
+    public List<EndEvent> findEndFlowElement(String processDefId);
 }

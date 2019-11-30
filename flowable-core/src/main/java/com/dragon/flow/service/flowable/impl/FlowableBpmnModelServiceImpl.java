@@ -47,4 +47,15 @@ public class FlowableBpmnModelServiceImpl implements IFlowableBpmnModelService {
         });
         return flowNodes;
     }
+
+    @Override
+    public List<EndEvent> findEndFlowElement(String processDefId) {
+        BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);
+        if (bpmnModel != null) {
+            Process process = bpmnModel.getMainProcess();
+            return process.findFlowElementsOfType(EndEvent.class);
+        } else {
+            return null;
+        }
+    }
 }

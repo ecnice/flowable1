@@ -52,5 +52,16 @@ public class ApiFlowableProcessInstanceResource extends BaseResource {
         return data;
     }
 
+    /**
+     * 激活或者挂起流程定义
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/saProcessInstanceById")
+    public ReturnVo<String> saProcessInstanceById(String id, int suspensionState) {
+        ReturnVo<String> returnVo = flowableProcessInstanceService.suspendOrActivateProcessInstanceById(id, suspensionState);
+        return returnVo;
+    }
 
 }

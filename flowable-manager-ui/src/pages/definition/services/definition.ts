@@ -13,3 +13,10 @@ export async function deleteDeployment(params: any): Promise<any> {
     params: params,
   });
 }
+
+export async function saDefinitionById(params: any): Promise<any> {
+  return request('/server/rest/definition/saDefinitionById', {
+    method: 'POST',
+    params: params,
+  });
+}

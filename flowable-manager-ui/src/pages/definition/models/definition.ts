@@ -2,7 +2,11 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { message } from 'antd';
 
-import { pageModel, deleteDeployment } from '@/pages/definition/services/definition.ts';
+import {
+  pageModel,
+  deleteDeployment,
+  saDefinitionById,
+} from '@/pages/definition/services/definition.ts';
 
 export interface DefinitionModelState {
   data: [];
@@ -15,6 +19,7 @@ export interface DefinitionModelType {
   effects: {
     fetchList: Effect;
     deleteDeployment: Effect;
+    saDefinitionById: Effect;
   };
   reducers: {
     list: Reducer<DefinitionModelState>;
@@ -47,6 +52,17 @@ const DefinitionModel: DefinitionModelType = {
         type: 'delete',
         payload: response,
       });
+    },
+    *saDefinitionById({ payload, callback }, { call, put }) {
+      const response = yield call(saDefinitionById, payload);
+      if (response.code === '100') {
+        message.success(response.msg);
+        callback();
+      } else if (response.code === '101') {
+        message.error(response.msg);
+      } else {
+        message.error('请求失败!');
+      }
     },
   },
   reducers: {

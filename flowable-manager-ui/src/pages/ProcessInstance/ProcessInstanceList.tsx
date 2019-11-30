@@ -203,15 +203,17 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
   stopProcess = (processInstanceId: string) => {
     message.warn('终止流程');
   };
-
-  //挂起流程
-  suspendProcess = (processInstanceId: string) => {
-    message.warn('挂起流程');
-  };
-
-  //激活流程
-  activateProcess = (processInstanceId: string) => {
-    message.warn('激活流程');
+  //挂起和激活流程实例
+  saProcessInstanceById = (suspensionState: number, id: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'processInstance/saProcessInstanceById',
+      payload: {
+        suspensionState: suspensionState,
+        id: id,
+      },
+      callback: this.callback,
+    });
   };
 
   render() {
@@ -248,9 +250,31 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a onClick={() => this.stopProcess(record.processInstanceId)}>终止</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <a onClick={() => this.suspendProcess(record.processInstanceId)}>挂起</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a onClick={() => this.activateProcess(record.processInstanceId)}>解挂</a>
+            {record.endTime == null ? (
+              record.suspensionState == 1 ? (
+                <Popconfirm
+                  title="挂起吗?"
+                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  onConfirm={() =>
+                    this.saProcessInstanceById(record.suspensionState, record.processInstanceId)
+                  }
+                >
+                  <a>挂起</a>
+                </Popconfirm>
+              ) : (
+                <Popconfirm
+                  title="激活吗?"
+                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  onConfirm={() =>
+                    this.saProcessInstanceById(record.suspensionState, record.processInstanceId)
+                  }
+                >
+                  <a>激活</a>
+                </Popconfirm>
+              )
+            ) : (
+              ''
+            )}
             &nbsp;&nbsp;&nbsp;&nbsp;
             <Popconfirm
               title="删除吗?"

@@ -104,6 +104,18 @@ class DefinitionList extends Component<DefinitionListProps> {
       callback: this.callback,
     });
   };
+  //挂起激活
+  saDefinitionById = (suspensionState: number, id: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'definition/saDefinitionById',
+      payload: {
+        suspensionState: suspensionState,
+        id: id,
+      },
+      callback: this.callback,
+    });
+  };
 
   //查询
   handleSearch = (e: any) => {
@@ -214,6 +226,24 @@ class DefinitionList extends Component<DefinitionListProps> {
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a onClick={() => this.processFile(record.id, 'img')}>流程图</a>
             &nbsp;&nbsp;&nbsp;&nbsp;
+            {record.suspensionState == 1 ? (
+              <Popconfirm
+                title="挂起吗?"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                onConfirm={() => this.saDefinitionById(record.suspensionState, record.id)}
+              >
+                <a>挂起</a>
+              </Popconfirm>
+            ) : (
+              <Popconfirm
+                title="激活吗?"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                onConfirm={() => this.saDefinitionById(record.suspensionState, record.id)}
+              >
+                <a>激活</a>
+              </Popconfirm>
+            )}
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Popconfirm
               title="删除吗?"
               icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
@@ -221,6 +251,7 @@ class DefinitionList extends Component<DefinitionListProps> {
             >
               <a>删除</a>
             </Popconfirm>
+            &nbsp;&nbsp;&nbsp;&nbsp;
           </span>
         ),
       },

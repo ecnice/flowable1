@@ -21,6 +21,10 @@ public class ProcessInstanceVo implements Serializable {
      */
     private String processDefinitionId;
     /**
+     * 激活状态 1激活 2挂起
+     */
+    private int suspensionState;
+    /**
      * 表单名称
      */
     private String formName;
@@ -131,5 +135,13 @@ public class ProcessInstanceVo implements Serializable {
 
     public void setProcessDefinitionId(String processDefinitionId) {
         this.processDefinitionId = processDefinitionId;
+    }
+
+    public int getSuspensionState() {
+        return suspensionState;
+    }
+
+    public void setSuspensionState(int suspensionState) {
+        this.suspensionState = suspensionState;
     }
 }
