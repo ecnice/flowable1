@@ -1,16 +1,15 @@
 package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.cmd.processinstance.DeleteFlowableProcessInstanceCmd;
+import com.dragon.flow.constant.FlowConstant;
 import com.dragon.flow.dao.flowable.IFlowableProcessInstanceDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
-import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
-import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
@@ -18,20 +17,15 @@ import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.util.IoUtil;
-import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.idm.api.User;
-import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,24 +41,12 @@ import java.util.List;
  * @date : 2019/11/1314:56
  */
 @Service
-public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInstanceService {
+public class FlowableProcessInstanceServiceImpl extends BaseProcessService implements IFlowableProcessInstanceService {
 
-    @Autowired
-    private RuntimeService runtimeService;
-    @Autowired
-    private IdentityService identityService;
-    @Autowired
-    private TaskService taskService;
-    @Autowired
-    private HistoryService historyService;
-    @Autowired
-    private ManagementService managementService;
     @Autowired
     private IFlowableBpmnModelService flowableBpmnModelService;
     @Autowired
     private IFlowableProcessInstanceDao flowableProcessInstanceDao;
-    @Autowired
-    private IFlowableCommentService flowableCommentService;
     @Autowired
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
 
@@ -90,20 +72,43 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
     @Override
     public ReturnVo<ProcessInstance> startProcessInstanceByKey(StartProcessInstanceVo params) {
         ReturnVo<ProcessInstance> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "启动成功");
-        identityService.setAuthenticatedUserId(params.getCurrentUserCode());
-        ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder()
-                .processDefinitionKey(params.getProcessDefinitionKey().trim())
-                .name(params.getFormName().trim())
-                .businessKey(params.getBusinessKey().trim())
-                .variables(params.getVariables())
-                .tenantId(params.getSystemSn().trim())
-                .start();
-        returnVo.setData(processInstance);
-        //添加备注
-        CommentVo commentVo = new CommentVo(params.getCurrentUserCode(),
-                processInstance.getProcessInstanceId(), params.getFormName() + "提交",
-                CommentTypeEnum.TJ.toString());
-        flowableCommentService.addComment(commentVo);
+        if (StringUtils.isNotBlank(params.getProcessDefinitionKey())
+                && StringUtils.isNotBlank(params.getBusinessKey())
+                && StringUtils.isNotBlank(params.getSystemSn())) {
+            /**
+             * 1、设置变量
+             * 1.1、设置提交人字段为空字符串让其自动跳过
+             * 1.2、设置可以自动跳过
+             * 1.3、汇报线的参数设置
+             */
+            //1.1、设置提交人字段为空字符串让其自动跳过
+            params.getVariables().put(FlowConstant.FLOW_SUBMITTER_VAR, "");
+            //1.2、设置可以自动跳过
+            params.getVariables().put(FlowConstant.FLOWABLE_SKIP_EXPRESSION_ENABLED, true);
+            // TODO 1.3、汇报线的参数设置
+            //2、当我们流程创建人和发起人
+            String creator = params.getCreator();
+            if (StringUtils.isBlank(creator)) {
+                creator = params.getCurrentUserCode();
+                params.setCreator(creator);
+            }
+            //3.启动流程
+            identityService.setAuthenticatedUserId(creator);
+            ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder()
+                    .processDefinitionKey(params.getProcessDefinitionKey().trim())
+                    .name(params.getFormName().trim())
+                    .businessKey(params.getBusinessKey().trim())
+                    .variables(params.getVariables())
+                    .tenantId(params.getSystemSn().trim())
+                    .start();
+            returnVo.setData(processInstance);
+            //4.添加审批记录
+            this.addComment(params.getCurrentUserCode(), processInstance.getProcessInstanceId(),
+                    CommentTypeEnum.TJ.toString(), params.getFormName() + "提交");
+            //5.TODO 推送消息数据
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "请填写 这三个字段 ProcessDefinitionKey,BusinessKey,SystemSn");
+        }
         return returnVo;
     }
 
@@ -186,9 +191,8 @@ public class FlowableProcessInstanceServiceImpl implements IFlowableProcessInsta
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(endVo.getProcessInstanceId()).singleResult();
         if (processInstance != null) {
             //1、添加审批记录
-            CommentVo commentVo = new CommentVo(endVo.getUserCode(), endVo.getProcessInstanceId(), endVo.getMessage(),
-                    CommentTypeEnum.LCZZ.toString());
-            flowableCommentService.addComment(commentVo);
+            this.addComment(endVo.getUserCode(), endVo.getProcessInstanceId(), CommentTypeEnum.LCZZ.toString(),
+                    endVo.getMessage());
             List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
             String endId = endNodes.get(0).getId();
             String processInstanceId = endVo.getProcessInstanceId();

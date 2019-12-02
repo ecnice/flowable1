@@ -25,10 +25,7 @@ import java.util.stream.Collectors;
  * @date : 2019/11/2519:42
  */
 @Service
-public class FlowableBpmnModelServiceImpl implements IFlowableBpmnModelService {
-
-    @Autowired
-    private RepositoryService repositoryService;
+public class FlowableBpmnModelServiceImpl extends BaseProcessService implements IFlowableBpmnModelService {
 
     @Override
     public BpmnModel getBpmnModelByProcessDefId(String processDefId) {

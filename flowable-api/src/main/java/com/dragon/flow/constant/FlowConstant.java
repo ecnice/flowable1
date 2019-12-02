@@ -10,4 +10,13 @@ package com.dragon.flow.constant;
 public class FlowConstant {
 
     public static final String MAPPER_SCAN = "com.dragon.*.dao.*";
+
+    /**
+     * 提交人的变量名称
+     */
+    public static final String FLOW_SUBMITTER_VAR = "initiator";
+    /**
+     * 自动跳过节点设置属性
+     */
+    public static final String FLOWABLE_SKIP_EXPRESSION_ENABLED = "_FLOWABLE_SKIP_EXPRESSION_ENABLED";
 }

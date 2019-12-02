@@ -300,7 +300,6 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
             >
               <a>删除</a>
             </Popconfirm>
-            &nbsp;&nbsp;&nbsp;&nbsp;
           </span>
         ),
       },

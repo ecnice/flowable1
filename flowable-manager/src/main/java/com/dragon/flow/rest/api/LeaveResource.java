@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,7 +31,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/rest/leave")
-public class LeaveResource extends BaseResource{
+public class LeaveResource extends BaseResource {
     private static Logger logger = LoggerFactory.getLogger(LeaveResource.class);
 
     private final String nameSpace = "leave";
@@ -66,9 +68,16 @@ public class LeaveResource extends BaseResource{
             startProcessInstanceVo.setFormName("请假流程");
             startProcessInstanceVo.setSystemSn("flow");
             startProcessInstanceVo.setProcessDefinitionKey("leave");
-            Map<String,Object> variables = new HashMap<>();
-            variables.put("days",leave.getDays());
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("days", leave.getDays());
             startProcessInstanceVo.setVariables(variables);
+            //设置三个人作为多实例的人员
+            List<String> userList = new ArrayList<>();
+            userList.add("00000001");
+            userList.add("00000002");
+            userList.add("00000003");
+            variables.put("userList", userList);
+
             ReturnVo<ProcessInstance> returnStart = flowableProcessInstanceService.startProcessInstanceByKey(startProcessInstanceVo);
             String processInstanceId = returnStart.getData().getProcessInstanceId();
             leave.setProcessInstanceId(processInstanceId);

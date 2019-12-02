@@ -9,7 +9,7 @@ import com.dragon.flow.service.flowable.IFlowableIdentityService;
  * @description: 用户组service
  * @date : 2019/11/1411:46
  */
-public class FlowableIdentityServiceImpl implements IFlowableIdentityService {
+public class FlowableIdentityServiceImpl extends BaseProcessService implements IFlowableIdentityService {
 
 
 }

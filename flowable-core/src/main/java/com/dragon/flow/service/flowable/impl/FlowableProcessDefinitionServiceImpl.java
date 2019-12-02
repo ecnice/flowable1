@@ -22,12 +22,10 @@ import org.springframework.stereotype.Service;
  * @date : 2019/11/1314:18
  */
 @Service
-public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDefinitionService {
+public class FlowableProcessDefinitionServiceImpl extends BaseProcessService implements IFlowableProcessDefinitionService {
 
     @Autowired
     private IFlowableProcessDefinitionDao flowableProcessDefinitionDao;
-    @Autowired
-    private RepositoryService repositoryService;
 
     @Override
     public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params, Query query) {

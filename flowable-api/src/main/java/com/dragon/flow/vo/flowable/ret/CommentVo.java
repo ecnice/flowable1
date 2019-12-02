@@ -55,13 +55,13 @@ public class CommentVo implements Serializable {
      */
     private String fullMsg;
     public CommentVo(){}
-    public CommentVo(String userId, String processInstanceId, String message, String type) {
+    public CommentVo(String userId, String processInstanceId, String type, String message) {
         this.userId = userId;
         this.processInstanceId = processInstanceId;
         this.message = message;
         this.type = type;
     }
-    public CommentVo(String taskId, String userId, String processInstanceId, String message, String type) {
+    public CommentVo(String taskId, String userId, String processInstanceId,String type, String message) {
         this.taskId = taskId;
         this.userId = userId;
         this.processInstanceId = processInstanceId;

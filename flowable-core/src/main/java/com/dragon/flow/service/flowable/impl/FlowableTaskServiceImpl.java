@@ -29,12 +29,8 @@ import com.dragon.flow.dao.flowable.IFlowableTaskDao;
  * @date : 2019/11/1315:15
  */
 @Service
-public class FlowableTaskServiceImpl implements IFlowableTaskService {
+public class FlowableTaskServiceImpl extends BaseProcessService implements IFlowableTaskService {
 
-    @Autowired
-    private TaskService taskService;
-    @Autowired
-    private IFlowableCommentService flowableCommentService;
     @Autowired
     private IFlowableTaskDao flowableTaskDao;
 
@@ -59,10 +55,9 @@ public class FlowableTaskServiceImpl implements IFlowableTaskService {
     public ReturnVo<String> complete(CompleteTaskVo params) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "审批成功");
         //1.添加审批意见
-        CommentVo comment = new CommentVo(params.getTaskId(), params.getUserCode(),
-                params.getProcessInstanceId(), params.getMessage(), params.getType());
-        flowableCommentService.addComment(comment);
-        ReturnVo<Task> taskVo = findTaskById(params.getTaskId());
+        this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
+                params.getType(), params.getMessage());
+        ReturnVo<Task> taskVo = this.findTaskById(params.getTaskId());
         if (taskVo != null) {
             Task task = taskVo.getData();
             if (task != null) {

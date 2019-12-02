@@ -1,6 +1,8 @@
 package com.dragon.flow.dao.flowable;
 
 import com.dragon.flow.vo.flowable.ret.CommentVo;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,6 +12,8 @@ import java.util.List;
  * @description: 流程备注Dao
  * @date : 2019/11/2413:00
  */
+@Mapper
+@Repository
 public interface IFlowableCommentDao {
 
     /**
