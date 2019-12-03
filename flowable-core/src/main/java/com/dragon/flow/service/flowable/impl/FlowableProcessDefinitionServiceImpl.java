@@ -25,8 +25,6 @@ public class FlowableProcessDefinitionServiceImpl implements IFlowableProcessDef
 
     @Autowired
     private IFlowableProcessDefinitionDao flowableProcessDefinitionDao;
-    @Autowired
-    private RepositoryService repositoryService;
 
     @Override
     public PagerModel<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params,Query query) {
