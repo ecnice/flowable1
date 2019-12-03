@@ -24,6 +24,7 @@ import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +61,9 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
                         .processInstanceId(processInstanceVo.getProcessInstanceId())
                         .singleResult();
                 if (processInstance.isSuspended()) {
-                    processInstanceVo.setSuspensionState(2);
+                    processInstanceVo.setSuspensionState(FlowConstant.SUSPENSION_STATE);
                 } else {
-                    processInstanceVo.setSuspensionState(1);
+                    processInstanceVo.setSuspensionState(FlowConstant.ACTIVATE_STATE);
                 }
             }
         });
@@ -75,6 +76,12 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
         if (StringUtils.isNotBlank(params.getProcessDefinitionKey())
                 && StringUtils.isNotBlank(params.getBusinessKey())
                 && StringUtils.isNotBlank(params.getSystemSn())) {
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(params.getProcessDefinitionKey())
+                    .latestVersion().singleResult();
+            if(processDefinition != null && processDefinition.isSuspended()) {
+                returnVo = new ReturnVo<>(ReturnCode.FAIL, "此流程已经挂起,请联系系统管理员!");
+                return returnVo;
+            }
             /**
              * 1、设置变量
              * 1.1、设置提交人字段为空字符串让其自动跳过
