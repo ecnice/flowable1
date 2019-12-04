@@ -10,8 +10,8 @@ import {
 import { ReturnCode } from '@/utils/utils';
 
 export interface DefinitionModelState {
-  data: [];
-  total: number;
+  data?: [];
+  total?: number;
 }
 
 export interface DefinitionModelType {
@@ -24,6 +24,7 @@ export interface DefinitionModelType {
   };
   reducers: {
     list: Reducer<DefinitionModelState>;
+    delete: Reducer<DefinitionModelState>;
   };
 }
 

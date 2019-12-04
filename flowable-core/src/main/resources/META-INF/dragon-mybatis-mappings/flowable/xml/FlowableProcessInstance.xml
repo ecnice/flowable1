@@ -11,15 +11,6 @@
             t1.BUSINESS_KEY_ AS businessKey,
             t1.START_TIME_ AS startTime,
             t1.END_TIME_ AS endTime,
-            (
-                SELECT
-                    auser.FIRST_
-                FROM
-                    act_ru_task task
-                LEFT JOIN act_id_user auser ON task.ASSIGNEE_ = auser.ID_
-                WHERE
-                    t1.ID_ = task.PROC_INST_ID_
-            ) as approver,
             t2.ID_ AS starterId,
             t2.FIRST_ as starter
         FROM

@@ -34,10 +34,4 @@ public interface IFlowableTaskDao {
      */
     public Page<TaskVo> getApplyedTasks(TaskQueryVo params) ;
 
-    /**
-     * 通过流程实例id获取流程实例的待办任务审批人列表
-     * @param processInstanceId 流程实例id
-     * @return
-     */
-    public List<UserVo> getApprovers(String processInstanceId) ;
 }

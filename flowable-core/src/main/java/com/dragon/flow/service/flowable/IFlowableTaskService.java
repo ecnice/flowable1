@@ -9,6 +9,7 @@ import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
+import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 
@@ -68,5 +69,5 @@ public interface IFlowableTaskService {
      * @param processInstanceId 流程实例id
      * @return
      */
-    public List<UserVo> getApprovers(String processInstanceId) ;
+    public List<User> getApprovers(String processInstanceId) ;
 }

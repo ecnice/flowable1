@@ -15,11 +15,16 @@ import com.dragon.tools.vo.ReturnVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
+import org.flowable.editor.language.json.converter.util.CollectionUtils;
+import org.flowable.entitylink.api.EntityLink;
+import org.flowable.identitylink.api.IdentityLink;
+import org.flowable.idm.api.User;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,7 +109,40 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     }
 
     @Override
-    public List<UserVo> getApprovers(String processInstanceId) {
-        return flowableTaskDao.getApprovers(processInstanceId);
+    public List<User> getApprovers(String processInstanceId) {
+        List<User> users = new ArrayList<>();
+        List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(task -> {
+                if (StringUtils.isNotBlank(task.getAssignee())) {
+                    //1.审批人ASSIGNEE_是用户id
+                    User user = identityService.createUserQuery().userId(task.getAssignee()).singleResult();
+                    users.add(user);
+                    //2.审批人ASSIGNEE_是组id
+                    List<User> gusers = identityService.createUserQuery().memberOfGroup(task.getAssignee()).list();
+                    if (CollectionUtils.isNotEmpty(gusers)) {
+                        users.addAll(gusers);
+                    }
+                } else {
+                    List<IdentityLink> identityLinks = taskService.getIdentityLinksForTask(task.getId());
+                    if (CollectionUtils.isNotEmpty(identityLinks)) {
+                        identityLinks.forEach(identityLink -> {
+                            //3.审批人ASSIGNEE_为空,用户id
+                            if (StringUtils.isNotBlank(identityLink.getUserId())) {
+                                User user = identityService.createUserQuery().userId(task.getAssignee()).singleResult();
+                                users.add(user);
+                            } else {
+                                //4.审批人ASSIGNEE_为空,组id
+                                List<User> gusers = identityService.createUserQuery().memberOfGroup(identityLink.getGroupId()).list();
+                                if (CollectionUtils.isNotEmpty(gusers)) {
+                                    users.addAll(gusers);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        return users;
     }
 }

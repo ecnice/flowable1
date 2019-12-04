@@ -30,6 +30,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.idm.api.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,30 +62,34 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
         Page<ProcessInstanceVo> page = flowableProcessInstanceDao.getPagerModel(params);
         page.forEach(processInstanceVo -> {
-            if (processInstanceVo.getEndTime() == null) {
-                ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-                        .processInstanceId(processInstanceVo.getProcessInstanceId())
-                        .singleResult();
-                if (processInstance.isSuspended()) {
-                    processInstanceVo.setSuspensionState(FlowConstant.SUSPENSION_STATE);
-                } else {
-                    processInstanceVo.setSuspensionState(FlowConstant.ACTIVATE_STATE);
-                }
-            }
-            List<UserVo> approvers = flowableTaskService.getApprovers(processInstanceVo.getProcessInstanceId());
-            String userNames = this.createApprovers(approvers);
-            processInstanceVo.setApprover(userNames);
+            this.setStateApprover(processInstanceVo);
         });
 
         return new PagerModel<>(page);
     }
 
-    private String createApprovers(List<UserVo> approvers) {
+    private void setStateApprover(ProcessInstanceVo processInstanceVo) {
+        if (processInstanceVo.getEndTime() == null) {
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                    .processInstanceId(processInstanceVo.getProcessInstanceId())
+                    .singleResult();
+            if (processInstance.isSuspended()) {
+                processInstanceVo.setSuspensionState(FlowConstant.SUSPENSION_STATE);
+            } else {
+                processInstanceVo.setSuspensionState(FlowConstant.ACTIVATE_STATE);
+            }
+        }
+        List<User> approvers = flowableTaskService.getApprovers(processInstanceVo.getProcessInstanceId());
+        String userNames = this.createApprovers(approvers);
+        processInstanceVo.setApprover(userNames);
+    }
+
+    private String createApprovers(List<User> approvers) {
         if (CollectionUtils.isNotEmpty(approvers)){
             StringBuffer approverstr = new StringBuffer();
             StringBuffer finalApproverstr = approverstr;
-            approvers.forEach(userVo -> {
-                finalApproverstr.append(userVo.getDisplayName()).append(";");
+            approvers.forEach(user -> {
+                finalApproverstr.append(user.getDisplayName()).append(";");
             });
             if (approverstr.length() > 0 ){
                 approverstr = approverstr.deleteCharAt(approverstr.length() - 1);
@@ -148,6 +153,9 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
         if (StringUtils.isNotBlank(params.getUserCode())) {
             Page<ProcessInstanceVo> myProcesses = flowableProcessInstanceDao.getPagerModel(params);
+            myProcesses.forEach(processInstanceVo -> {
+                this.setStateApprover(processInstanceVo);
+            });
             return new PagerModel<>(myProcesses);
         }
         return null;
