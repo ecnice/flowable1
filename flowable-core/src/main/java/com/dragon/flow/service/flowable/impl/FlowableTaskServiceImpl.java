@@ -117,7 +117,9 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 if (StringUtils.isNotBlank(task.getAssignee())) {
                     //1.审批人ASSIGNEE_是用户id
                     User user = identityService.createUserQuery().userId(task.getAssignee()).singleResult();
-                    users.add(user);
+                    if(user != null){
+                        users.add(user);
+                    }
                     //2.审批人ASSIGNEE_是组id
                     List<User> gusers = identityService.createUserQuery().memberOfGroup(task.getAssignee()).list();
                     if (CollectionUtils.isNotEmpty(gusers)) {
@@ -130,7 +132,9 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                             //3.审批人ASSIGNEE_为空,用户id
                             if (StringUtils.isNotBlank(identityLink.getUserId())) {
                                 User user = identityService.createUserQuery().userId(identityLink.getUserId()).singleResult();
-                                users.add(user);
+                                if (user != null){
+                                    users.add(user);
+                                }
                             } else {
                                 //4.审批人ASSIGNEE_为空,组id
                                 List<User> gusers = identityService.createUserQuery().memberOfGroup(identityLink.getGroupId()).list();
