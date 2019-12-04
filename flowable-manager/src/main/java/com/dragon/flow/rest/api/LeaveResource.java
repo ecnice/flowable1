@@ -79,10 +79,14 @@ public class LeaveResource extends BaseResource {
             variables.put("userList", userList);
 
             ReturnVo<ProcessInstance> returnStart = flowableProcessInstanceService.startProcessInstanceByKey(startProcessInstanceVo);
-            String processInstanceId = returnStart.getData().getProcessInstanceId();
-            leave.setProcessInstanceId(processInstanceId);
-            this.LeaveService.insertLeave(leave);
-            returnVo = new ReturnVo(ReturnCode.SUCCESS, "添加成功");
+            if (returnStart.getCode().equals(ReturnCode.SUCCESS)){
+                String processInstanceId = returnStart.getData().getProcessInstanceId();
+                leave.setProcessInstanceId(processInstanceId);
+                this.LeaveService.insertLeave(leave);
+                returnVo = new ReturnVo(ReturnCode.SUCCESS, "添加成功");
+            }else {
+                returnVo = new ReturnVo(returnStart.getCode(), returnStart.getMsg());
+            }
         } catch (Exception e) {
             logger.error("LeaveController-add:", e);
             e.printStackTrace();
