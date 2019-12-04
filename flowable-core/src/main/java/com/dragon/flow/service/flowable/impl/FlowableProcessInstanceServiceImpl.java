@@ -10,9 +10,9 @@ import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
+import com.dragon.flow.vo.flowable.RevokeVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
-import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
@@ -21,6 +21,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
+import org.flowable.bpmn.model.Activity;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.util.IoUtil;
@@ -64,10 +65,13 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
         page.forEach(processInstanceVo -> {
             this.setStateApprover(processInstanceVo);
         });
-
         return new PagerModel<>(page);
     }
 
+    /**
+     * 设置状态和审批人
+     * @param processInstanceVo 参数
+     */
     private void setStateApprover(ProcessInstanceVo processInstanceVo) {
         if (processInstanceVo.getEndTime() == null) {
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
@@ -84,14 +88,19 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
         processInstanceVo.setApprover(userNames);
     }
 
+    /**
+     * 组合审批人显示名称
+     * @param approvers 审批人列表
+     * @return
+     */
     private String createApprovers(List<User> approvers) {
-        if (CollectionUtils.isNotEmpty(approvers)){
+        if (CollectionUtils.isNotEmpty(approvers)) {
             StringBuffer approverstr = new StringBuffer();
             StringBuffer finalApproverstr = approverstr;
             approvers.forEach(user -> {
                 finalApproverstr.append(user.getDisplayName()).append(";");
             });
-            if (approverstr.length() > 0 ){
+            if (approverstr.length() > 0) {
                 approverstr = approverstr.deleteCharAt(approverstr.length() - 1);
             }
             return approverstr.toString();
@@ -107,7 +116,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
                 && StringUtils.isNotBlank(params.getSystemSn())) {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(params.getProcessDefinitionKey())
                     .latestVersion().singleResult();
-            if(processDefinition != null && processDefinition.isSuspended()) {
+            if (processDefinition != null && processDefinition.isSuspended()) {
                 returnVo = new ReturnVo<>(ReturnCode.FAIL, "此流程已经挂起,请联系系统管理员!");
                 return returnVo;
             }
@@ -242,6 +251,36 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
             runtimeService.createChangeActivityStateBuilder()
                     .moveExecutionsToSingleActivityId(executionIds, endId)
                     .changeState();
+        }
+        return returnVo;
+    }
+
+    @Override
+    public ReturnVo<String> revokeProcess(RevokeVo revokeVo) {
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.FAIL, "撤回失败!");
+        if (StringUtils.isNotBlank(revokeVo.getProcessInstanceId())) {
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                    .processInstanceId(revokeVo.getProcessInstanceId()).singleResult();
+            if (processInstance != null) {
+                //1.添加撤回意见
+                this.addComment(revokeVo.getUserCode(),revokeVo.getProcessInstanceId(),CommentTypeEnum.CH.toString(),revokeVo.getMessage());
+                //2.设置提交人
+                runtimeService.setVariable(revokeVo.getProcessInstanceId(), FlowConstant.FLOW_SUBMITTER_VAR, processInstance.getStartUserId());
+                //3.执行撤回
+                Activity disActivity = flowableBpmnModelService.findActivityByName(processInstance.getProcessDefinitionId(), FlowConstant.FLOW_SUBMITTER);
+                //4.删除历史的节点信息
+                this.deleteHisActivity(disActivity.getId(),revokeVo.getProcessInstanceId());
+                //5.执行跳转
+                List<Execution> executions = runtimeService.createExecutionQuery().parentId(revokeVo.getProcessInstanceId()).list();
+                List<String> executionIds = new ArrayList<>();
+                executions.forEach(execution -> executionIds.add(execution.getId()));
+                runtimeService.createChangeActivityStateBuilder()
+                        .moveExecutionsToSingleActivityId(executionIds, disActivity.getId())
+                        .changeState();
+                returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "撤回成功!");
+            }
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "流程实例id不能为空!");
         }
         return returnVo;
     }

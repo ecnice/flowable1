@@ -7,12 +7,13 @@ import {
   complete,
   image,
   stopProcess,
+  revokeProcess,
 } from '@/pages/tasks/services/FormDetailService';
 import { ReturnCode } from '@/utils/utils';
 
 export interface FormDetailModelState {
   commentList?: [];
-  imgSrc?:string;
+  imgSrc?: string;
 }
 
 export interface FormDetailModelType {
@@ -23,6 +24,7 @@ export interface FormDetailModelType {
     fetchComplete: Effect;
     fetchStopProcess: Effect;
     fetchProcessImage: Effect;
+    fetchRevokeProcess: Effect;
   };
   reducers: {
     saveCommentList: Reducer<FormDetailModelState>;
@@ -54,6 +56,15 @@ const FormDetailModel: FormDetailModelType = {
     },
     *fetchStopProcess({ payload, callback }, { call, put }) {
       const response = yield call(stopProcess, payload);
+      if (response.code === ReturnCode.SUCCESS) {
+        message.success(response.msg);
+        callback();
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *fetchRevokeProcess({ payload, callback }, { call, put }) {
+      const response = yield call(revokeProcess, payload);
       if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();

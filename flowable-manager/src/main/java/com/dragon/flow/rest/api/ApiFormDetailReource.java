@@ -3,10 +3,7 @@ package com.dragon.flow.rest.api;
 import com.dragon.flow.service.flowable.IFlowableCommentService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
-import com.dragon.flow.vo.flowable.CompleteTaskVo;
-import com.dragon.flow.vo.flowable.DelegateTaskVo;
-import com.dragon.flow.vo.flowable.EndVo;
-import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.vo.ReturnVo;
@@ -86,6 +83,19 @@ public class ApiFormDetailReource extends BaseResource {
         return returnVo;
     }
 
+    /**
+     * 撤回
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/revokeProcess")
+    public ReturnVo<String> revokeProcess(RevokeVo params) {
+        ReturnVo<String> returnVo = null;
+        params.setUserCode(this.getLoginUser().getId());
+        returnVo = flowableProcessInstanceService.revokeProcess(params);
+        return returnVo;
+    }
     /**
      * 转办
      *

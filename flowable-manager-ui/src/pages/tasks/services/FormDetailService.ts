@@ -21,6 +21,13 @@ export async function stopProcess(params: any): Promise<any> {
   });
 }
 
+export async function revokeProcess(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/revokeProcess`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function image(params: any): Promise<any> {
   return request(`/server/rest/formdetail/image`, {
     method: 'GET',

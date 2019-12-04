@@ -92,7 +92,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
 
   //审批
   complete = () => {
-    if (this.state.note) {
+    if (this.state.note != null && this.state.note != '') {
       const { dispatch, formInfo, callBack } = this.props;
       dispatch({
         type: 'formDetail/fetchComplete',
@@ -110,10 +110,27 @@ class TaskDetailForm extends PureComponent<IProps, any> {
   };
 
   stopProcess = () => {
-    if (this.state.note) {
+    if (this.state.note != null && this.state.note != '') {
       const { dispatch, formInfo, callBack } = this.props;
       dispatch({
         type: 'formDetail/fetchStopProcess',
+        payload: {
+          message: this.state.note,
+          processInstanceId: formInfo.processInstanceId,
+        },
+        callback: callBack,
+      });
+    } else {
+      message.warn('请填写意见!');
+    }
+  };
+  //撤回
+  revokeProcess = () => {
+    if (this.state.note != null && this.state.note != '') {
+      debugger;
+      const { dispatch, formInfo, callBack } = this.props;
+      dispatch({
+        type: 'formDetail/fetchRevokeProcess',
         payload: {
           message: this.state.note,
           processInstanceId: formInfo.processInstanceId,
@@ -199,10 +216,13 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 <Button type="primary" onClick={this.stopProcess}>
                   终止
                 </Button>
-                {/*<Button>转办</Button>
-                <Button>委派</Button>
-                <Button>驳回</Button>
-                <Button>终止</Button>*/}
+                <Button type="primary" onClick={this.revokeProcess}>
+                  撤回
+                </Button>
+                <Button type="primary">转办</Button>
+                <Button type="primary">委派</Button>
+                <Button type="primary">驳回</Button>
+                <Button type="primary">加签</Button>
               </div>
             </Card>
           </React.Fragment>

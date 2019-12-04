@@ -2,6 +2,7 @@ import com.dragon.flow.manager.main.FlowManagerApplication;
 import com.dragon.flow.model.leave.Leave;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.leave.ILeaveService;
+import com.dragon.flow.vo.flowable.RevokeVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.tools.common.DateUtil;
 import com.dragon.tools.common.UUIDGenerator;
@@ -59,5 +60,11 @@ public class ProcessInstanceTest {
         String processInstanceId = returnStart.getData().getProcessInstanceId();
         leave.setProcessInstanceId(processInstanceId);
         this.leaveService.insertLeave(leave);
+    }
+    @Test
+    public void testRevokeProcess() {
+        RevokeVo revokeVo = new RevokeVo();
+        revokeVo.setProcessInstanceId("021d89c116a011ea89b4dc8b287b3603");
+        flowableProcessInstanceService.revokeProcess(revokeVo);
     }
 }

@@ -2,6 +2,7 @@ package com.dragon.flow.service.flowable;
 
 import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
+import com.dragon.flow.vo.flowable.RevokeVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.pager.PagerModel;
@@ -73,4 +74,11 @@ public interface IFlowableProcessInstanceService {
      * @return
      */
     public ReturnVo<String> stopProcessInstanceById(EndVo endVo) ;
+
+    /**
+     * 撤回流程
+     * @param revokeVo 参数
+     * @return
+     */
+    public ReturnVo<String> revokeProcess(RevokeVo revokeVo);
 }

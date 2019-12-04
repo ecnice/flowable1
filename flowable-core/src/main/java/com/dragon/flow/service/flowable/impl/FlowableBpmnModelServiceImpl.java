@@ -2,6 +2,7 @@ package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
 import org.flowable.engine.HistoryService;
@@ -54,5 +55,22 @@ public class FlowableBpmnModelServiceImpl extends BaseProcessService implements 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Activity findActivityByName(String processDefId, String name) {
+        Activity activity = null;
+        BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);
+        Process process = bpmnModel.getMainProcess();
+        Collection<FlowElement> list = process.getFlowElements();
+        for (FlowElement f : list) {
+            if (StringUtils.isNotBlank(name)) {
+                if (name.equals(f.getName())) {
+                    activity = (Activity) f;
+                    break;
+                }
+            }
+        }
+        return activity;
     }
 }

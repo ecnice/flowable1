@@ -16,6 +16,10 @@ public class FlowConstant {
      */
     public static final String FLOW_SUBMITTER_VAR = "initiator";
     /**
+     * 提交人节点名称
+     */
+    public static final String FLOW_SUBMITTER = "提交人";
+    /**
      * 自动跳过节点设置属性
      */
     public static final String FLOWABLE_SKIP_EXPRESSION_ENABLED = "_FLOWABLE_SKIP_EXPRESSION_ENABLED";

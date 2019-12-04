@@ -71,7 +71,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 if (DelegationState.PENDING.equals(task.getDelegationState())) {
                     taskService.resolveTask(params.getTaskId(), params.getVariables());
                 } else {
-                    //3.1修改执行人
+                    //3.1修改执行人 其实我这里就相当于签收了
                     taskService.setAssignee(params.getTaskId(), params.getUserCode());
                     //3.2执行任务
                     taskService.complete(params.getTaskId(), params.getVariables());
@@ -129,7 +129,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                         identityLinks.forEach(identityLink -> {
                             //3.审批人ASSIGNEE_为空,用户id
                             if (StringUtils.isNotBlank(identityLink.getUserId())) {
-                                User user = identityService.createUserQuery().userId(task.getAssignee()).singleResult();
+                                User user = identityService.createUserQuery().userId(identityLink.getUserId()).singleResult();
                                 users.add(user);
                             } else {
                                 //4.审批人ASSIGNEE_为空,组id
