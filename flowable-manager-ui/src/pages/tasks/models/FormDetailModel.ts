@@ -11,6 +11,7 @@ import {
 
 export interface FormDetailModelState {
   commentList?: [];
+  imgSrc?:string;
 }
 
 export interface FormDetailModelType {
@@ -18,6 +19,9 @@ export interface FormDetailModelType {
   state: FormDetailModelState;
   effects: {
     fetchCommentList: Effect;
+    fetchComplete: Effect;
+    fetchStopProcess: Effect;
+    fetchProcessImage: Effect;
   };
   reducers: {
     saveCommentList: Reducer<FormDetailModelState>;

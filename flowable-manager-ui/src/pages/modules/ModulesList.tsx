@@ -11,7 +11,6 @@ import moment from 'moment';
   fetchingData: loading.effects['modules/fetch'],
 }))
 class ModulesList extends Component<any, any> {
-  state: {};
   onTabChange = (type: string) => {
     this.setState({ type });
   };
@@ -145,7 +144,7 @@ class ModulesList extends Component<any, any> {
       showTotal: (total: number) => `共 ${total} 条数据`,
     };
     return (
-      <PageHeaderWrapper title={}>
+      <PageHeaderWrapper title={null}>
         <Card>
           <div className={styles.toolBar}>
             <Upload {...props}>
