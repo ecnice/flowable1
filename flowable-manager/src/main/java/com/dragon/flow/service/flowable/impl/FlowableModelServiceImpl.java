@@ -18,6 +18,9 @@ import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.flowable.ui.modeler.repository.ModelRepository;
 import org.flowable.ui.modeler.serviceapi.ModelService;
+import org.flowable.validation.ProcessValidator;
+import org.flowable.validation.ProcessValidatorFactory;
+import org.flowable.validation.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,14 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 InputStreamReader xmlIn = new InputStreamReader(file.getInputStream(), "UTF-8");
                 XMLStreamReader xtr = xif.createXMLStreamReader(xmlIn);
                 BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(xtr);
+                //模板验证
+                ProcessValidator validator = new ProcessValidatorFactory().createDefaultProcessValidator();
+                List<ValidationError> errors = validator.validate(bpmnModel);
+                if (CollectionUtils.isNotEmpty(errors)){
+                    StringBuffer es = new StringBuffer();
+                    errors.forEach(ve -> es.append(ve.toString()).append("/n"));
+                    throw new BadRequestException("模板验证失败，原因: " + es.toString());
+                }
                 if (CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
                     throw new BadRequestException("No process found in definition " + fileName);
                 }
@@ -97,6 +108,8 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 newModel.setLastUpdated(Calendar.getInstance().getTime());
                 newModel.setLastUpdatedBy(createdBy.getId());
                 newModel.setTenantId(model.getTenantId());
+
+
                 newModel = modelService.createModel(newModel, SecurityUtils.getCurrentUserObject());
                 return new ModelRepresentation(newModel);
             } catch (BadRequestException e) {

@@ -7,6 +7,7 @@ import {
   deleteDeployment,
   saDefinitionById,
 } from '@/pages/definition/services/definition.ts';
+import { ReturnCode } from '@/utils/utils';
 
 export interface DefinitionModelState {
   data: [];
@@ -42,7 +43,7 @@ const DefinitionModel: DefinitionModelType = {
     },
     *deleteDeployment({ payload, callback }, { call, put }) {
       const response = yield call(deleteDeployment, payload);
-      if (response.code === '100') {
+      if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
       } else {
@@ -55,7 +56,7 @@ const DefinitionModel: DefinitionModelType = {
     },
     *saDefinitionById({ payload, callback }, { call, put }) {
       const response = yield call(saDefinitionById, payload);
-      if (response.code === '100') {
+      if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
       } else if (response.code === '101') {

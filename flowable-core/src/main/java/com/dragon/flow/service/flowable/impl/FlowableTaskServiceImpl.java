@@ -1,25 +1,26 @@
 package com.dragon.flow.service.flowable.impl;
 
-import com.dragon.flow.service.flowable.IFlowableCommentService;
+import com.dragon.flow.dao.flowable.IFlowableTaskDao;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.CompleteTaskVo;
 import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
-import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
+import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import org.flowable.engine.TaskService;
+import org.apache.commons.lang.StringUtils;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dragon.flow.dao.flowable.IFlowableTaskDao;
+
+import java.util.List;
 
 /**
  * @author : bruce.liu
@@ -54,22 +55,28 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     @Override
     public ReturnVo<String> complete(CompleteTaskVo params) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "审批成功");
-        //1.添加审批意见
-        this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
-                params.getType(), params.getMessage());
-        ReturnVo<Task> taskVo = this.findTaskById(params.getTaskId());
-        if (taskVo != null) {
-            Task task = taskVo.getData();
+        if (StringUtils.isNotBlank(params.getProcessInstanceId())
+                && StringUtils.isNotBlank(params.getTaskId())) {
+            //1.添加审批意见
+            this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
+                    params.getType(), params.getMessage());
+            Task task = taskService.createTaskQuery().taskId(params.getTaskId()).singleResult();
             if (task != null) {
+                //2.委派处理
                 if (DelegationState.PENDING.equals(task.getDelegationState())) {
-                    taskService.resolveTask(params.getTaskId());
+                    taskService.resolveTask(params.getTaskId(), params.getVariables());
                 } else {
-                    //2.修改执行人
+                    //3.1修改执行人
                     taskService.setAssignee(params.getTaskId(), params.getUserCode());
-                    //3.执行任务
-                    taskService.complete(params.getTaskId());
+                    //3.2执行任务
+                    taskService.complete(params.getTaskId(), params.getVariables());
                 }
+                //TODO 4.处理加签的逻辑
+            } else {
+                returnVo = new ReturnVo<>(ReturnCode.FAIL, "没有此任务，请确认!");
             }
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "请输入正确的参数!");
         }
         return returnVo;
     }
@@ -94,5 +101,10 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
         Page<TaskVo> applyedTasks = flowableTaskDao.getApplyedTasks(params);
         return new PagerModel<>(applyedTasks);
+    }
+
+    @Override
+    public List<UserVo> getApprovers(String processInstanceId) {
+        return flowableTaskDao.getApprovers(processInstanceId);
     }
 }

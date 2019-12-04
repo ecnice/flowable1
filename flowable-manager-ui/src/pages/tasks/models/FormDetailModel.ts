@@ -8,6 +8,7 @@ import {
   image,
   stopProcess,
 } from '@/pages/tasks/services/FormDetailService';
+import { ReturnCode } from '@/utils/utils';
 
 export interface FormDetailModelState {
   commentList?: [];
@@ -40,7 +41,7 @@ const FormDetailModel: FormDetailModelType = {
     },
     *fetchComplete({ payload, callback }, { call, put }) {
       const response = yield call(complete, payload);
-      if (response.code === '100') {
+      if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
       } else {
@@ -49,7 +50,7 @@ const FormDetailModel: FormDetailModelType = {
     },
     *fetchStopProcess({ payload, callback }, { call, put }) {
       const response = yield call(stopProcess, payload);
-      if (response.code === '100') {
+      if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
       } else {

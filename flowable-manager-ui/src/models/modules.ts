@@ -56,7 +56,7 @@ const ModulesModel: ModulesModelType = {
     },
     *deploy({ payload }, { call, put }) {
       const response = yield call(deployModules, payload);
-      if (response.code === '100') {
+      if (response.code === ReturnCode.SUCCESS) {
         message.success(response.msg);
         yield put({
           type: 'fetch',

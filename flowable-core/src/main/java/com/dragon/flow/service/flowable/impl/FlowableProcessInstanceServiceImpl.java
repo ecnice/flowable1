@@ -7,10 +7,12 @@ import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
+import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.EndVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
+import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
@@ -22,6 +24,7 @@ import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.util.IoUtil;
+import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -50,6 +53,8 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
     private IFlowableProcessInstanceDao flowableProcessInstanceDao;
     @Autowired
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
+    @Autowired
+    private IFlowableTaskService flowableTaskService;
 
     @Override
     public PagerModel<ProcessInstanceVo> getPagerModel(ProcessInstanceQueryVo params, Query query) {
@@ -66,8 +71,27 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
                     processInstanceVo.setSuspensionState(FlowConstant.ACTIVATE_STATE);
                 }
             }
+            List<UserVo> approvers = flowableTaskService.getApprovers(processInstanceVo.getProcessInstanceId());
+            String userNames = this.createApprovers(approvers);
+            processInstanceVo.setApprover(userNames);
         });
+
         return new PagerModel<>(page);
+    }
+
+    private String createApprovers(List<UserVo> approvers) {
+        if (CollectionUtils.isNotEmpty(approvers)){
+            StringBuffer approverstr = new StringBuffer();
+            StringBuffer finalApproverstr = approverstr;
+            approvers.forEach(userVo -> {
+                finalApproverstr.append(userVo.getDisplayName()).append(";");
+            });
+            if (approverstr.length() > 0 ){
+                approverstr = approverstr.deleteCharAt(approverstr.length() - 1);
+            }
+            return approverstr.toString();
+        }
+        return null;
     }
 
     @Override

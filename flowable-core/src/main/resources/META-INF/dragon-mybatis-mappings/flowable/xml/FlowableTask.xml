@@ -67,7 +67,38 @@
             t1.END_TIME_ is not null
         AND t1.ASSIGNEE_ = #{userCode}
     </select>
-
+    <select id="getApprovers" parameterType="java.lang.String" resultType="com.dragon.flow.vo.flowable.ret.UserVo">
+        SELECT
+            uu.DISPLAY_NAME_ AS displayName,
+            uu.id_ as id
+        FROM
+            (
+                SELECT
+                    u.ID_
+                FROM
+                    act_ru_task task
+                LEFT JOIN act_ru_identitylink link ON link.TASK_ID_ = task.ID_
+                LEFT JOIN act_id_user u ON u.ID_ = link.USER_ID_
+                WHERE
+                    task.PROC_INST_ID_ = #{value}
+                UNION ALL
+                    SELECT
+                        ug.user_id_
+                    FROM
+                        (
+                            SELECT
+                                g.id_
+                            FROM
+                                act_ru_task task
+                            LEFT JOIN act_ru_identitylink link ON link.TASK_ID_ = task.ID_
+                            LEFT JOIN act_id_group g ON g.ID_ = link.GROUP_ID_
+                            WHERE
+                                task.PROC_INST_ID_ = #{value}
+                        ) gg
+                    INNER JOIN act_id_membership ug ON gg.id_ = ug.GROUP_ID_
+            ) uall
+        INNER JOIN act_id_user uu ON uall.id_ = uu.id_
+    </select>
 
 
 </mapper>

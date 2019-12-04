@@ -22,11 +22,11 @@ public class BaseProcessVo implements Serializable {
      */
     private String message;
     /**
-     * 流程实例的id
+     * 流程实例的id 必填
      */
     private String processInstanceId;
     /**
-     * 审批类型
+     * 审批类型 必填
      */
     private String type;
 

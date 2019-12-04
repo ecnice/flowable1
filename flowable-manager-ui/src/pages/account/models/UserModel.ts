@@ -3,20 +3,19 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import {
   pageModel,
-  deleteProcessInstanceById,
-  saProcessInstanceById,
-  stopProcess,
-} from '@/pages/processInstance/services/ProcessInstanceService.ts';
-import { ReturnCode } from '@/utils/utils';
+  saveUser,
+  deleteUser,
+  addUserGroup,
+} from '@/pages/account/services/UserService.ts';
 
-export interface ProcessInstanceModelState {
+export interface UserModelState {
   data: [];
   total: number;
 }
 
-export interface ProcessInstanceModelType {
-  namespace: 'processInstance';
-  state: ProcessInstanceModelState;
+export interface UserModelType {
+  namespace: 'account';
+  state: UserModelState;
   effects: {
     fetchList: Effect;
     deleteProcessInstanceById: Effect;
@@ -24,12 +23,12 @@ export interface ProcessInstanceModelType {
     stopProcess: Effect;
   };
   reducers: {
-    list: Reducer<ProcessInstanceModelState>;
+    list: Reducer<UserModelState>;
   };
 }
 
-const ProcessInstanceModel: ProcessInstanceModelType = {
-  namespace: 'processInstance',
+const UserModel: UserModelType = {
+  namespace: 'account',
   state: {
     data: [],
     total: 0,
@@ -42,8 +41,8 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
         payload: response,
       });
     },
-    *deleteProcessInstanceById({ payload, callback }, { call, put }) {
-      const response = yield call(deleteProcessInstanceById, payload);
+    *saveUser({ payload, callback }, { call, put }) {
+      const response = yield call(saveUser, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
@@ -51,9 +50,9 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
         message.error(response.msg);
       }
     },
-    *saProcessInstanceById({ payload, callback }, { call, put }) {
+    *deleteUser({ payload, callback }, { call, put }) {
       debugger;
-      const response = yield call(saProcessInstanceById, payload);
+      const response = yield call(deleteUser, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
@@ -61,9 +60,9 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
         message.error(response.msg);
       }
     },
-    *stopProcess({ payload, callback }, { call, put }) {
+    *addUserGroup({ payload, callback }, { call, put }) {
       debugger;
-      const response = yield call(stopProcess, payload);
+      const response = yield call(addUserGroup, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
         callback();
@@ -83,4 +82,4 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
   },
 };
 
-export default ProcessInstanceModel;
+export default UserModel;

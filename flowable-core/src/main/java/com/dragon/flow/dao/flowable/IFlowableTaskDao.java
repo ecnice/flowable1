@@ -2,10 +2,13 @@ package com.dragon.flow.dao.flowable;
 
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
+import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.pager.PagerModel;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author : bruce.liu
@@ -30,4 +33,11 @@ public interface IFlowableTaskDao {
      * @return
      */
     public Page<TaskVo> getApplyedTasks(TaskQueryVo params) ;
+
+    /**
+     * 通过流程实例id获取流程实例的待办任务审批人列表
+     * @param processInstanceId 流程实例id
+     * @return
+     */
+    public List<UserVo> getApprovers(String processInstanceId) ;
 }

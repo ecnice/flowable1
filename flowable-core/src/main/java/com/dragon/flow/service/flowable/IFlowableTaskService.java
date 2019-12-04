@@ -5,11 +5,14 @@ import com.dragon.flow.vo.flowable.DelegateTaskVo;
 import com.dragon.flow.vo.flowable.TaskQueryVo;
 import com.dragon.flow.vo.flowable.TurnTaskVo;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
+import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
+
+import java.util.List;
 
 /**
  * @author : bruce.liu
@@ -59,4 +62,11 @@ public interface IFlowableTaskService {
      * @return
      */
     public PagerModel<TaskVo> getApplyedTasks(TaskQueryVo params, Query  query) ;
+
+    /**
+     * 通过流程实例id获取流程实例的待办任务审批人列表
+     * @param processInstanceId 流程实例id
+     * @return
+     */
+    public List<UserVo> getApprovers(String processInstanceId) ;
 }
