@@ -8,6 +8,11 @@ export const isUrl = (path: string): boolean => reg.test(path);
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
+export const ReturnCode = {
+  SUCCESS: '100',
+  FAIL:'101'
+};
+
 /**
  * props.route.routes
  * @param router [{}]
