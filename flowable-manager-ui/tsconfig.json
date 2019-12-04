@@ -12,10 +12,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "allowJs": true,
     "experimentalDecorators": true,
     "strict": true,
+    "noImplicitAny": false, // 不需要声明变量类型
+    "noEmpty": false,//块语句中的内容不能为空
+    "blockNoEmpty": false,
     "paths": {
       "@/*": ["./src/*"]
     }

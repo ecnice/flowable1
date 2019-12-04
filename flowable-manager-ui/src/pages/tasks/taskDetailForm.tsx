@@ -25,15 +25,16 @@ import moment from 'moment';
 import { connect } from 'dva';
 
 interface IProps extends FormComponentProps {
-  loading: boolean;
-  canHandel: boolean;
-  record: any;
-  formInfo: any;
-  handle: any;
-  modalTitle: string;
-  commentList: [];
+  loading?: boolean;
+  canHandel?: boolean;
+  record?: any;
+  formInfo?: any;
+  handle?: any;
+  modalTitle?: string;
+  commentList?: [];
+  modalVisible?: boolean;
   dispatch?: any;
-  formatCommentList: [];
+  formatCommentList?: [];
   callBack?: Function;
 }
 

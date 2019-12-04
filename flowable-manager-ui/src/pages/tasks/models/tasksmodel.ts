@@ -14,6 +14,10 @@ export interface TasksModelState {
   myProcessInstances?: [];
   total?: number;
   formInfo?: object;
+  modalVisible?:boolean;
+  modalTitle?:string;
+  showImageModal?:boolean;
+  imgSrc?:string;
 }
 
 export interface TasksModelType {
@@ -30,6 +34,8 @@ export interface TasksModelType {
     saveApplyedTasks: Reducer<TasksModelState>;
     saveMyProcessInstancesTasks: Reducer<TasksModelState>;
     saveFormInfo: Reducer<TasksModelState>;
+    showHandleTaskModal: Reducer<TasksModelState>;
+    processImage: Reducer<TasksModelState>;
   };
 }
 
@@ -41,10 +47,10 @@ const TasksModel: TasksModelType = {
     myProcessInstances: [],
     total: 0,
     formInfo: {},
-    modalVisible: false,
-    modalTitle: '',
-    showImageModal: false,
-    imgSrc: '',
+    modalVisible:false,
+    modalTitle:"",
+    showImageModal:false,
+    imgSrc:"",
   },
   effects: {
     *fetchApplyingTasks({ payload }, { call, put }) {
@@ -68,7 +74,7 @@ const TasksModel: TasksModelType = {
         payload: response,
       });
     },
-    *fetchFormInfo({ payload, callback }, { call, put }) {
+    *fetchFormInfo({ payload, callback}, { call, put }) {
       const response = yield call(getFormInfoForTask, payload);
       yield put({
         type: 'saveFormInfo',
