@@ -8,6 +8,8 @@ import {
   image,
   stopProcess,
   revokeProcess,
+  turnTask,
+  delegateTask,
 } from '@/pages/tasks/services/FormDetailService';
 import { ReturnCode } from '@/utils/utils';
 
@@ -25,6 +27,7 @@ export interface FormDetailModelType {
     fetchStopProcess: Effect;
     fetchProcessImage: Effect;
     fetchRevokeProcess: Effect;
+    doApprove: Effect;
   };
   reducers: {
     saveCommentList: Reducer<FormDetailModelState>;
@@ -38,6 +41,26 @@ const FormDetailModel: FormDetailModelType = {
     imgSrc: '',
   },
   effects: {
+    *doApprove({ payload }, { call, put }) {
+      if (payload.type === 'ZB') {
+        const response = yield call(turnTask, payload);
+      } else if (payload.type === 'WP') {
+        const response = yield call(delegateTask, payload);
+      }
+      // 关闭弹窗
+      yield put({
+        type: 'tasks/showHandleTaskModal',
+        payload: {
+          modalTitle: '',
+          modalVisible: false,
+        },
+      });
+      //查询待办任务
+      yield put({
+        type: 'tasks/fetchApplyingTasks',
+        payload: {},
+      });
+    },
     *fetchCommentList({ payload }, { call, put }) {
       const response = yield call(commentsByProcessInstanceId, payload);
       yield put({

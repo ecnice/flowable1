@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/rest/formdetail")
-public class ApiFormDetailReource extends BaseResource {
+public class    ApiFormDetailReource extends BaseResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFormDetailReource.class);
     @Autowired
     private IFlowableCommentService flowableCommentService;
@@ -103,11 +105,11 @@ public class ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/turnTask")
-    public ReturnVo<String> turnTask(TurnTaskVo params,List<String> userCodes) {
+    public ReturnVo<String> turnTask(TurnTaskVo params,String[] userCodes) {
         ReturnVo<String> returnVo = null;
-        if (CollectionUtils.isNotEmpty(userCodes)) {
+        if (userCodes != null && userCodes.length > 0) {
             params.setUserCode(this.getLoginUser().getId());
-            params.setTurnToUserId(userCodes.get(0));
+            params.setTurnToUserId(userCodes[0]);
             returnVo = flowableTaskService.turnTask(params);
         }else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
@@ -122,11 +124,11 @@ public class ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/delegateTask")
-    public ReturnVo<String> delegateTask(DelegateTaskVo params,List<String> userCodes) {
+    public ReturnVo<String> delegateTask(DelegateTaskVo params,String[] userCodes) {
         ReturnVo<String> returnVo = null;
-        if (CollectionUtils.isNotEmpty(userCodes)) {
+        if (userCodes != null && userCodes.length > 0) {
             params.setUserCode(this.getLoginUser().getId());
-            params.setDelegateUserCode(userCodes.get(0));
+            params.setDelegateUserCode(userCodes[0]);
             returnVo = flowableTaskService.delegateTask(params);
         }else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");

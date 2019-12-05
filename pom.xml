@@ -14,7 +14,7 @@
         <module>flowable-manager</module>
         <module>flowable-server</module>
         <module>flowable-parent</module>
-        <module>flowable-manager-ui</module>
+
     </modules>
 
 

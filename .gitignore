@@ -10,6 +10,12 @@
 .springBeans
 .sts4-cache
 
+# dependencies
+**/node_modules
+# roadhog-api-doc ignore
+/src/utils/request-temp.js
+_roadhog-api-doc
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

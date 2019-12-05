@@ -26,7 +26,6 @@ public class TaskTest {
         TurnTaskVo turnTaskVo = new TurnTaskVo();
         turnTaskVo.setTaskId("4b48af1616a911eab464dc8b287b3603");
         turnTaskVo.setProcessInstanceId("61cebe8b16a711eab464dc8b287b3603");
-        turnTaskVo.setTurnUserId("00000003");
         turnTaskVo.setTurnToUserId("00000004");
         turnTaskVo.setMessage("转办");
         flowableTaskService.turnTask(turnTaskVo);

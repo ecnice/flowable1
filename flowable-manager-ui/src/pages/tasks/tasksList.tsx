@@ -6,6 +6,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
 import TaskModalForm from './taskDetailForm';
+import ApproveModal from '@/pages/tasks/components/ApproveModal';
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,
@@ -49,7 +50,6 @@ class TaskList extends PureComponent<any, any> {
 
   //查询待办
   applying = (payload: any) => {
-    debugger;
     const { dispatch } = this.props;
     dispatch({
       type: 'tasks/fetchApplyingTasks',

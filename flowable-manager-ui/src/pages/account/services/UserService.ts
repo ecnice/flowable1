@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 export async function pageModel(params: any): Promise<any> {
   return request('/server/rest/user/getPagerModel', {
-    method: 'POST',
+    method: 'GET',
     params: params,
   });
 }

@@ -46,8 +46,9 @@ public class ApiFlowableUserResource extends BaseResource {
             userQuery.userFirstNameLike(name);
         }
         long count = userQuery.count();
+
         int firstResult = (query.getPageNum() - 1) * query.getPageSize();
-        List<User> datas = userQuery.orderByUserFirstName().listPage(firstResult, query.getPageSize());
+        List<User> datas = userQuery.orderByUserFirstName().desc().listPage(firstResult, query.getPageSize());
         return new PagerModel<>(count, datas);
     }
 

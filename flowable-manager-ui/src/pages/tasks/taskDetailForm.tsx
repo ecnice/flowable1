@@ -23,6 +23,7 @@ const { Title } = Typography;
 const { TextArea } = Input;
 import moment from 'moment';
 import { connect } from 'dva';
+import ApproveModal from '@/pages/tasks/components/ApproveModal';
 
 interface IProps extends FormComponentProps {
   loading?: boolean;
@@ -46,6 +47,12 @@ interface IProps extends FormComponentProps {
 class TaskDetailForm extends PureComponent<IProps, any> {
   state = {
     note: '',
+    approveModal: {
+      title: '',
+      open: false,
+      multiSelect: true,
+      type: '',
+    },
   };
 
   //查询审批意见
@@ -127,7 +134,6 @@ class TaskDetailForm extends PureComponent<IProps, any> {
   //撤回
   revokeProcess = () => {
     if (this.state.note != null && this.state.note != '') {
-      debugger;
       const { dispatch, formInfo, callBack } = this.props;
       dispatch({
         type: 'formDetail/fetchRevokeProcess',
@@ -142,6 +148,31 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     }
   };
 
+  doApprove = e => {
+    const { dispatch, formInfo, callBack } = this.props;
+    this.setState({ approveModal: { open: false } });
+
+    let userIds = [];
+    e.users.forEach((item, i) => {
+      userIds.push(item.userId);
+    });
+    const data = {
+      taskId: formInfo.taskId,
+      processInstanceId: formInfo.processInstanceId,
+      message: e.approveMsg,
+      userCodes: userIds,
+      type: e.type,
+    };
+    dispatch({
+      type: 'formDetail/doApprove',
+      payload: data,
+    });
+  };
+
+  onChange = ({ target: { value } }) => {
+    this.setState({ note: value });
+  };
+
   render() {
     const {
       modalVisible,
@@ -153,6 +184,10 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       loading,
       commentList,
     } = this.props;
+    const {
+      approveModal: { title, open, multiSelect, type },
+      note,
+    } = this.state;
     const formItems = () => {
       const id = record ? record.id : null;
       form.getFieldDecorator('id', {
@@ -185,6 +220,48 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         </FormItem>,
       ];
     };
+
+    const ctrlOptions = [
+      {
+        buttonText: '转办',
+        showTitle: '转办',
+        type: 'ZB',
+        handelClick: e => {
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: false },
+          });
+        },
+      },
+      {
+        buttonText: '委派',
+        showTitle: '委派',
+        type: 'WP',
+        handelClick: e => {
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: false },
+          });
+        },
+      },
+      {
+        buttonText: '前加签',
+        showTitle: '前加签',
+        type: 'QJQ',
+        handelClick: e => {
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: true },
+          });
+        },
+      },
+      {
+        buttonText: '后加签',
+        showTitle: '后加签',
+        type: 'HJQ',
+        handelClick: e => {
+          this.setState({ approveModal: { open: true, title: '后加签', multiSelect: true } });
+        },
+      },
+    ];
+
     return (
       <Modal
         width={800}
@@ -203,9 +280,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
             <Divider />
             <Card title={'审批'}>
               <TextArea
-                onChange={e => {
-                  this.setState({ note: e.target.value });
-                }}
+                onChange={this.onChange.bind(this)}
                 placeholder="审批意见填写"
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
@@ -219,10 +294,23 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 <Button type="primary" onClick={this.revokeProcess}>
                   撤回
                 </Button>
-                <Button type="primary">转办</Button>
+                {ctrlOptions.map(item => {
+                  return (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        item.handelClick(item);
+                      }}
+                    >
+                      {item.buttonText}
+                    </Button>
+                  );
+                })}
+
+                {/*<Button type="primary">转办</Button>
                 <Button type="primary">委派</Button>
                 <Button type="primary">驳回</Button>
-                <Button type="primary">加签</Button>
+                <Button type="primary">加签</Button>*/}
               </div>
             </Card>
           </React.Fragment>
@@ -250,6 +338,19 @@ class TaskDetailForm extends PureComponent<IProps, any> {
             )}
           />
         </Card>
+        <ApproveModal
+          onCancel={() => {
+            this.setState({ approveModal: { open: false } });
+          }}
+          onApprove={e => {
+            this.doApprove(e);
+          }}
+          type={type}
+          title={title}
+          multiSelect={multiSelect}
+          open={open}
+          approveMsg={note}
+        />
       </Modal>
     );
   }
