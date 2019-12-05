@@ -28,6 +28,20 @@ export async function revokeProcess(params: any): Promise<any> {
   });
 }
 
+export async function turnTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/turnTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
+export async function delegateTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/delegateTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function image(params: any): Promise<any> {
   return request(`/server/rest/formdetail/image`, {
     method: 'GET',
