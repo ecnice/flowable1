@@ -173,7 +173,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
         TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(delegateTaskVo.getTaskId()).singleResult();
         if (currTask != null) {
             //1.添加审批意见
-            this.addComment(delegateTaskVo.getTaskId(), delegateTaskVo.getProcessInstanceId(), CommentTypeEnum.WP.toString(), delegateTaskVo.getMessage());
+            this.addComment(delegateTaskVo.getTaskId(), delegateTaskVo.getUserCode(), delegateTaskVo.getProcessInstanceId(), CommentTypeEnum.WP.toString(), delegateTaskVo.getMessage());
             //2.设置审批人就是当前登录人
             taskService.setAssignee(delegateTaskVo.getTaskId(), delegateTaskVo.getUserCode());
             //2.执行委派
@@ -193,7 +193,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             //1.生成历史记录
             TaskEntity task = this.createSubTask(currTask, turnTaskVo.getUserCode());
             //2.添加审批意见
-            this.addComment(task.getId(), turnTaskVo.getProcessInstanceId(), CommentTypeEnum.ZB.toString(), turnTaskVo.getMessage());
+            this.addComment(task.getId(), turnTaskVo.getUserCode(), turnTaskVo.getProcessInstanceId(), CommentTypeEnum.ZB.toString(), turnTaskVo.getMessage());
             taskService.saveTask(task);
             taskService.complete(task.getId());
             //3.转办
@@ -201,7 +201,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             taskService.setOwner(turnTaskVo.getTaskId(), turnTaskVo.getUserCode());
             returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "转办成功");
         } else {
-            returnVo = new ReturnVo<>(ReturnCode.FAIL, "转办失败");
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "没有运行时的任务实例,请确认!");
         }
         return returnVo;
     }
@@ -222,7 +222,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                     taskService.complete(task.getId());
                     //2.2生成审批意见
                     this.addComment(task.getId(), params.getUserCode(), params.getProcessInstanceId(),
-                            type, params.getMessage());
+                            CommentTypeEnum.SP.toString(), params.getMessage());
                     //2.3执行委派
                     taskService.resolveTask(params.getTaskId(), params.getVariables());
                 } else {
@@ -232,7 +232,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                     taskService.complete(params.getTaskId(), params.getVariables());
                     //3.3生成审批记录
                     this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
-                            type, params.getMessage());
+                            CommentTypeEnum.SP.toString(), params.getMessage());
                     //4.处理加签父任务
                     String parentTaskId = taskEntity.getParentTaskId();
                     if (StringUtils.isNotBlank(parentTaskId)) {
