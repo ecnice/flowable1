@@ -11,19 +11,16 @@ import java.util.List;
  * @date : 2019/11/1315:51
  */
 public class DelegateTaskVo extends BaseProcessVo {
-
     /**
      * 委派人
      */
-    private String userCode;
+    private String delegateUserCode;
 
-    @Override
-    public String getUserCode() {
-        return userCode;
+    public String getDelegateUserCode() {
+        return delegateUserCode;
     }
 
-    @Override
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
+    public void setDelegateUserCode(String delegateUserCode) {
+        this.delegateUserCode = delegateUserCode;
     }
 }

@@ -1,13 +1,10 @@
 package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.dao.flowable.IFlowableTaskDao;
+import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
-import com.dragon.flow.vo.flowable.CompleteTaskVo;
-import com.dragon.flow.vo.flowable.DelegateTaskVo;
-import com.dragon.flow.vo.flowable.TaskQueryVo;
-import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
-import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
@@ -16,11 +13,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
-import org.flowable.entitylink.api.EntityLink;
 import org.flowable.identitylink.api.IdentityLink;
+import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.idm.api.User;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
+import org.flowable.task.service.impl.persistence.entity.TaskEntity;
+import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,19 +40,87 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     private IFlowableTaskDao flowableTaskDao;
 
     @Override
+    public ReturnVo<String> unClaimTask(ClaimTaskVo claimTaskVo) {
+        ReturnVo<String> returnVo = null;
+        TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(claimTaskVo.getTaskId()).singleResult();
+        if (currTask != null) {
+            //1.添加审批意见
+            this.addComment(claimTaskVo.getTaskId(), claimTaskVo.getProcessInstanceId(), CommentTypeEnum.QS.toString(), claimTaskVo.getMessage());
+            List<IdentityLink> identityLinks = taskService.getIdentityLinksForTask(claimTaskVo.getTaskId());
+            boolean flag = false;
+            if (CollectionUtils.isNotEmpty(identityLinks)) {
+                for (IdentityLink link : identityLinks) {
+                    if (IdentityLinkType.CANDIDATE.equals(link.getTaskId())) {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            //2.签收
+            if (flag) {
+                taskService.claim(claimTaskVo.getTaskId(), null);
+                returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "签收成功");
+            } else {
+                returnVo = new ReturnVo<>(ReturnCode.FAIL, "由于没有候选人或候选组,会导致任务无法认领,请确认.");
+            }
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "签收失败");
+        }
+        return returnVo;
+    }
+
+    @Override
+    public ReturnVo<String> claimTask(ClaimTaskVo claimTaskVo) {
+        ReturnVo<String> returnVo = null;
+        TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(claimTaskVo.getTaskId()).singleResult();
+        if (currTask != null) {
+            //1.添加审批意见
+            this.addComment(claimTaskVo.getTaskId(), claimTaskVo.getProcessInstanceId(), CommentTypeEnum.QS.toString(), claimTaskVo.getMessage());
+            //2.签收
+            taskService.claim(claimTaskVo.getTaskId(), claimTaskVo.getUserCode());
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "签收成功");
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "签收失败");
+        }
+        return returnVo;
+    }
+
+    @Override
     public ReturnVo<String> delegateTask(DelegateTaskVo delegateTaskVo) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        taskService.addComment(delegateTaskVo.getTaskId(), delegateTaskVo.getProcessInstanceId(), delegateTaskVo.getMessage());
-        taskService.delegateTask(delegateTaskVo.getTaskId(), delegateTaskVo.getUserCode());
+        ReturnVo<String> returnVo = null;
+        TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(delegateTaskVo.getTaskId()).singleResult();
+        if (currTask != null) {
+            //1.添加审批意见
+            this.addComment(delegateTaskVo.getTaskId(), delegateTaskVo.getProcessInstanceId(), CommentTypeEnum.WP.toString(), delegateTaskVo.getMessage());
+            //2.设置审批人就是当前登录人
+            taskService.setAssignee(delegateTaskVo.getTaskId(), delegateTaskVo.getUserCode());
+            //2.执行委派
+            taskService.delegateTask(delegateTaskVo.getTaskId(), delegateTaskVo.getDelegateUserCode());
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "委派成功");
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "委派失败");
+        }
         return returnVo;
     }
 
     @Override
     public ReturnVo<String> turnTask(TurnTaskVo turnTaskVo) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        taskService.addComment(turnTaskVo.getTaskId(), turnTaskVo.getProcessInstanceId(), turnTaskVo.getMessage());
-        taskService.setAssignee(turnTaskVo.getTaskId(), turnTaskVo.getTurnToUserId());
-        taskService.setOwner(turnTaskVo.getTaskId(), turnTaskVo.getTurnUserId());
+        ReturnVo<String> returnVo = null;
+        TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(turnTaskVo.getTaskId()).singleResult();
+        if (currTask != null) {
+            //1.生成历史记录
+            TaskEntity task = this.createSubTask(currTask, turnTaskVo.getTurnUserId());
+            //2.添加审批意见
+            this.addComment(task.getId(), turnTaskVo.getProcessInstanceId(), CommentTypeEnum.ZB.toString(), turnTaskVo.getMessage());
+            taskService.saveTask(task);
+            taskService.complete(task.getId());
+            //3.转办
+            taskService.setAssignee(turnTaskVo.getTaskId(), turnTaskVo.getTurnToUserId());
+            taskService.setOwner(turnTaskVo.getTaskId(), turnTaskVo.getTurnUserId());
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "转办成功");
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "转办失败");
+        }
         return returnVo;
     }
 
@@ -62,19 +129,28 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "审批成功");
         if (StringUtils.isNotBlank(params.getProcessInstanceId())
                 && StringUtils.isNotBlank(params.getTaskId())) {
-            //1.添加审批意见
-            this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
-                    params.getType(), params.getMessage());
-            Task task = taskService.createTaskQuery().taskId(params.getTaskId()).singleResult();
-            if (task != null) {
+            String type = params.getType() == null ? CommentTypeEnum.SP.toString() : params.getType();
+            TaskEntity taskEntity = (TaskEntity) taskService.createTaskQuery().taskId(params.getTaskId()).singleResult();
+            if (taskEntity != null) {
                 //2.委派处理
-                if (DelegationState.PENDING.equals(task.getDelegationState())) {
+                if (DelegationState.PENDING.equals(taskEntity.getDelegationState())) {
+                    //2.1生成历史记录
+                    TaskEntity task = this.createSubTask(taskEntity, params.getUserCode());
+                    taskService.saveTask(task);
+                    taskService.complete(task.getId());
+                    //2.2生成审批意见
+                    this.addComment(task.getId(), params.getUserCode(), params.getProcessInstanceId(),
+                            type, params.getMessage());
+                    //2.3执行委派
                     taskService.resolveTask(params.getTaskId(), params.getVariables());
                 } else {
                     //3.1修改执行人 其实我这里就相当于签收了
                     taskService.setAssignee(params.getTaskId(), params.getUserCode());
                     //3.2执行任务
                     taskService.complete(params.getTaskId(), params.getVariables());
+                    //3.3生成审批记录
+                    this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
+                            type, params.getMessage());
                 }
                 //TODO 4.处理加签的逻辑
             } else {
@@ -117,7 +193,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 if (StringUtils.isNotBlank(task.getAssignee())) {
                     //1.审批人ASSIGNEE_是用户id
                     User user = identityService.createUserQuery().userId(task.getAssignee()).singleResult();
-                    if(user != null){
+                    if (user != null) {
                         users.add(user);
                     }
                     //2.审批人ASSIGNEE_是组id
@@ -132,7 +208,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                             //3.审批人ASSIGNEE_为空,用户id
                             if (StringUtils.isNotBlank(identityLink.getUserId())) {
                                 User user = identityService.createUserQuery().userId(identityLink.getUserId()).singleResult();
-                                if (user != null){
+                                if (user != null) {
                                     users.add(user);
                                 }
                             } else {

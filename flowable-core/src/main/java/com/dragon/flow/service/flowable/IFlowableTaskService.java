@@ -1,9 +1,6 @@
 package com.dragon.flow.service.flowable;
 
-import com.dragon.flow.vo.flowable.CompleteTaskVo;
-import com.dragon.flow.vo.flowable.DelegateTaskVo;
-import com.dragon.flow.vo.flowable.TaskQueryVo;
-import com.dragon.flow.vo.flowable.TurnTaskVo;
+import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.TaskVo;
 import com.dragon.flow.vo.flowable.ret.UserVo;
 import com.dragon.tools.pager.PagerModel;
@@ -22,6 +19,19 @@ import java.util.List;
  * @date : 2019/11/1315:05
  */
 public interface IFlowableTaskService {
+
+    /**
+     * 反签收任务
+     * @param claimTaskVo 参数
+     * @return
+     */
+    public ReturnVo<String> unClaimTask(ClaimTaskVo claimTaskVo) ;
+    /**
+     * 签收任务
+     * @param claimTaskVo 参数
+     * @return
+     */
+    public ReturnVo<String> claimTask(ClaimTaskVo claimTaskVo) ;
 
     /**
      * 委派任务
