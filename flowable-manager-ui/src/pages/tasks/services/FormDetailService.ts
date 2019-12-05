@@ -42,6 +42,13 @@ export async function delegateTask(params: any): Promise<any> {
   });
 }
 
+export async function userList(params: any): Promise<any> {
+  return request(`/server/rest/user/getPagerModel`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function image(params: any): Promise<any> {
   return request(`/server/rest/formdetail/image`, {
     method: 'GET',
