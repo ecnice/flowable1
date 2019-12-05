@@ -20,11 +20,23 @@ import java.util.List;
  */
 public interface IFlowableTaskService {
     /**
+     * 任务前加签 （如果多次加签只能显示第一次前加签的处理人来处理任务）
+     * @param addSignTaskVo 参数
+     * @return
+     */
+    public ReturnVo<String> beforeAddSignTask(AddSignTaskVo addSignTaskVo) ;
+    /**
+     * 任务后加签
+     * @param addSignTaskVo 参数
+     * @return
+     */
+    public ReturnVo<String> afterAddSignTask(AddSignTaskVo addSignTaskVo) ;
+    /**
      * 任务加签
      * @param addSignTaskVo 参数
      * @return
      */
-    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo) ;
+    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo, Boolean flag) ;
     /**
      * 反签收任务
      * @param claimTaskVo 参数

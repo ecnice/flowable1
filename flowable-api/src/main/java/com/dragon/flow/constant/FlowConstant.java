@@ -31,5 +31,9 @@ public class FlowConstant {
      * 激活状态
      */
     public static final int ACTIVATE_STATE = 1;
+    //后加签
+    public static final String AFTER_ADDSIGN = "after";
+    //前加签
+    public static final String BEFORE_ADDSIGN = "before";
 
 }

@@ -1,5 +1,6 @@
 package com.dragon.flow.service.flowable.impl;
 
+import com.dragon.flow.constant.FlowConstant;
 import com.dragon.flow.dao.flowable.IFlowableTaskDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
@@ -40,8 +41,84 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     private IFlowableTaskDao flowableTaskDao;
 
     @Override
-    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo) {
-        return null;
+    public ReturnVo<String> beforeAddSignTask(AddSignTaskVo addSignTaskVo) {
+        return this.addSignTask(addSignTaskVo, false);
+    }
+
+    @Override
+    public ReturnVo<String> afterAddSignTask(AddSignTaskVo addSignTaskVo) {
+        return this.addSignTask(addSignTaskVo, true);
+    }
+
+    @Override
+    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo, Boolean flag) {
+        ReturnVo<String> returnVo = null;
+        TaskEntityImpl taskEntity = (TaskEntityImpl) taskService.createTaskQuery().taskId(addSignTaskVo.getTaskId()).singleResult();
+        //1.把当前的节点设置为空
+        if (taskEntity != null) {
+            //如果是加签再加签
+            String parentTaskId = taskEntity.getParentTaskId();
+            if (StringUtils.isBlank(parentTaskId)) {
+                taskEntity.setOwner(addSignTaskVo.getUserCode());
+                taskEntity.setAssignee(null);
+                taskEntity.setCountEnabled(true);
+                if (flag) {
+                    taskEntity.setScopeType(FlowConstant.AFTER_ADDSIGN);
+                } else {
+                    taskEntity.setScopeType(FlowConstant.BEFORE_ADDSIGN);
+                }
+                //1.2 设置任务为空执行者
+                taskService.saveTask(taskEntity);
+            }
+            //2.添加加签表中
+            this.createSignSubTasks(addSignTaskVo, taskEntity);
+            //3.添加审批意见
+            String type = flag ? CommentTypeEnum.HJQ.toString() : CommentTypeEnum.QJQ.toString();
+            this.addComment(addSignTaskVo.getTaskId(), addSignTaskVo.getUserCode(), addSignTaskVo.getProcessInstanceId(),
+                    type, addSignTaskVo.getMessage());
+            String message = flag ? "后加签成功" : "前加签成功";
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, message);
+        } else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "不存在任务实例，请确认!");
+        }
+        return returnVo;
+    }
+
+    /**
+     * 创建加签子任务
+     *
+     * @param signVo     加签参数
+     * @param taskEntity 父任务
+     */
+    private void createSignSubTasks(AddSignTaskVo signVo, TaskEntity taskEntity) {
+        if (CollectionUtils.isNotEmpty(signVo.getSignPersoneds())) {
+            String parentTaskId = taskEntity.getParentTaskId();
+            if (StringUtils.isBlank(parentTaskId)) {
+                parentTaskId = taskEntity.getId();
+            }
+            String finalParentTaskId = parentTaskId;
+            //1.创建被加签人的任务列表
+            signVo.getSignPersoneds().forEach(userCode -> {
+                if (StringUtils.isNotBlank(userCode)) {
+                    this.createSubTask(taskEntity, finalParentTaskId, userCode);
+                }
+            });
+            String taskId = taskEntity.getId();
+            if (StringUtils.isBlank(taskEntity.getParentTaskId())) {
+                //2.创建加签人的任务并执行完毕
+                Task task = this.createSubTask(taskEntity, finalParentTaskId, signVo.getUserCode());
+                taskId = task.getId();
+            }
+            Task taskInfo = taskService.createTaskQuery().taskId(taskId).singleResult();
+            if (null != taskInfo) {
+                taskService.complete(taskId);
+            }
+            //如果是候选人，需要删除运行时候选表种的数据。
+            long candidateCount = taskService.createTaskQuery().taskId(parentTaskId).taskCandidateUser(signVo.getUserCode()).count();
+            if (candidateCount > 0) {
+                taskService.deleteCandidateUser(parentTaskId, signVo.getUserCode());
+            }
+        }
     }
 
     @Override
@@ -156,8 +233,22 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                     //3.3生成审批记录
                     this.addComment(params.getTaskId(), params.getUserCode(), params.getProcessInstanceId(),
                             type, params.getMessage());
+                    //4.处理加签父任务
+                    String parentTaskId = taskEntity.getParentTaskId();
+                    if (StringUtils.isNotBlank(parentTaskId)) {
+                        String tableName = managementService.getTableName(TaskEntity.class);
+                        String sql = "select count(1) from " + tableName + " where PARENT_TASK_ID_=#{parentTaskId}";
+                        long subTaskCount = taskService.createNativeTaskQuery().sql(sql).parameter("parentTaskId", parentTaskId).count();
+                        if (subTaskCount == 0) {
+                            Task task = taskService.createTaskQuery().taskId(parentTaskId).singleResult();
+                            //处理前后加签的任务
+                            taskService.resolveTask(parentTaskId);
+                            if (FlowConstant.AFTER_ADDSIGN.equals(task.getScopeType())) {
+                                taskService.complete(parentTaskId);
+                            }
+                        }
+                    }
                 }
-                //TODO 4.处理加签的逻辑
             } else {
                 returnVo = new ReturnVo<>(ReturnCode.FAIL, "没有此任务，请确认!");
             }

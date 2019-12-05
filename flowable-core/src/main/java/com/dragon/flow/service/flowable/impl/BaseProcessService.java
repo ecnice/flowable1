@@ -112,23 +112,28 @@ public abstract class BaseProcessService {
                 .changeState();
     }
 
+    protected TaskEntity createSubTask(TaskEntity ptask, String assignee) {
+        return this.createSubTask(ptask, ptask.getId(), assignee);
+    }
+
     /**
      * 创建子任务
-     * @param ptask 创建子任务
+     *
+     * @param ptask    创建子任务
      * @param assignee 子任务的执行人
      * @return
      */
-    protected TaskEntity createSubTask(TaskEntity ptask, String assignee) {
+    protected TaskEntity createSubTask(TaskEntity ptask, String ptaskId, String assignee) {
         TaskEntity task = null;
         if (ptask != null) {
-            //2.生成子任务
+            //1.生成子任务
             task = (TaskEntity) taskService.newTask(UUIDGenerator.generate());
             task.setCategory(ptask.getCategory());
             task.setDescription(ptask.getDescription());
             task.setTenantId(ptask.getTenantId());
             task.setAssignee(assignee);
             task.setName(ptask.getName());
-            task.setParentTaskId(ptask.getId());
+            task.setParentTaskId(ptaskId);
             task.setProcessDefinitionId(ptask.getProcessDefinitionId());
             task.setProcessInstanceId(ptask.getProcessInstanceId());
             task.setTaskDefinitionKey(ptask.getTaskDefinitionKey());
