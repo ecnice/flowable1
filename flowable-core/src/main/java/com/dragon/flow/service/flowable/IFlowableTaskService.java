@@ -19,7 +19,12 @@ import java.util.List;
  * @date : 2019/11/1315:05
  */
 public interface IFlowableTaskService {
-
+    /**
+     * 任务加签
+     * @param addSignTaskVo 参数
+     * @return
+     */
+    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo) ;
     /**
      * 反签收任务
      * @param claimTaskVo 参数
@@ -80,4 +85,6 @@ public interface IFlowableTaskService {
      * @return
      */
     public List<User> getApprovers(String processInstanceId) ;
+
+
 }

@@ -40,6 +40,11 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     private IFlowableTaskDao flowableTaskDao;
 
     @Override
+    public ReturnVo<String> addSignTask(AddSignTaskVo addSignTaskVo) {
+        return null;
+    }
+
+    @Override
     public ReturnVo<String> unClaimTask(ClaimTaskVo claimTaskVo) {
         ReturnVo<String> returnVo = null;
         TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(claimTaskVo.getTaskId()).singleResult();
