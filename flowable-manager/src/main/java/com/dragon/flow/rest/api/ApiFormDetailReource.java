@@ -7,6 +7,7 @@ import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.CommentVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.vo.ReturnVo;
+import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,9 +103,15 @@ public class ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/turnTask")
-    public ReturnVo<String> turnTask(TurnTaskVo params) {
-        params.setUserCode(this.getLoginUser().getId());
-        ReturnVo<String> returnVo = flowableTaskService.turnTask(params);
+    public ReturnVo<String> turnTask(TurnTaskVo params,List<String> userCodes) {
+        ReturnVo<String> returnVo = null;
+        if (CollectionUtils.isNotEmpty(userCodes)) {
+            params.setUserCode(this.getLoginUser().getId());
+            params.setTurnToUserId(userCodes.get(0));
+            returnVo = flowableTaskService.turnTask(params);
+        }else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
+        }
         return returnVo;
     }
 
@@ -115,9 +122,15 @@ public class ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/delegateTask")
-    public ReturnVo<String> delegateTask(DelegateTaskVo params) {
-        params.setUserCode(this.getLoginUser().getId());
-        ReturnVo<String> returnVo = flowableTaskService.delegateTask(params);
+    public ReturnVo<String> delegateTask(DelegateTaskVo params,List<String> userCodes) {
+        ReturnVo<String> returnVo = null;
+        if (CollectionUtils.isNotEmpty(userCodes)) {
+            params.setUserCode(this.getLoginUser().getId());
+            params.setDelegateUserCode(userCodes.get(0));
+            returnVo = flowableTaskService.delegateTask(params);
+        }else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
+        }
         return returnVo;
     }
 

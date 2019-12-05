@@ -1,7 +1,6 @@
 package com.dragon.flow.vo.flowable;
 
 
-import java.util.List;
 
 /**
  * @author : bruce.liu

@@ -1,6 +1,5 @@
 package com.dragon.flow.vo.flowable;
 
-import java.io.Serializable;
 
 /**
  * @author : bruce.liu
