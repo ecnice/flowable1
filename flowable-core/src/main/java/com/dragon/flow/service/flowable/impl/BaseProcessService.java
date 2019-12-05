@@ -54,7 +54,7 @@ public abstract class BaseProcessService {
      * @param type 审批类型
      * @param message 审批意见
      */
-    public void addComment(String taskId,String userCode,String processInstanceId,String type,String message) {
+    protected void addComment(String taskId,String userCode,String processInstanceId,String type,String message) {
         //1.添加备注
         CommentVo commentVo = new CommentVo(taskId,userCode, processInstanceId,type,message);
         flowableCommentService.addComment(commentVo);
@@ -69,7 +69,7 @@ public abstract class BaseProcessService {
      * @param type 审批类型
      * @param message 审批意见
      */
-    public void addComment(String userCode,String processInstanceId,String type,String message) {
+    protected void addComment(String userCode,String processInstanceId,String type,String message) {
         this.addComment(null,userCode, processInstanceId,type,message);
     }
 
@@ -78,10 +78,10 @@ public abstract class BaseProcessService {
      * @param disActivityId 跳转的节点id
      * @param processInstanceId 流程实例id
      */
-    protected void deleteHisActivity(String disActivityId,String processInstanceId) {
+    protected void deleteActivity(String disActivityId,String processInstanceId) {
         List<ActivityInstance> disActivities = runtimeService.createActivityInstanceQuery()
                 .processInstanceId(processInstanceId).activityId(disActivityId).list();
-        //删除运行时和李四节点信息
+        //删除运行时和历史节点信息
         if (CollectionUtils.isNotEmpty(disActivities)) {
             ActivityInstance activityInstance = disActivities.get(0);
             String tableName = managementService.getTableName(ActivityInstanceEntity.class);
@@ -95,6 +95,15 @@ public abstract class BaseProcessService {
                 hisFlowableActinstDao.deleteHisActinstsByIds(runActivityIds);
             }
         }
+    }
+
+    /**
+     * 执行跳转
+     */
+    protected void moveExecutionsToSingleActivityId(List<String> executionIds,String activityId){
+        runtimeService.createChangeActivityStateBuilder()
+                .moveExecutionsToSingleActivityId(executionIds, activityId)
+                .changeState();
     }
 
 }

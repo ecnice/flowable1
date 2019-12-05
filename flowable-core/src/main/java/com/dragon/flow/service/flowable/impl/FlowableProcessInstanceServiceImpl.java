@@ -70,6 +70,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
 
     /**
      * 设置状态和审批人
+     *
      * @param processInstanceVo 参数
      */
     private void setStateApprover(ProcessInstanceVo processInstanceVo) {
@@ -90,6 +91,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
 
     /**
      * 组合审批人显示名称
+     *
      * @param approvers 审批人列表
      * @return
      */
@@ -235,7 +237,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
 
     @Override
     public ReturnVo<String> stopProcessInstanceById(EndVo endVo) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "终止成功");
+        ReturnVo<String> returnVo = null;
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(endVo.getProcessInstanceId()).singleResult();
         if (processInstance != null) {
             //1、添加审批记录
@@ -244,13 +246,14 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
             List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
             String endId = endNodes.get(0).getId();
             String processInstanceId = endVo.getProcessInstanceId();
-            //2、终止多实例或者并行节点的终止
+            //2、执行终止
             List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
             List<String> executionIds = new ArrayList<>();
             executions.forEach(execution -> executionIds.add(execution.getId()));
-            runtimeService.createChangeActivityStateBuilder()
-                    .moveExecutionsToSingleActivityId(executionIds, endId)
-                    .changeState();
+            this.moveExecutionsToSingleActivityId(executionIds, endId);
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "终止成功");
+        }else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "不存在运行的流程实例,请确认!");
         }
         return returnVo;
     }
@@ -263,20 +266,18 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
                     .processInstanceId(revokeVo.getProcessInstanceId()).singleResult();
             if (processInstance != null) {
                 //1.添加撤回意见
-                this.addComment(revokeVo.getUserCode(),revokeVo.getProcessInstanceId(),CommentTypeEnum.CH.toString(),revokeVo.getMessage());
+                this.addComment(revokeVo.getUserCode(), revokeVo.getProcessInstanceId(), CommentTypeEnum.CH.toString(), revokeVo.getMessage());
                 //2.设置提交人
                 runtimeService.setVariable(revokeVo.getProcessInstanceId(), FlowConstant.FLOW_SUBMITTER_VAR, processInstance.getStartUserId());
                 //3.执行撤回
                 Activity disActivity = flowableBpmnModelService.findActivityByName(processInstance.getProcessDefinitionId(), FlowConstant.FLOW_SUBMITTER);
-                //4.删除历史的节点信息
-                this.deleteHisActivity(disActivity.getId(),revokeVo.getProcessInstanceId());
+                //4.删除运行和历史的节点信息
+                this.deleteActivity(disActivity.getId(), revokeVo.getProcessInstanceId());
                 //5.执行跳转
                 List<Execution> executions = runtimeService.createExecutionQuery().parentId(revokeVo.getProcessInstanceId()).list();
                 List<String> executionIds = new ArrayList<>();
                 executions.forEach(execution -> executionIds.add(execution.getId()));
-                runtimeService.createChangeActivityStateBuilder()
-                        .moveExecutionsToSingleActivityId(executionIds, disActivity.getId())
-                        .changeState();
+                this.moveExecutionsToSingleActivityId(executionIds, disActivity.getId());
                 returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "撤回成功!");
             }
         } else {
