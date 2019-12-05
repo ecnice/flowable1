@@ -91,9 +91,8 @@ public class ApiFormDetailReource extends BaseResource {
      */
     @PostMapping(value = "/revokeProcess")
     public ReturnVo<String> revokeProcess(RevokeVo params) {
-        ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableProcessInstanceService.revokeProcess(params);
+        ReturnVo<String> returnVo = flowableProcessInstanceService.revokeProcess(params);
         return returnVo;
     }
     /**
@@ -104,9 +103,8 @@ public class ApiFormDetailReource extends BaseResource {
      */
     @PostMapping(value = "/turnTask")
     public ReturnVo<String> turnTask(TurnTaskVo params) {
-        ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.turnTask(params);
+        ReturnVo<String> returnVo = flowableTaskService.turnTask(params);
         return returnVo;
     }
 
@@ -118,9 +116,8 @@ public class ApiFormDetailReource extends BaseResource {
      */
     @PostMapping(value = "/delegateTask")
     public ReturnVo<String> delegateTask(DelegateTaskVo params) {
-        ReturnVo<String> returnVo = null;
         params.setUserCode(this.getLoginUser().getId());
-        returnVo = flowableTaskService.delegateTask(params);
+        ReturnVo<String> returnVo = flowableTaskService.delegateTask(params);
         return returnVo;
     }
 

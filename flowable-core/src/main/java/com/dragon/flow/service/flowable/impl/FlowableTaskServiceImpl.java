@@ -191,14 +191,14 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
         TaskEntityImpl currTask = (TaskEntityImpl) taskService.createTaskQuery().taskId(turnTaskVo.getTaskId()).singleResult();
         if (currTask != null) {
             //1.生成历史记录
-            TaskEntity task = this.createSubTask(currTask, turnTaskVo.getTurnUserId());
+            TaskEntity task = this.createSubTask(currTask, turnTaskVo.getUserCode());
             //2.添加审批意见
             this.addComment(task.getId(), turnTaskVo.getProcessInstanceId(), CommentTypeEnum.ZB.toString(), turnTaskVo.getMessage());
             taskService.saveTask(task);
             taskService.complete(task.getId());
             //3.转办
             taskService.setAssignee(turnTaskVo.getTaskId(), turnTaskVo.getTurnToUserId());
-            taskService.setOwner(turnTaskVo.getTaskId(), turnTaskVo.getTurnUserId());
+            taskService.setOwner(turnTaskVo.getTaskId(), turnTaskVo.getUserCode());
             returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "转办成功");
         } else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL, "转办失败");
