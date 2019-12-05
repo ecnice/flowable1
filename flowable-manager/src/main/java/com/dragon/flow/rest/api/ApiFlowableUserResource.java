@@ -6,6 +6,7 @@ import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.pager.Query;
 import com.dragon.tools.vo.ReturnVo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.flowable.idm.api.*;
 import org.flowable.idm.engine.impl.persistence.entity.UserEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,10 @@ public class ApiFlowableUserResource extends BaseResource {
      */
     @GetMapping("/getPagerModel")
     public PagerModel<User> getPagerModel(String name, Query query) {
-        UserQuery userQuery = idmIdentityService.createUserQuery().userFirstNameLike(name);
+        UserQuery userQuery = idmIdentityService.createUserQuery();
+        if (StringUtils.isNotBlank(name)){
+            userQuery.userFirstNameLike(name);
+        }
         long count = userQuery.count();
         int firstResult = (query.getPageNum() - 1) * query.getPageSize();
         List<User> datas = userQuery.orderByUserFirstName().listPage(firstResult, query.getPageSize());
