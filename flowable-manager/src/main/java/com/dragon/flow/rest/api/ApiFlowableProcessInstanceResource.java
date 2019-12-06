@@ -1,7 +1,7 @@
 package com.dragon.flow.rest.api;
 
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
-import com.dragon.flow.vo.flowable.EndVo;
+import com.dragon.flow.vo.flowable.EndProcessVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.common.ReturnCode;
@@ -72,7 +72,7 @@ public class ApiFlowableProcessInstanceResource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/stopProcess")
-    public ReturnVo<String> stopProcess(EndVo params) {
+    public ReturnVo<String> stopProcess(EndProcessVo params) {
         boolean flag = this.isSuspended(params.getProcessInstanceId());
         ReturnVo<String> returnVo = null;
         if (flag){

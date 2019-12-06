@@ -18,6 +18,7 @@ public interface IFlowableBpmnModelService {
 
     /**
      * 通过流程定义id获取BpmnModel
+     *
      * @param processDefId 流程定义id
      * @return
      */
@@ -25,6 +26,7 @@ public interface IFlowableBpmnModelService {
 
     /**
      * 通过流程定义id获取所有的节点
+     *
      * @param processDefId 流程定义id
      * @return
      */
@@ -39,11 +41,31 @@ public interface IFlowableBpmnModelService {
     public List<EndEvent> findEndFlowElement(String processDefId);
 
     /**
+     * 通过流程id获取节点
+     *
+     * @param processDefId 流程定义id
+     * @param activityId   节点id
+     * @return
+     */
+    public List<Activity> findActivityByActivityId(String processDefId, String activityId);
+
+    /**
+     * 通过流程id获取主流程中的节点
+     *
+     * @param processDefId 流程定义id
+     * @param activityId   节点id
+     * @param processDefId
+     * @param activityId
+     * @return
+     */
+    public Activity findMainProcessActivityByActivityId(String processDefId, String activityId);
+
+    /**
      * 通过名称获取节点
      *
      * @param processDefId 流程定义id
      * @param name         节点名称
      * @return
      */
-    public Activity findActivityByName(String processDefId, String name) ;
+    public Activity findActivityByName(String processDefId, String name);
 }

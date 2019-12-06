@@ -7,7 +7,7 @@ package com.dragon.flow.vo.flowable;
  * @description: 终止流程的VO
  * @date : 2019/11/3010:40
  */
-public class EndVo extends BaseProcessVo {
+public class EndProcessVo extends BaseProcessVo {
 
 
 }

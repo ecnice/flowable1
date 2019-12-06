@@ -73,9 +73,8 @@ public class LeaveResource extends BaseResource {
             startProcessInstanceVo.setVariables(variables);
             //设置三个人作为多实例的人员
             List<String> userList = new ArrayList<>();
-            userList.add("00000001");
-            userList.add("00000002");
-            userList.add("00000003");
+            userList.add("00000005");
+            userList.add("00000006");
             variables.put("userList", userList);
 
             ReturnVo<ProcessInstance> returnStart = flowableProcessInstanceService.startProcessInstanceByKey(startProcessInstanceVo);

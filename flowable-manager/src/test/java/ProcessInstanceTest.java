@@ -2,14 +2,12 @@ import com.dragon.flow.manager.main.FlowManagerApplication;
 import com.dragon.flow.model.leave.Leave;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.leave.ILeaveService;
-import com.dragon.flow.vo.flowable.RevokeVo;
+import com.dragon.flow.vo.flowable.RevokeProcessVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.tools.common.DateUtil;
 import com.dragon.tools.common.UUIDGenerator;
 import com.dragon.tools.vo.ReturnVo;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.idm.api.User;
-import org.flowable.ui.common.security.SecurityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +61,7 @@ public class ProcessInstanceTest {
     }
     @Test
     public void testRevokeProcess() {
-        RevokeVo revokeVo = new RevokeVo();
+        RevokeProcessVo revokeVo = new RevokeProcessVo();
         revokeVo.setProcessInstanceId("021d89c116a011ea89b4dc8b287b3603");
         flowableProcessInstanceService.revokeProcess(revokeVo);
     }

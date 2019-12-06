@@ -42,6 +42,20 @@ export async function delegateTask(params: any): Promise<any> {
   });
 }
 
+export async function beforeAddSignTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/beforeAddSignTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
+export async function afterAddSignTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/afterAddSignTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function image(params: any): Promise<any> {
   return request(`/server/rest/formdetail/image`, {
     method: 'GET',

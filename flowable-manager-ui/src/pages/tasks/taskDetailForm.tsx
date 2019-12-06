@@ -257,7 +257,19 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         showTitle: '后加签',
         type: 'HJQ',
         handelClick: e => {
-          this.setState({ approveModal: { open: true, title: '后加签', multiSelect: true } });
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: true },
+          });
+        },
+      },
+      {
+        buttonText: '驳回',
+        showTitle: '驳回',
+        type: 'BH',
+        handelClick: e => {
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: true },
+          });
         },
       },
     ];
@@ -306,11 +318,6 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                     </Button>
                   );
                 })}
-
-                {/*<Button type="primary">转办</Button>
-                <Button type="primary">委派</Button>
-                <Button type="primary">驳回</Button>
-                <Button type="primary">加签</Button>*/}
               </div>
             </Card>
           </React.Fragment>

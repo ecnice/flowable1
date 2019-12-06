@@ -140,6 +140,7 @@ public abstract class BaseProcessService {
             task.setTaskDefinitionId(ptask.getTaskDefinitionId());
             task.setPriority(ptask.getPriority());
             task.setCreateTime(new Date());
+            taskService.saveTask(task);
         }
         return task;
     }

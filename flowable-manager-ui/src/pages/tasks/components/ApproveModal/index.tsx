@@ -76,7 +76,6 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
   };
 
   handleCancel = e => {
-    console.log('cancel...');
     this.setState({
       selectedRowKeys: [],
       selectedRows: [],
@@ -138,7 +137,7 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
         >
           <div className={styles.lineItem}>
             <Search
-              placeholder="工号/姓名/邮箱"
+              placeholder="姓名"
               onSearch={value => {
                 this.setState({ searchKey: value });
               }}

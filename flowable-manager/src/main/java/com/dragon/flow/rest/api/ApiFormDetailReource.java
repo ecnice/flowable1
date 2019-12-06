@@ -74,7 +74,7 @@ public class    ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/stopProcess")
-    public ReturnVo<String> stopProcess(EndVo params) {
+    public ReturnVo<String> stopProcess(EndProcessVo params) {
         boolean flag = this.isSuspended(params.getProcessInstanceId());
         ReturnVo<String> returnVo = null;
         if (flag){
@@ -93,7 +93,7 @@ public class    ApiFormDetailReource extends BaseResource {
      * @return
      */
     @PostMapping(value = "/revokeProcess")
-    public ReturnVo<String> revokeProcess(RevokeVo params) {
+    public ReturnVo<String> revokeProcess(RevokeProcessVo params) {
         params.setUserCode(this.getLoginUser().getId());
         ReturnVo<String> returnVo = flowableProcessInstanceService.revokeProcess(params);
         return returnVo;
@@ -130,6 +130,44 @@ public class    ApiFormDetailReource extends BaseResource {
             params.setUserCode(this.getLoginUser().getId());
             params.setDelegateUserCode(userCodes[0]);
             returnVo = flowableTaskService.delegateTask(params);
+        }else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
+        }
+        return returnVo;
+    }
+
+    /**
+     * 向前加签
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/beforeAddSignTask")
+    public ReturnVo<String> beforeAddSignTask(AddSignTaskVo params,String[] userCodes) {
+        ReturnVo<String> returnVo = null;
+        if (userCodes != null && userCodes.length > 0) {
+            params.setUserCode(this.getLoginUser().getId());
+            params.setSignPersoneds(Arrays.asList(userCodes));
+            returnVo = flowableTaskService.beforeAddSignTask(params);
+        }else {
+            returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
+        }
+        return returnVo;
+    }
+
+    /**
+     * 向后加签
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/afterAddSignTask")
+    public ReturnVo<String> afterAddSignTask(AddSignTaskVo params,String[] userCodes) {
+        ReturnVo<String> returnVo = null;
+        if (userCodes != null && userCodes.length > 0) {
+            params.setUserCode(this.getLoginUser().getId());
+            params.setSignPersoneds(Arrays.asList(userCodes));
+            returnVo = flowableTaskService.afterAddSignTask(params);
         }else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL,"请选择人员");
         }

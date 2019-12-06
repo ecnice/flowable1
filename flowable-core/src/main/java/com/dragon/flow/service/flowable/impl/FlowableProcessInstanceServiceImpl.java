@@ -8,9 +8,9 @@ import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableBpmnModelService;
 import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
-import com.dragon.flow.vo.flowable.EndVo;
+import com.dragon.flow.vo.flowable.EndProcessVo;
 import com.dragon.flow.vo.flowable.ProcessInstanceQueryVo;
-import com.dragon.flow.vo.flowable.RevokeVo;
+import com.dragon.flow.vo.flowable.RevokeProcessVo;
 import com.dragon.flow.vo.flowable.StartProcessInstanceVo;
 import com.dragon.flow.vo.flowable.ret.ProcessInstanceVo;
 import com.dragon.tools.common.ReturnCode;
@@ -236,7 +236,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
     }
 
     @Override
-    public ReturnVo<String> stopProcessInstanceById(EndVo endVo) {
+    public ReturnVo<String> stopProcessInstanceById(EndProcessVo endVo) {
         ReturnVo<String> returnVo = null;
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(endVo.getProcessInstanceId()).singleResult();
         if (processInstance != null) {
@@ -259,7 +259,7 @@ public class FlowableProcessInstanceServiceImpl extends BaseProcessService imple
     }
 
     @Override
-    public ReturnVo<String> revokeProcess(RevokeVo revokeVo) {
+    public ReturnVo<String> revokeProcess(RevokeProcessVo revokeVo) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.FAIL, "撤回失败!");
         if (StringUtils.isNotBlank(revokeVo.getProcessInstanceId())) {
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()

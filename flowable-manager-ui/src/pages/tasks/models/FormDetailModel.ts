@@ -10,6 +10,8 @@ import {
   revokeProcess,
   turnTask,
   delegateTask,
+  beforeAddSignTask,
+  afterAddSignTask,
 } from '@/pages/tasks/services/FormDetailService';
 import { ReturnCode } from '@/utils/utils';
 
@@ -42,10 +44,16 @@ const FormDetailModel: FormDetailModelType = {
   },
   effects: {
     *doApprove({ payload }, { call, put }) {
+      debugger;
       if (payload.type === 'ZB') {
         const response = yield call(turnTask, payload);
       } else if (payload.type === 'WP') {
         const response = yield call(delegateTask, payload);
+      } else if (payload.type === 'QJQ') {
+        const response = yield call(beforeAddSignTask, payload);
+      } else if (payload.type === 'HJQ') {
+        const response = yield call(afterAddSignTask, payload);
+      } else if (payload.type === 'BH') {
       }
       // 关闭弹窗
       yield put({

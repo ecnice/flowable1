@@ -29,6 +29,7 @@ class ModulesList extends Component<any, any> {
 
   doDeploy(modelId: string) {
     const { dispatch } = this.props;
+    debugger;
     dispatch({
       type: 'modules/deploy',
       payload: {
