@@ -61,7 +61,7 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
     @Override
     public ModelRepresentation addModel(ModelVo modelVo, ModelRepresentation model) {
         InputStream inputStream = new ByteArrayInputStream(modelVo.getXml().getBytes());
-        return this.createModel(inputStream, model, modelVo.getProcessName());
+        return this.createModel(inputStream, model);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
         if (fileName != null && (fileName.endsWith(".bpmn") || fileName.endsWith(".bpmn20.xml"))) {
             try {
                 InputStream inputStream = file.getInputStream();
-                return this.createModel(inputStream, model, fileName);
+                return this.createModel(inputStream, model);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -80,7 +80,7 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
         return model;
     }
 
-    private ModelRepresentation createModel(InputStream inputStream, ModelRepresentation model, String fileName) {
+    private ModelRepresentation createModel(InputStream inputStream, ModelRepresentation model) {
         try {
             XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
             InputStreamReader xmlIn = new InputStreamReader(inputStream, "UTF-8");
@@ -94,6 +94,7 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 errors.forEach(ve -> es.append(ve.toString()).append("/n"));
                 throw new BadRequestException("模板验证失败，原因: " + es.toString());
             }
+            String fileName = bpmnModel.getMainProcess().getName();
             if (CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
                 throw new BadRequestException("No process found in definition " + fileName);
             }
@@ -136,8 +137,8 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            LOGGER.error("Import failed for {}", fileName, e);
-            throw new BadRequestException("Import failed for " + fileName + ", error message " + e.getMessage());
+            LOGGER.error("Import failed for {}", e);
+            throw new BadRequestException("Import failed for , error message " + e.getMessage());
         }
     }
 }
