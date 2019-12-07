@@ -14,6 +14,7 @@ import EditingTools from './BpmnEditor/EditingTools';
 import BpmnModeler from './BpmnEditor/Modeler';
 import { diagramXML } from './BpmnEditor/sources/xml';
 import styles from './BpmnEditor/sources/Bpmn.less';
+import { ReturnCode } from '../../../utils/utils';
 
 @connect(({ processManage, loading }) => ({
   processManage,
@@ -158,17 +159,20 @@ class ProcessDesign extends Component {
       console.log(data);
       svg_xml = data;
     });
-    alert(json_xml);
-    return;
+
     dispatch({
       type: 'processManage/updateBPMN',
       payload: {
-        id: params.id,
-        json_xml,
-        svg_xml,
+        processId: params.id == 0 ? '' : params.id,
+        xml: json_xml,
       },
-      callback: () => {
-        this.handleBack(); // 返回列表页
+      callback: res => {
+        if (ReturnCode.SUCCESS === res.code) {
+          message.success('保存成功！');
+          this.handleBack(); // 返回列表页
+        } else {
+          message.error('保存失败！' + res.msg);
+        }
       },
     });
   };
@@ -248,7 +252,6 @@ class ProcessDesign extends Component {
   // 返回列表
   handleBack() {
     // TODO 保存成功后返回列表
-    message.success('保存成功！');
     router.push('/modules');
   }
 

@@ -60,10 +60,11 @@ export async function updateBPMN(params) {
   //     method: 'POST',
   //     body: params,
   // });
-  // TODO 执行流程图保存动作
-  return request(`/server/rest/definition/processFile/xml/save`, {
+  debugger;
+  return request(`/server/rest/model/addModel`, {
     method: 'POST',
-    body: params,
+    requestType: 'json',
+    data: params,
   });
 }
 // 初始化流程下拉框
