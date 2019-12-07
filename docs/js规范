@@ -1,0 +1,13 @@
+#### 组件命名说明
+>组件，页面大驼峰命名  如：组件：BackStep.tsx 页面：UserList.tsx
+>model,service 小驼峰命名
+如：model:userInfoModel.ts
+   service:userInfoService.ts
+
+>路由全部小写，以中划线连接
+如：path: '/engine/modules/diagram/process-manage/edit/:id',
+
+>列表页面以 【List】结尾 如：UserInfoList.tsx
+>弹出层全名 【Modal】结尾 如：UserInfoModal.tsx
+>详情页面以 【Detail】结尾 如：UserInfoDetail.tsx
+>输入页面以 【Form】结尾 如：UserInfoForm.tsx

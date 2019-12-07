@@ -5,6 +5,7 @@ import com.dragon.flow.service.flowable.IFlowableProcessInstanceService;
 import com.dragon.flow.service.flowable.IFlowableTaskService;
 import com.dragon.flow.vo.flowable.*;
 import com.dragon.flow.vo.flowable.ret.CommentVo;
+import com.dragon.flow.vo.flowable.ret.FlowNodeVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.vo.ReturnVo;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
@@ -210,5 +211,17 @@ public class    ApiFormDetailReource extends BaseResource {
             LOGGER.error("ApiFormDetailReource-image:" + e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 获取可驳回节点列表
+     * @param processInstanceId 流程实例id
+     * @return
+     */
+    @GetMapping(value = "/getBackNodesByProcessInstanceId/{processInstanceId}")
+    public List<FlowNodeVo> getBackNodesByProcessInstanceId(@PathVariable String processInstanceId) {
+        List<FlowNodeVo> datas = flowableTaskService.getBackNodesByProcessInstanceId(processInstanceId);
+        return datas;
+
     }
 }

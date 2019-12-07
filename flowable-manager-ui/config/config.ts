@@ -102,7 +102,6 @@ export default {
             {
               path: '/engine',
               name: '引擎管理',
-              hideInMenu: false,
               routes: [
                 {
                   path: '/engine/modules',
