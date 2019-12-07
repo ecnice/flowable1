@@ -110,6 +110,13 @@ export default {
               hideChildrenInMenu: true,
             },
             {
+              path: '/modules/diagram/processManage/edit/:id',
+              name: '流程设计',
+              icon: 'smile',
+              component: './diagram/ProcessManage/ProcessDesign',
+              hideInMenu: true,
+            },
+            {
               path: '/defintions',
               name: '定义管理',
               icon: 'smile',
@@ -144,6 +151,7 @@ export default {
               icon: 'smile',
               component: './modules/ModulesEditor',
             },
+
             {
               component: './404',
             },
@@ -154,7 +162,6 @@ export default {
         },
       ],
     },
-
     {
       component: './404',
     },
