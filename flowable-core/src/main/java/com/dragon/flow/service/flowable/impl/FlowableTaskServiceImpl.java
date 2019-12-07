@@ -198,21 +198,21 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             boolean flag = false;
             if (CollectionUtils.isNotEmpty(identityLinks)) {
                 for (IdentityLink link : identityLinks) {
-                    if (IdentityLinkType.CANDIDATE.equals(link.getTaskId())) {
+                    if (IdentityLinkType.CANDIDATE.equals(link.getType())) {
                         flag = true;
                         break;
                     }
                 }
             }
-            //2.签收
+            //2.反签收
             if (flag) {
                 taskService.claim(claimTaskVo.getTaskId(), null);
-                returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "签收成功");
+                returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "反签收成功");
             } else {
                 returnVo = new ReturnVo<>(ReturnCode.FAIL, "由于没有候选人或候选组,会导致任务无法认领,请确认.");
             }
         } else {
-            returnVo = new ReturnVo<>(ReturnCode.FAIL, "签收失败");
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, "反签收失败");
         }
         return returnVo;
     }

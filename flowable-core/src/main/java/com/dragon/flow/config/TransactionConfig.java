@@ -46,6 +46,7 @@ public class TransactionConfig {
         properties.setProperty("complete*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("turn*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("claim*", "PROPAGATION_REQUIRED,-Exception");
+        properties.setProperty("unClaim*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("back*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("deploy*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("set*", "PROPAGATION_REQUIRED,-Exception");
@@ -56,6 +57,7 @@ public class TransactionConfig {
         properties.setProperty("sync*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("review*", "PROPAGATION_REQUIRED,-Exception");
         properties.setProperty("copy*", "PROPAGATION_REQUIRED,-Exception");
+
         /*************************   flowable   **************************/
         properties.setProperty("query*", "PROPAGATION_REQUIRED,-Exception,readOnly");
         properties.setProperty("find*", "PROPAGATION_REQUIRED,-Exception,readOnly");
