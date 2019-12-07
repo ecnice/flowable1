@@ -13,6 +13,13 @@ export async function deployModules(params): Promise<any> {
   });
 }
 
+export async function addModel(params): Promise<any> {
+  return request('/server/rest/model/addModel', {
+    method: 'POST',
+    params: params,
+  });
+}
+
 export async function queryCurrent(): Promise<any> {
   return request('/server/app/rest/account');
 }

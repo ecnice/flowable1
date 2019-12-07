@@ -2,6 +2,7 @@ package com.dragon.flow.rest.api;
 
 import com.dragon.flow.service.flowable.FlowProcessDiagramGenerator;
 import com.dragon.flow.service.flowable.IFlowableModelService;
+import com.dragon.flow.vo.flowable.ModelVo;
 import com.dragon.tools.common.ReturnCode;
 import com.dragon.tools.pager.PagerModel;
 import com.dragon.tools.vo.ReturnVo;
@@ -73,6 +74,15 @@ public class ApiFlowableModelResource extends BaseResource {
             abstractModel.setCreatedBy(user.getFirstName());
         });
         returnVo.setData(pm);
+        return returnVo;
+    }
+
+    @PostMapping(value = "/addModel")
+    public ReturnVo<String> addModel(ModelVo params) {
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
+        ModelRepresentation model = new ModelRepresentation();
+        model.setTenantId("flow");
+        flowableModelService.addModel(params, model);
         return returnVo;
     }
 
