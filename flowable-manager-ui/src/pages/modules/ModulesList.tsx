@@ -40,7 +40,7 @@ class ModulesList extends Component<any, any> {
   }
 
   doEditByModelId(modelId: string) {
-    router.push(`/modules/diagram/processManage/edit/${modelId}`);
+    router.push(`/engine/modules/diagram/processManage/edit/${modelId}`);
   }
 
   doLoadXmlByModelId(modelId) {
@@ -52,7 +52,7 @@ class ModulesList extends Component<any, any> {
   }
 
   addModel() {
-    router.push('/modules/diagram/processManage/edit/0');
+    router.push('/engine/modules/diagram/processManage/edit/0');
   }
 
   render() {

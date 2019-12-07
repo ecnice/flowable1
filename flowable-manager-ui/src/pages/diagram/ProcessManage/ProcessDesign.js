@@ -252,7 +252,7 @@ class ProcessDesign extends Component {
   // 返回列表
   handleBack() {
     // TODO 保存成功后返回列表
-    router.push('/modules');
+    router.push('/engine/modules');
   }
 
   // 关闭流程图弹窗

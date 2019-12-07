@@ -98,63 +98,62 @@ export default {
           component: '../layouts/BasicLayout',
           authority: ['admin', 'user'],
           routes: [
+            { path: '/', redirect: '/engine/modules' },
             {
-              path: '/',
-              name:'引擎管理',
+              path: '/engine',
+              name: '引擎管理',
               hideInMenu: false,
               hideChildrenInMenu: false,
-              routes:[
+              routes: [
                 {
-                  path: '/modules',
+                  path: '/engine/modules',
                   name: '模版管理',
                   icon: 'smile',
                   component: './modules/ModulesList',
                   hideChildrenInMenu: true,
                 },
                 {
-                  path: '/modules/diagram/processManage/edit/:id',
+                  path: '/engine/modules/diagram/processManage/edit/:id',
                   name: '流程设计',
                   icon: 'smile',
                   component: './diagram/ProcessManage/ProcessDesign',
                   hideInMenu: true,
                 },
                 {
-                  path: '/defintions',
+                  path: '/engine/defintions',
                   name: '定义管理',
                   icon: 'smile',
                   component: './definition/DefinitionList',
                   hideChildrenInMenu: true,
                 },
                 {
-                  path: '/processInstance',
+                  path: '/engine/processInstance',
                   name: '实例管理',
                   icon: 'smile',
                   component: './processInstance/ProcessInstanceList',
                   hideChildrenInMenu: true,
                 },
                 {
-                  path: '/tasks',
+                  path: '/engine/tasks',
                   name: '任务管理',
                   icon: 'smile',
                   component: './tasks/tasksList',
                   hideChildrenInMenu: true,
                 },
-              ]
+              ],
             },
 
             {
-              path: '/leave',
-              name: '请假管理',
-              icon: 'smile',
-              component: './leave/leaveList',
-              hideChildrenInMenu: true,
-            },
-            {
-              path: '/modules/editor/:modelId',
-              hideInMenu: true,
-              name: 'modulesEditor',
-              icon: 'smile',
-              component: './modules/ModulesEditor',
+              path: '/demo',
+              name: 'DOME测试',
+              routes: [
+                {
+                  name: '请假',
+                  icon: 'smile',
+                  path: '/demo/leave',
+                  component: './leave/leaveList',
+                },
+              ],
             },
 
             {
@@ -162,6 +161,13 @@ export default {
             },
           ],
         },
+        {
+          path: '/',
+          component: '../layouts/BasicLayout',
+          authority: ['admin', 'user'],
+          routes: [],
+        },
+
         {
           component: './404',
         },
