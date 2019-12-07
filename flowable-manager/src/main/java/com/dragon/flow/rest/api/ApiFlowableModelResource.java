@@ -79,7 +79,7 @@ public class ApiFlowableModelResource extends BaseResource {
 
     @PostMapping(value = "/addModel")
     public ReturnVo<String> addModel(ModelVo params) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "添加模板成功");
         ModelRepresentation model = new ModelRepresentation();
         model.setTenantId("flow");
         flowableModelService.addModel(params, model);
@@ -88,7 +88,7 @@ public class ApiFlowableModelResource extends BaseResource {
 
     @PostMapping(value = "/import-process-model")
     public ReturnVo<String> importProcessModel(@RequestParam("file") MultipartFile file) {
-        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
+        ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "导入模板成功");
         ModelRepresentation model = new ModelRepresentation();
         model.setTenantId("flow");
         flowableModelService.importProcessModel(file, model);
