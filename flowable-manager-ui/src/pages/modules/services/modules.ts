@@ -1,5 +1,4 @@
 import request from '@/utils/request';
-import { LoginParamsType } from '@/services/login';
 
 export async function queryModules(): Promise<any> {
   return request('/server/rest/model/page-model');

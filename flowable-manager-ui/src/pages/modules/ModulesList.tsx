@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { message, Card, Table, Button, Upload, Icon, Popconfirm } from 'antd';
+import { Button, Card, Icon, message, Popconfirm, Table, Upload } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import styles from './modules.less';
@@ -39,8 +39,8 @@ class ModulesList extends Component<any, any> {
     // this.doFetchData();
   }
 
-  doEdit(modelId: string) {
-    router.push(`/modules/editor/${modelId}`);
+  doEditByModelId(modelId: string) {
+    router.push(`/modules/diagram/processManage/edit/${modelId}`);
   }
 
   doLoadXmlByModelId(modelId) {
@@ -49,6 +49,10 @@ class ModulesList extends Component<any, any> {
 
   doLoadPngByModelId(modelId) {
     window.open(`/server/rest/model/loadPngByModelId/${modelId}`);
+  }
+
+  addModel() {
+    router.push('/modules/diagram/processManage/edit/0');
   }
 
   render() {
@@ -71,6 +75,8 @@ class ModulesList extends Component<any, any> {
               <a onClick={() => this.doLoadXmlByModelId(record.id)}>查看XML</a>
               &nbsp;&nbsp;
               <a onClick={() => this.doLoadPngByModelId(record.id)}>查看图片</a>
+              &nbsp;&nbsp;
+              <a onClick={() => this.doEditByModelId(record.id)}>编辑</a>
             </div>
           ) : null,
       },
@@ -154,6 +160,11 @@ class ModulesList extends Component<any, any> {
                 导入模板
               </Button>
             </Upload>
+            &nbsp;&nbsp;
+            <Button type="primary" onClick={this.addModel}>
+              <Icon type="plus" />
+              新建
+            </Button>
           </div>
           <Table
             bordered

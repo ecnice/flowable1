@@ -1,0 +1,73 @@
+@import '~antd/lib/style/themes/default.less';
+@import '~@/utils/utils.less';
+
+.processCard {
+  :global {
+    .ant-list-item {
+      flex-wrap: wrap;
+      padding: 0;
+    }
+    .ant-list-item-meta {
+      flex: 0;
+      margin: 10px 40px 10px 0;
+    }
+    .ant-list-item-meta-content {
+      width: 300px;
+    }
+    .ant-avatar-lg {
+      width: 48px;
+      height: 48px;
+      margin-right: 12px;
+      border-radius: 8px;
+    }
+    .ant-list-item-meta-title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .ant-list-item-action {
+      min-width: 200px;
+      margin: 10px 0 10px 40px;
+    }
+  }
+  & + & {
+    margin-top: 20px;
+  }
+  .invalidIcon {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;
+  }
+}
+
+.listContent {
+  flex: 1;
+  min-width: 180px;
+  margin: 10px 0;
+  padding-left: 40px;
+  font-size: 0;
+  border-left: 1px solid #d9d9d9;
+  .listContentItem {
+    display: inline-block;
+    color: @text-color-secondary;
+    font-size: @font-size-base;
+    vertical-align: middle;
+    > span {
+      line-height: 20px;
+    }
+    > p {
+      margin-top: 4px;
+      margin-bottom: 0;
+      line-height: 22px;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-xs) {
+  .listContent {
+    margin-left: 10px;
+  }
+}
