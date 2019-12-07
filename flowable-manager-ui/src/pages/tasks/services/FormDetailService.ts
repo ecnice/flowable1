@@ -7,7 +7,7 @@ export async function commentsByProcessInstanceId(params: any): Promise<any> {
   });
 }
 
-export async function complete(params: any): Promise<any> {
+export async function completeTask(params: any): Promise<any> {
   return request(`/server/rest/formdetail/complete`, {
     method: 'POST',
     params: params,
@@ -37,6 +37,20 @@ export async function turnTask(params: any): Promise<any> {
 
 export async function delegateTask(params: any): Promise<any> {
   return request(`/server/rest/formdetail/delegateTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
+export async function claimTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/claimTask`, {
+    method: 'POST',
+    params: params,
+  });
+}
+
+export async function unClaimTask(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/unClaimTask`, {
     method: 'POST',
     params: params,
   });

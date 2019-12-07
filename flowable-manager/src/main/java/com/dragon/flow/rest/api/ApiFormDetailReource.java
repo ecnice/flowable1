@@ -137,6 +137,32 @@ public class    ApiFormDetailReource extends BaseResource {
     }
 
     /**
+     * 签收
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/claimTask")
+    public ReturnVo<String> claimTask(ClaimTaskVo params) {
+        params.setUserCode(this.getLoginUser().getId());
+        ReturnVo<String> returnVo = flowableTaskService.claimTask(params);
+        return returnVo;
+    }
+
+    /**
+     * 反签收
+     *
+     * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/unClaimTask")
+    public ReturnVo<String> unClaimTask(ClaimTaskVo params) {
+        params.setUserCode(this.getLoginUser().getId());
+        ReturnVo<String> returnVo = flowableTaskService.unClaimTask(params);
+        return returnVo;
+    }
+
+    /**
      * 向前加签
      *
      * @param params 参数

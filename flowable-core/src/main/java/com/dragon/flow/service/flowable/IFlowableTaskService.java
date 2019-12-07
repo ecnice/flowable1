@@ -23,7 +23,7 @@ import java.util.List;
 public interface IFlowableTaskService {
 
     /**
-     * 驳回任意节点
+     * 驳回任意节点 暂时没有考虑子流程
      *
      * @param backTaskVo 参数
      * @return

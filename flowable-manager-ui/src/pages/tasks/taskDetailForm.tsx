@@ -97,57 +97,22 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
   };
 
-  //审批
-  complete = () => {
-    if (this.state.note != null && this.state.note != '') {
-      const { dispatch, formInfo, callBack } = this.props;
-      dispatch({
-        type: 'formDetail/fetchComplete',
-        payload: {
-          message: this.state.note,
-          taskId: formInfo.taskId,
-          processInstanceId: formInfo.processInstanceId,
-          type: 'SP',
-        },
-        callback: callBack,
-      });
-    } else {
-      message.warn('请填写意见!');
-    }
+  //审批没有弹出框
+  doApproveNoModel = item => {
+    const { dispatch, formInfo, callBack } = this.props;
+    const data = {
+      taskId: formInfo.taskId,
+      processInstanceId: formInfo.processInstanceId,
+      message: this.state.note,
+      type: item.type,
+    };
+    dispatch({
+      type: 'formDetail/doApproveNoModel',
+      payload: data,
+      callback: callBack,
+    });
   };
-
-  stopProcess = () => {
-    if (this.state.note != null && this.state.note != '') {
-      const { dispatch, formInfo, callBack } = this.props;
-      dispatch({
-        type: 'formDetail/fetchStopProcess',
-        payload: {
-          message: this.state.note,
-          processInstanceId: formInfo.processInstanceId,
-        },
-        callback: callBack,
-      });
-    } else {
-      message.warn('请填写意见!');
-    }
-  };
-  //撤回
-  revokeProcess = () => {
-    if (this.state.note != null && this.state.note != '') {
-      const { dispatch, formInfo, callBack } = this.props;
-      dispatch({
-        type: 'formDetail/fetchRevokeProcess',
-        payload: {
-          message: this.state.note,
-          processInstanceId: formInfo.processInstanceId,
-        },
-        callback: callBack,
-      });
-    } else {
-      message.warn('请填写意见!');
-    }
-  };
-
+  //审批并选择人员
   doApprove = e => {
     const { dispatch, formInfo, callBack } = this.props;
     this.setState({ approveModal: { open: false } });
@@ -158,7 +123,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
     const data = {
       taskId: formInfo.taskId,
-      processInstanceId: formInfo.processInstanceId,
+      processInstanceId: formInfo.processIdoApprovenstanceId,
       message: e.approveMsg,
       userCodes: userIds,
       type: e.type,
@@ -221,6 +186,30 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       ];
     };
 
+    //没有弹出层
+    const ctrlOptionsNoModel = [
+      {
+        buttonText: '审批',
+        type: 'SP',
+      },
+      {
+        buttonText: '签收',
+        type: 'QS',
+      },
+      {
+        buttonText: '反签收',
+        type: 'FQS',
+      },
+      {
+        buttonText: '撤回',
+        type: 'CH',
+      },
+      {
+        buttonText: '终止',
+        type: 'ZZ',
+      },
+    ];
+    //有弹出层
     const ctrlOptions = [
       {
         buttonText: '转办',
@@ -236,6 +225,16 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         buttonText: '委派',
         showTitle: '委派',
         type: 'WP',
+        handelClick: e => {
+          this.setState({
+            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: false },
+          });
+        },
+      },
+      {
+        buttonText: '签收',
+        showTitle: '签收',
+        type: 'QS',
         handelClick: e => {
           this.setState({
             approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: false },
@@ -276,7 +275,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
 
     return (
       <Modal
-        width={800}
+        width={950}
         bodyStyle={{ padding: '10px 15px 10px' }}
         destroyOnClose
         title={modalTitle}
@@ -297,7 +296,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
               <div className={styles.handelTask}>
-                <Button type="primary" onClick={this.complete}>
+                {/*<Button type="primary" onClick={this.complete}>
                   审批
                 </Button>
                 <Button type="primary" onClick={this.stopProcess}>
@@ -305,7 +304,20 @@ class TaskDetailForm extends PureComponent<IProps, any> {
                 </Button>
                 <Button type="primary" onClick={this.revokeProcess}>
                   撤回
-                </Button>
+                </Button>*/}
+                {ctrlOptionsNoModel.map(item => {
+                  return (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        this.doApproveNoModel(item);
+                      }}
+                    >
+                      {item.buttonText}
+                    </Button>
+                  );
+                })}
+                |&nbsp;&nbsp;
                 {ctrlOptions.map(item => {
                   return (
                     <Button
