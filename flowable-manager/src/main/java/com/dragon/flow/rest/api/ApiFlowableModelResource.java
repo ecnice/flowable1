@@ -51,7 +51,6 @@ import java.util.List;
 @RequestMapping("/rest/model")
 public class ApiFlowableModelResource extends BaseResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiFlowableModelResource.class);
-    protected BpmnXMLConverter bpmnXmlConverter = new BpmnXMLConverter();
     @Autowired
     private IFlowableModelService flowableModelService;
     @Autowired
@@ -82,7 +81,12 @@ public class ApiFlowableModelResource extends BaseResource {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         ModelRepresentation model = new ModelRepresentation();
         model.setTenantId("flow");
-        flowableModelService.addModel(params, model);
+        try {
+            flowableModelService.addModel(params, model);
+        }catch (BadRequestException e){
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, e.getMessage());
+        }
+
         return returnVo;
     }
 
@@ -91,7 +95,11 @@ public class ApiFlowableModelResource extends BaseResource {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
         ModelRepresentation model = new ModelRepresentation();
         model.setTenantId("flow");
-        flowableModelService.importProcessModel(file, model);
+        try {
+            flowableModelService.importProcessModel(file, model);
+        }catch (BadRequestException e){
+            returnVo = new ReturnVo<>(ReturnCode.FAIL, e.getMessage());
+        }
         return returnVo;
     }
 
@@ -126,33 +134,6 @@ public class ApiFlowableModelResource extends BaseResource {
         }
         return returnVo;
     }
-
-    /**
-     * 通过文件转化成BpmnModel
-     *
-     * @param file 上传的文件
-     * @return
-     * @throws Exception
-     */
-    private BpmnModel getBpmnModelByFile(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        if (fileName != null && (fileName.endsWith(".bpmn") || fileName.endsWith(".bpmn20.xml"))) {
-            try {
-                XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
-                InputStreamReader xmlIn = new InputStreamReader(file.getInputStream(), "UTF-8");
-                XMLStreamReader xtr = xif.createXMLStreamReader(xmlIn);
-                BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(xtr);
-                if (CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
-                    throw new BadRequestException("No process found in definition " + fileName);
-                }
-                return bpmnModel;
-            } catch (Exception e) {
-                LOGGER.error("转化失败", e);
-            }
-        }
-        return null;
-    }
-
     /**
      * 显示xml
      *

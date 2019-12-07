@@ -4,7 +4,6 @@ import { message } from 'antd';
 
 import {
   commentsByProcessInstanceId,
-  complete,
   image,
   stopProcess,
   revokeProcess,
@@ -12,6 +11,9 @@ import {
   delegateTask,
   beforeAddSignTask,
   afterAddSignTask,
+  completeTask,
+  claimTask,
+  unClaimTask,
 } from '@/pages/tasks/services/FormDetailService';
 import { ReturnCode } from '@/utils/utils';
 
@@ -30,6 +32,7 @@ export interface FormDetailModelType {
     fetchProcessImage: Effect;
     fetchRevokeProcess: Effect;
     doApprove: Effect;
+    doApproveNoModel: Effect;
   };
   reducers: {
     saveCommentList: Reducer<FormDetailModelState>;
@@ -44,30 +47,89 @@ const FormDetailModel: FormDetailModelType = {
   },
   effects: {
     *doApprove({ payload }, { call, put }) {
-      debugger;
-      if (payload.type === 'ZB') {
-        const response = yield call(turnTask, payload);
-      } else if (payload.type === 'WP') {
-        const response = yield call(delegateTask, payload);
-      } else if (payload.type === 'QJQ') {
-        const response = yield call(beforeAddSignTask, payload);
-      } else if (payload.type === 'HJQ') {
-        const response = yield call(afterAddSignTask, payload);
-      } else if (payload.type === 'BH') {
-      }
+      let response = {
+        code: ReturnCode.FAIL,
+        msg: '操作失败',
+      };
       // 关闭弹窗
-      yield put({
-        type: 'tasks/showHandleTaskModal',
-        payload: {
-          modalTitle: '',
-          modalVisible: false,
-        },
-      });
-      //查询待办任务
-      yield put({
-        type: 'tasks/fetchApplyingTasks',
-        payload: {},
-      });
+      const closeUserWindow = () => {
+        return put({
+          type: 'tasks/showHandleTaskModal',
+          payload: {
+            modalTitle: '',
+            modalVisible: false,
+          },
+        });
+      };
+      //执行操作
+      switch (payload.type) {
+        case 'ZB':
+          response = yield call(turnTask, payload);
+          break;
+        case 'WP':
+          response = yield call(delegateTask, payload);
+          break;
+        case 'QJQ':
+          response = yield call(beforeAddSignTask, payload);
+          break;
+        case 'HJQ':
+          response = yield call(afterAddSignTask, payload);
+          break;
+        default:
+          break;
+      }
+      if (response.code === ReturnCode.SUCCESS) {
+        message.success(response.msg);
+        yield closeUserWindow();
+        //查询待办任务
+        yield put({
+          type: 'tasks/fetchApplyingTasks',
+          payload: {},
+        });
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *doApproveNoModel({ payload, callback }, { call, put }) {
+      if (!payload.message) {
+        message.warn('请填写审批意见!');
+        return;
+      }
+      let response = {
+        code: ReturnCode.FAIL,
+        msg: '操作失败',
+      };
+      //执行操作
+      switch (payload.type) {
+        case 'SP':
+          response = yield call(completeTask, payload);
+          break;
+        case 'CH':
+          response = yield call(revokeProcess, payload);
+          break;
+        case 'ZZ':
+          response = yield call(stopProcess, payload);
+          break;
+        case 'QS':
+          response = yield call(claimTask, payload);
+          break;
+        case 'FQS':
+          response = yield call(unClaimTask, payload);
+          break;
+        default:
+          break;
+      }
+      if (response.code === ReturnCode.SUCCESS) {
+        message.success(response.msg);
+        callback();
+        //查询待办任务
+        yield put({
+          type: 'tasks/fetchApplyingTasks',
+          payload: {},
+        });
+      } else {
+        message.error(response.msg);
+      }
     },
     *fetchCommentList({ payload }, { call, put }) {
       const response = yield call(commentsByProcessInstanceId, payload);
@@ -75,33 +137,6 @@ const FormDetailModel: FormDetailModelType = {
         type: 'saveCommentList',
         payload: response,
       });
-    },
-    *fetchComplete({ payload, callback }, { call, put }) {
-      const response = yield call(complete, payload);
-      if (response.code === ReturnCode.SUCCESS) {
-        message.success(response.msg);
-        callback();
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *fetchStopProcess({ payload, callback }, { call, put }) {
-      const response = yield call(stopProcess, payload);
-      if (response.code === ReturnCode.SUCCESS) {
-        message.success(response.msg);
-        callback();
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *fetchRevokeProcess({ payload, callback }, { call, put }) {
-      const response = yield call(revokeProcess, payload);
-      if (response.code === ReturnCode.SUCCESS) {
-        message.success(response.msg);
-        callback();
-      } else {
-        message.error(response.msg);
-      }
     },
     *fetchProcessImage({ payload }, { call, put }) {
       const response = yield call(image, payload);
