@@ -103,14 +103,12 @@ export default {
               path: '/engine',
               name: '引擎管理',
               hideInMenu: false,
-              hideChildrenInMenu: false,
               routes: [
                 {
                   path: '/engine/modules',
                   name: '模版管理',
                   icon: 'smile',
                   component: './modules/ModulesList',
-                  hideChildrenInMenu: true,
                 },
                 {
                   path: '/engine/modules/diagram/processManage/edit/:id',
@@ -124,21 +122,18 @@ export default {
                   name: '定义管理',
                   icon: 'smile',
                   component: './definition/DefinitionList',
-                  hideChildrenInMenu: true,
                 },
                 {
                   path: '/engine/processInstance',
                   name: '实例管理',
                   icon: 'smile',
                   component: './processInstance/ProcessInstanceList',
-                  hideChildrenInMenu: true,
                 },
                 {
                   path: '/engine/tasks',
                   name: '任务管理',
                   icon: 'smile',
                   component: './tasks/tasksList',
-                  hideChildrenInMenu: true,
                 },
               ],
             },
