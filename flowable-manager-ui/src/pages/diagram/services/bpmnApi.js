@@ -56,11 +56,6 @@ export async function findBPMNById(params) {
 }
 // 新增编辑流程设计模板
 export async function updateBPMN(params) {
-  // return request(`/api/activiti/save/bpmn`, {
-  //     method: 'POST',
-  //     body: params,
-  // });
-  debugger;
   return request(`/server/rest/model/addModel`, {
     method: 'POST',
     requestType: 'json',

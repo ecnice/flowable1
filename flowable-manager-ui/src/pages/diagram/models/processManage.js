@@ -49,13 +49,15 @@ export default {
     },
     // 查询流程设计
     *findBPMNById({ payload, callback }, { call }) {
-      const response = yield call(findBPMNById, payload);
-      const newResponse = {
+      let newResponse = {
         code: 200,
         msg: 'success',
-        data: response,
+        data: '',
       };
-      debugger;
+      if(payload.id){
+        const response = yield call(findBPMNById, payload);
+        newResponse.data = response;
+      }
       if (callback) callback(newResponse.data);
     },
     // 保存流程设计
