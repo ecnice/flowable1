@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import styles from './modules.less';
 import router from 'umi/router';
 import moment from 'moment';
+import { ReturnCode } from '@/utils/utils';
 
 @connect(({ modules, loading }: any) => ({
   modules: modules.modules,
@@ -138,8 +139,13 @@ class ModulesList extends Component<any, any> {
           console.log(info.file, info.fileList);
         }
         if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-          _that.doFetchData();
+          console.log(info.file.response);
+          if (info.file.response.code === ReturnCode.SUCCESS) {
+            message.success(`${info.file.name}文件上传成功！`);
+            _that.doFetchData();
+          } else {
+            message.error(`${info.file.name}文件上传失败，原因：${info.file.response.msg}`);
+          }
         } else if (info.file.status === 'error') {
           message.error(`${info.file.name} file upload failed.`);
         }
