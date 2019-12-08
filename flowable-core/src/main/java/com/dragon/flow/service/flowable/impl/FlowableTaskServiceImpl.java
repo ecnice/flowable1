@@ -136,7 +136,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 //1.2 设置任务为空执行者
                 taskService.saveTask(taskEntity);
             }
-            //2.添加加签表中
+            //2.添加加签数据
             this.createSignSubTasks(addSignTaskVo, taskEntity);
             //3.添加审批意见
             String type = flag ? CommentTypeEnum.HJQ.toString() : CommentTypeEnum.QJQ.toString();

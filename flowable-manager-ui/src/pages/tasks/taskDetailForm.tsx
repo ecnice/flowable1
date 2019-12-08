@@ -123,7 +123,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     });
     const data = {
       taskId: formInfo.taskId,
-      processInstanceId: formInfo.processIdoApprovenstanceId,
+      processInstanceId: formInfo.processInstanceId,
       message: e.approveMsg,
       userCodes: userIds,
       type: e.type,
