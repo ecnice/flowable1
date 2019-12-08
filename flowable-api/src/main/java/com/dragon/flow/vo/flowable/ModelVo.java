@@ -14,6 +14,10 @@ public class ModelVo implements Serializable {
     private String processId;
     //流程名称
     private String processName;
+    /**
+     * 分类Id
+     */
+    private String categoryId;
     //流程的xml
     private String xml;
 
@@ -39,5 +43,13 @@ public class ModelVo implements Serializable {
 
     public void setXml(String xml) {
         this.xml = xml;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }

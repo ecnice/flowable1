@@ -2,6 +2,8 @@ package com.dragon.flow.service.flowable.impl;
 
 import com.dragon.flow.service.flowable.IFlowableModelService;
 import com.dragon.flow.vo.flowable.ModelVo;
+import com.dragon.tools.common.ReturnCode;
+import com.dragon.tools.vo.ReturnVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
@@ -59,28 +61,30 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
     protected BpmnJsonConverter bpmnJsonConverter = new BpmnJsonConverter();
 
     @Override
-    public ModelRepresentation addModel(ModelVo modelVo, ModelRepresentation model) {
+    public ReturnVo<String> addModel(ModelVo modelVo) {
         InputStream inputStream = new ByteArrayInputStream(modelVo.getXml().getBytes());
-        return this.createModel(inputStream, model);
+        return this.createModel(inputStream);
     }
 
     @Override
-    public ModelRepresentation importProcessModel(MultipartFile file, ModelRepresentation model) {
+    public ReturnVo<String> importProcessModel(MultipartFile file) {
+        ReturnVo<String> returnVo = new ReturnVo(ReturnCode.SUCCESS,"创建模板成功");
         String fileName = file.getOriginalFilename();
         if (fileName != null && (fileName.endsWith(".bpmn") || fileName.endsWith(".bpmn20.xml"))) {
             try {
                 InputStream inputStream = file.getInputStream();
-                return this.createModel(inputStream, model);
+                return this.createModel(inputStream);
             } catch (IOException e) {
-                e.printStackTrace();
+                returnVo = new ReturnVo(ReturnCode.SUCCESS,"读取文件导入文件出错");
             }
         } else {
-            throw new BadRequestException("Invalid file name, only .bpmn and .bpmn20.xml files are supported not " + fileName);
+            returnVo = new ReturnVo(ReturnCode.SUCCESS,"Invalid file name, only .bpmn and .bpmn20.xml files are supported not " + fileName);
         }
-        return model;
+        return returnVo;
     }
 
-    private ModelRepresentation createModel(InputStream inputStream, ModelRepresentation model) {
+    private ReturnVo<String> createModel(InputStream inputStream) {
+        ReturnVo<String> returnVo = new ReturnVo(ReturnCode.SUCCESS,"创建模板成功");
         try {
             XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
             InputStreamReader xmlIn = new InputStreamReader(inputStream, "UTF-8");
@@ -92,11 +96,11 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
             if (CollectionUtils.isNotEmpty(errors)) {
                 StringBuffer es = new StringBuffer();
                 errors.forEach(ve -> es.append(ve.toString()).append("/n"));
-                throw new BadRequestException("模板验证失败，原因: " + es.toString());
+                return new ReturnVo(ReturnCode.SUCCESS,"模板验证失败，原因: " + es.toString());
             }
             String fileName = bpmnModel.getMainProcess().getName();
             if (CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
-                throw new BadRequestException("No process found in definition " + fileName);
+                return new ReturnVo(ReturnCode.SUCCESS,"No process found in definition " + fileName);
             }
             if (bpmnModel.getLocationMap().size() == 0) {
                 BpmnAutoLayout bpmnLayout = new BpmnAutoLayout(bpmnModel);
@@ -109,36 +113,31 @@ public class FlowableModelServiceImpl implements IFlowableModelService {
                 name = process.getName();
             }
             String description = process.getDocumentation();
-            model.setKey(process.getId());
-            model.setName(name);
-            model.setDescription(description);
-            model.setModelType(AbstractModel.MODEL_TYPE_BPMN);
-
             User createdBy = SecurityUtils.getCurrentUserObject();
             //查询是否已经存在流程模板
             Model newModel = new Model();
-            List<Model> models = modelRepository.findByKeyAndType(model.getKey(), model.getModelType());
+            List<Model> models = modelRepository.findByKeyAndType(process.getId(), AbstractModel.MODEL_TYPE_BPMN);
             if (CollectionUtils.isNotEmpty(models)) {
                 Model updateModel = models.get(0);
                 newModel.setId(updateModel.getId());
             }
-            newModel.setName(model.getName());
-            newModel.setKey(model.getKey());
-            newModel.setModelType(model.getModelType());
+            newModel.setName(name);
+            newModel.setKey(process.getId());
+            newModel.setModelType(AbstractModel.MODEL_TYPE_BPMN);
             newModel.setCreated(Calendar.getInstance().getTime());
             newModel.setCreatedBy(createdBy.getId());
-            newModel.setDescription(model.getDescription());
+            newModel.setDescription(description);
             newModel.setModelEditorJson(modelNode.toString());
             newModel.setLastUpdated(Calendar.getInstance().getTime());
             newModel.setLastUpdatedBy(createdBy.getId());
-            newModel.setTenantId(model.getTenantId());
-            newModel = modelService.createModel(newModel, SecurityUtils.getCurrentUserObject());
-            return new ModelRepresentation(newModel);
+            modelService.createModel(newModel, SecurityUtils.getCurrentUserObject());
+            return returnVo;
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
             LOGGER.error("Import failed for {}", e);
-            throw new BadRequestException("Import failed for , error message " + e.getMessage());
+            returnVo =  new ReturnVo(ReturnCode.SUCCESS,"Import failed for , error message " + e.getMessage());
         }
+        return returnVo;
     }
 }

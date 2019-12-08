@@ -1,6 +1,7 @@
 package com.dragon.flow.service.flowable;
 
 import com.dragon.flow.vo.flowable.ModelVo;
+import com.dragon.tools.vo.ReturnVo;
 import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,16 +16,14 @@ public interface IFlowableModelService {
     /**
      * 导入模型
      * @param file 文件
-     * @param model 模型参数
      * @return
      */
-    public ModelRepresentation importProcessModel(MultipartFile file, ModelRepresentation model);
+    public ReturnVo<String> importProcessModel(MultipartFile file);
 
     /**
      * 添加模型
      * @param modelVo
-     * @param model
      * @return
      */
-    public ModelRepresentation addModel(ModelVo modelVo, ModelRepresentation model);
+    public ReturnVo<String> addModel(ModelVo modelVo);
 }

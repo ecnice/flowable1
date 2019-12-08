@@ -16,7 +16,9 @@ import org.flowable.engine.repository.Deployment;
 import org.flowable.idm.api.IdmIdentityService;
 import org.flowable.idm.api.User;
 import org.flowable.image.impl.DefaultProcessDiagramGenerator;
+import org.flowable.ui.common.security.SecurityUtils;
 import org.flowable.ui.common.service.exception.BadRequestException;
+import org.flowable.ui.common.tenant.TenantProvider;
 import org.flowable.ui.common.util.XmlUtil;
 import org.flowable.ui.modeler.domain.AbstractModel;
 import org.flowable.ui.modeler.domain.Model;
@@ -61,6 +63,8 @@ public class ApiFlowableModelResource extends BaseResource {
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
     @Autowired
     private IdentityService identityService;
+    @Autowired
+    private TenantProvider tenantProvider;
 
 
     @GetMapping(value = "/page-model")
@@ -79,10 +83,8 @@ public class ApiFlowableModelResource extends BaseResource {
     @PostMapping(value = "/addModel")
     public ReturnVo<String> addModel(@RequestBody ModelVo params) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        ModelRepresentation model = new ModelRepresentation();
-        model.setTenantId("flow");
         try {
-            flowableModelService.addModel(params, model);
+            flowableModelService.addModel(params);
         }catch (BadRequestException e){
             returnVo = new ReturnVo<>(ReturnCode.FAIL, e.getMessage());
         }
@@ -93,10 +95,8 @@ public class ApiFlowableModelResource extends BaseResource {
     @PostMapping(value = "/import-process-model")
     public ReturnVo<String> importProcessModel(@RequestParam("file") MultipartFile file) {
         ReturnVo<String> returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "OK");
-        ModelRepresentation model = new ModelRepresentation();
-        model.setTenantId("flow");
         try {
-            flowableModelService.importProcessModel(file, model);
+            flowableModelService.importProcessModel(file);
         }catch (BadRequestException e){
             returnVo = new ReturnVo<>(ReturnCode.FAIL, e.getMessage());
         }
