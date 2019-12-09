@@ -63,9 +63,6 @@ public class ApiFlowableModelResource extends BaseResource {
     private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
     @Autowired
     private IdentityService identityService;
-    @Autowired
-    private TenantProvider tenantProvider;
-
 
     @GetMapping(value = "/page-model")
     public ReturnVo<PagerModel<AbstractModel>> pageModel() {

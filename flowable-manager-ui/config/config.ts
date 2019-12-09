@@ -147,6 +147,12 @@ export default {
                   path: '/demo/leave',
                   component: './leave/leaveList',
                 },
+                {
+                  name: '采购',
+                  icon: 'smile',
+                  path: '/demo/purchase',
+                  component: './purchase/PurchaseList',
+                },
               ],
             },
 

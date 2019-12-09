@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dragon.flow.dao.leave.IPurchaseDao" >
+    <resultMap id="PurchaseMap" type="com.dragon.flow.model.leave.Purchase" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="money" property="money" jdbcType="DOUBLE" />
+        <result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        process_instance_id,
+        title,
+        content,
+        money,
+        apply_time
+    </sql>
+
+    <sql id="where">
+        <if test="id != null and id != ''">
+        and id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="title != null and title != ''">
+        and title = #{title,jdbcType=VARCHAR}
+        </if>
+        <if test="content != null and content != ''">
+        and content = #{content,jdbcType=VARCHAR}
+        </if>
+        <if test="money != null">
+        and money = #{money,jdbcType=DOUBLE}
+        </if>
+        <if test="applyTime != null and applyTime != ''">
+        and apply_time = #{applyTime,jdbcType=TIMESTAMP}
+        </if>
+		<!--
+		<if test="startTime!=null and startTime!=''">
+        and create_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+        and create_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+        </if>
+		 -->
+    </sql>
+
+    <select id="getPurchaseById" resultMap="PurchaseMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from tbl_flow_purchase
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getPurchaseByIds" resultMap="PurchaseMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from tbl_flow_purchase
+        where id in(${ids})
+    </select>
+
+    <select id="getPurchaseByIdsList" resultMap="PurchaseMap" parameterType="java.util.List" >
+        select
+        <include refid="Base_Column_List" />
+        from tbl_flow_purchase
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+	        #{item}
+	    </foreach>
+    </select>
+
+    <select id="getAll" parameterType="com.dragon.flow.model.leave.Purchase" resultMap="PurchaseMap">
+        select <include refid="Base_Column_List"/> from tbl_flow_purchase where 1=1
+        <include refid="where" />
+    </select>
+
+    <select id="getPagerModelByQuery" parameterType="com.dragon.flow.model.leave.Purchase" resultMap="PurchaseMap">
+        select <include refid="Base_Column_List"/> from tbl_flow_purchase where 1=1
+        <include refid="where" />
+    </select>
+
+    <select id="getByPageCount" parameterType="com.dragon.flow.model.leave.Purchase" resultType="int">
+        select count(1) from tbl_flow_purchase where 1=1
+        <include refid="where" />
+    </select>
+
+    <insert id="insertPurchase" parameterType="com.dragon.flow.model.leave.Purchase" >
+        insert into tbl_flow_purchase (<include refid="Base_Column_List" />)
+        values (
+        #{id,jdbcType=VARCHAR},
+        #{processInstanceId,jdbcType=VARCHAR},
+        #{title,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{money,jdbcType=DOUBLE},
+        #{applyTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <insert id="insertPurchaseBatch" parameterType="java.util.List">
+        insert into tbl_flow_purchase (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+	        (
+	        #{item.id,jdbcType=VARCHAR},
+            #{item.processInstanceId,jdbcType=VARCHAR},
+	        #{item.title,jdbcType=VARCHAR},
+	        #{item.content,jdbcType=VARCHAR},
+	        #{item.money,jdbcType=DOUBLE},
+	        #{item.applyTime,jdbcType=TIMESTAMP}
+	        )
+        </foreach>
+    </insert>
+
+    <delete id="delPurchaseById" parameterType="java.lang.String" >
+        delete from tbl_flow_purchase
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="delPurchaseByIds" parameterType="java.lang.String" >
+        delete from tbl_flow_purchase
+        where id in(${ids})
+    </delete>
+
+    <delete id="delPurchaseByIdsList" parameterType="java.util.List" >
+        delete from tbl_flow_purchase
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+	        #{item}
+	    </foreach>
+    </delete>
+
+    <update id="updatePurchase" parameterType="com.dragon.flow.model.leave.Purchase" >
+        update tbl_flow_purchase
+        <set>
+            <if test="id != null" >
+                id = #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="money != null" >
+                money = #{money,jdbcType=DOUBLE},
+            </if>
+            <if test="applyTime != null" >
+                apply_time = #{applyTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updatePurchaseByIds" parameterType="java.util.Map">
+        update tbl_flow_purchase
+        <set>
+            <if test="purchase.id != null" >
+                id = #{purchase.id,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.title != null" >
+                title = #{purchase.title,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.content != null" >
+                content = #{purchase.content,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.money != null" >
+                money = #{purchase.money,jdbcType=DOUBLE},
+            </if>
+            <if test="purchase.applyTime != null" >
+                apply_time = #{purchase.applyTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id in(${ids})
+    </update>
+
+    <update id="updatePurchaseByIdsList" parameterType="java.util.Map">
+        update tbl_flow_purchase
+        <set>
+            <if test="purchase.id != null" >
+                id = #{purchase.id,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.title != null" >
+                title = #{purchase.title,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.content != null" >
+                content = #{purchase.content,jdbcType=VARCHAR},
+            </if>
+            <if test="purchase.money != null" >
+                money = #{purchase.money,jdbcType=DOUBLE},
+            </if>
+            <if test="purchase.applyTime != null" >
+                apply_time = #{purchase.applyTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+	        #{item}
+	    </foreach>
+    </update>
+
+    <update id="updatePurchaseList" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" open="" close=";" separator=";">
+		        update tbl_flow_purchase
+		        <set>
+		            <if test="item.id != null" >
+		                id = #{item.id,jdbcType=VARCHAR},
+		            </if>
+		            <if test="item.title != null" >
+		                title = #{item.title,jdbcType=VARCHAR},
+		            </if>
+		            <if test="item.content != null" >
+		                content = #{item.content,jdbcType=VARCHAR},
+		            </if>
+		            <if test="item.money != null" >
+		                money = #{item.money,jdbcType=DOUBLE},
+		            </if>
+		            <if test="item.applyTime != null" >
+		                apply_time = #{item.applyTime,jdbcType=TIMESTAMP}
+		            </if>
+		        </set>
+		        where id = #{item.id,jdbcType=VARCHAR}
+	     </foreach>
+    </update>
+
+</mapper>

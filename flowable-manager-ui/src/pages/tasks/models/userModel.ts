@@ -2,7 +2,6 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
 import { pageModel } from '@/pages/account/services/UserService';
-
 export interface UserModelState {
   userList?: [];
 }
