@@ -62,9 +62,10 @@ const FormDetailModel: FormDetailModelType = {
       });
     },
 
-    *doBackStep({ payload }, { call, put }) {
+    *doBackStep({ payload, callback }, { call, put }) {
       const response = yield call(doBackStep, payload);
       if (response.code === ReturnCode.SUCCESS) {
+        callback();
         yield put({
           type: 'tasks/showHandleTaskModal',
           payload: {

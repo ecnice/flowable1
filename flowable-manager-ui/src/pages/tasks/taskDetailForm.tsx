@@ -153,9 +153,11 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     };
     dispatch({
       type: 'formDetail/doBackStep',
+      callback: () => {
+        this.setState({ backStepModal: { open: false } });
+      },
       payload: data,
     });
-    this.setState({ backStepModal: { open: false } });
   }
 
   render() {
