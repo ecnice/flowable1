@@ -136,6 +136,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     dispatch({
       type: 'formDetail/doApprove',
       payload: data,
+      callback: callBack,
     });
   };
 
@@ -143,21 +144,21 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     this.setState({ note: value });
   };
 
+  //驳回
   onBackStep(e) {
-    const { dispatch, formInfo } = this.props;
+    const { dispatch, formInfo, callBack } = this.props;
     const data = {
       taskId: formInfo.taskId,
-      nodeId: e.nodeId,
-      approveMsg: e.approveMsg,
-      processInstanceId: formInfo.processIdoApprovenstanceId,
+      distFlowElementId: e.nodeId,
+      message: e.approveMsg,
+      processInstanceId: formInfo.processInstanceId,
     };
     dispatch({
       type: 'formDetail/doBackStep',
-      callback: () => {
-        this.setState({ backStepModal: { open: false } });
-      },
       payload: data,
+      callback: callBack,
     });
+    this.setState({ backStepModal: { open: false } });
   }
 
   render() {
@@ -170,6 +171,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       modalTitle,
       loading,
       commentList,
+      formInfo,
     } = this.props;
     const {
       approveModal: { title, open, multiSelect, type },
@@ -399,7 +401,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
           onCancel={() => {
             this.setState({ backStepModal: { open: false } });
           }}
-          processInstanceId="cf484d3e18e911ea9e5bdc8b287b3603"
+          processInstanceId={formInfo.processInstanceId}
           open={this.state.backStepModal.open}
           title="驳回"
           type="BH"

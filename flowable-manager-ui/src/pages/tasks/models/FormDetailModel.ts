@@ -64,6 +64,7 @@ const FormDetailModel: FormDetailModelType = {
 
     *doBackStep({ payload, callback }, { call, put }) {
       const response = yield call(doBackStep, payload);
+      debugger;
       if (response.code === ReturnCode.SUCCESS) {
         callback();
         yield put({

@@ -85,18 +85,25 @@ public abstract class BaseProcessService {
      * @param processInstanceId 流程实例id
      */
     protected void deleteActivity(String disActivityId, String processInstanceId) {
-        List<ActivityInstance> disActivities = runtimeService.createActivityInstanceQuery()
-                .processInstanceId(processInstanceId).activityId(disActivityId).list();
+        String tableName = managementService.getTableName(ActivityInstanceEntity.class);
+        String sql = "select t.* from " + tableName + " t where t.PROC_INST_ID_=#{processInstanceId} and t.ACT_ID_ = #{disActivityId} and t.END_TIME_ is not null";
+        List<ActivityInstance> disActivities = runtimeService.createNativeActivityInstanceQuery().sql(sql)
+                .parameter("processInstanceId",processInstanceId).parameter("disActivityId",disActivityId).list();
         //删除运行时和历史节点信息
         if (CollectionUtils.isNotEmpty(disActivities)) {
             ActivityInstance activityInstance = disActivities.get(0);
-            String tableName = managementService.getTableName(ActivityInstanceEntity.class);
-            String sql = "select t.* from " + tableName + " t where t.PROC_INST_ID_=#{processInstanceId} and (t.END_TIME_ >= #{endTime} or t.END_TIME_ is null)";
+            sql = "select t.* from " + tableName + " t where t.PROC_INST_ID_=#{processInstanceId} and (t.END_TIME_ >= #{endTime} or t.END_TIME_ is null)";
             List<ActivityInstance> datas = runtimeService.createNativeActivityInstanceQuery().sql(sql).parameter("processInstanceId", processInstanceId)
                     .parameter("endTime", activityInstance.getEndTime()).list();
+            List<ActivityInstance> deleteActivityInstances = new ArrayList<>();
+            for (ActivityInstance activity : datas){
+                if (!(activity.getActivityId().equals(disActivityId) && activity.getEndTime() == null)){
+                    deleteActivityInstances.add(activity);
+                }
+            }
             List<String> runActivityIds = new ArrayList<>();
-            if (CollectionUtils.isNotEmpty(datas)) {
-                datas.forEach(ai -> runActivityIds.add(ai.getId()));
+            if (CollectionUtils.isNotEmpty(deleteActivityInstances)) {
+                deleteActivityInstances.forEach(ai -> runActivityIds.add(ai.getId()));
                 runFlowableActinstDao.deleteRunActinstsByIds(runActivityIds);
                 hisFlowableActinstDao.deleteHisActinstsByIds(runActivityIds);
             }

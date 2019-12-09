@@ -226,4 +226,16 @@ public class    ApiFormDetailReource extends BaseResource {
         return returnVo;
 
     }
+
+    /**
+     * 驳回节点
+      * @param params 参数
+     * @return
+     */
+    @PostMapping(value = "/doBackStep")
+    public ReturnVo<String> doBackStep(BackTaskVo params) {
+        params.setUserCode(this.getLoginUser().getId());
+        ReturnVo<String> returnVo = flowableTaskService.backToStepTask(params);
+        return returnVo;
+    }
 }
