@@ -38,10 +38,10 @@ export async function updatePurchase(params: any): Promise<any> {
  * @param ids
  */
 export async function delPurchase(params: any): Promise<any> {
-  return request('/server/rest/demo/purchase/del', {
+  return request('/server/rest/demo/purchase/dels', {
     method: 'GET',
     params: {
-      id: params,
+      ids: params,
     },
   });
 }

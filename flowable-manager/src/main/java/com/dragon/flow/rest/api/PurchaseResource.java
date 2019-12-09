@@ -101,11 +101,13 @@ public class PurchaseResource extends BaseResource {
     }
 
     //删除
-    @GetMapping("/del")
-    public ReturnVo del(String id) {
+    @GetMapping("/dels")
+    public ReturnVo dels(String[] ids) {
         ReturnVo returnVo = new ReturnVo(ReturnCode.FAIL, "删除失败");
         try {
-            this.purchaseService.delPurchaseById(id);
+            for(String id: ids) {
+                this.purchaseService.delPurchaseById(id);
+            }
             returnVo = new ReturnVo(ReturnCode.SUCCESS, "删除成功");
         } catch (Exception e) {
             logger.error("PurchaseController-del:", e);

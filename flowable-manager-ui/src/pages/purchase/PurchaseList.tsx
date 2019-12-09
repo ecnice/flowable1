@@ -120,10 +120,9 @@ class PurchaseList extends Component<PurchaseListProps> {
   //删除
   handleDel = (records: any) => {
     const { dispatch } = this.props;
-    const id = records[0].id;
     dispatch({
       type: 'purchase/fetchDelete',
-      payload: id,
+      payload: records,
       callback: this.callback,
     });
   };
@@ -188,7 +187,7 @@ class PurchaseList extends Component<PurchaseListProps> {
       },
       {
         title: '金额',
-        width: 100,
+        width: 50,
         dataIndex: 'money',
       },
       {
@@ -199,7 +198,7 @@ class PurchaseList extends Component<PurchaseListProps> {
       },
       {
         title: '详情',
-        width: 100,
+        width: 400,
         dataIndex: 'content',
       },
     ];
@@ -215,7 +214,8 @@ class PurchaseList extends Component<PurchaseListProps> {
 
     const rowSelection: any = {
       selectedRowKeys: selectedRowKeys,
-      type: 'radio',
+      type: 'checkbox',
+      columnWidth: 20,
       onChange: (selectedRowKeys: any, selectedRows: any) => {
         this.setState({
           selectedRows: selectedRows,
@@ -245,7 +245,7 @@ class PurchaseList extends Component<PurchaseListProps> {
                 >
                   我要采购
                 </Button>
-                {selectedRows.length == 1 ? (
+                {selectedRows.length >= 1 ? (
                   <span>
                     <Button
                       icon="edit"
@@ -264,7 +264,7 @@ class PurchaseList extends Component<PurchaseListProps> {
                           cancelText: '取消',
                           okText: '确认',
                           onOk() {
-                            handleDel(selectedRows);
+                            handleDel(selectedRowKeys);
                           },
                         })
                       }
@@ -285,6 +285,7 @@ class PurchaseList extends Component<PurchaseListProps> {
               columns={columns}
               rowSelection={rowSelection}
               pagination={paginationProps}
+              size="small"
             />
           </div>
         </Card>
