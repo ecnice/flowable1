@@ -46,7 +46,6 @@ class ProcessInstanceList extends Component<ProcessInstanceListProps> {
 
   //回掉
   callback = () => {
-    debugger;
     const { dispatch } = this.props;
     const { pageNum, pageSize, formValues } = this.state;
     this.setState({

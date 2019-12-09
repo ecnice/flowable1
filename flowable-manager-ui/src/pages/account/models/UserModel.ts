@@ -52,7 +52,6 @@ const UserModel: UserModelType = {
       }
     },
     *deleteUser({ payload, callback }, { call, put }) {
-      debugger;
       const response = yield call(deleteUser, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
@@ -62,7 +61,6 @@ const UserModel: UserModelType = {
       }
     },
     *addUserGroup({ payload, callback }, { call, put }) {
-      debugger;
       const response = yield call(addUserGroup, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);

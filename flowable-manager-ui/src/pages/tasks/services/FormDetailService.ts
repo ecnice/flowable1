@@ -76,3 +76,20 @@ export async function image(params: any): Promise<any> {
     params: params,
   });
 }
+
+export async function getBackStepList(params: any): Promise<any> {
+  return request(
+    `/server/rest/formdetail/getBackNodesByProcessInstanceId/${params.processInstanceId}`,
+    {
+      method: 'GET',
+    },
+  );
+}
+
+// 驳回
+export async function doBackStep(params: any): Promise<any> {
+  return request(`/server/rest/formdetail/doBackStep`, {
+    method: 'POST',
+    params: params,
+  });
+}

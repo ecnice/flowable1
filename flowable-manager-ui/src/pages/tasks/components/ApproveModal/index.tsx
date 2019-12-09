@@ -48,7 +48,6 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
 
   doSearch() {
     const { dispatch } = this.props;
-    debugger;
     dispatch({
       type: 'userModel/fetchUserList',
       payload: { keyword: this.state.searchKey },
@@ -56,7 +55,6 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
   }
 
   onKeyDown = (e: React.KeyboardEvent) => {
-    debugger;
     if (e.key === 'Enter') {
       this.doSearch();
     }

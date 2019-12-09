@@ -24,6 +24,7 @@ const { TextArea } = Input;
 import moment from 'moment';
 import { connect } from 'dva';
 import ApproveModal from '@/pages/tasks/components/ApproveModal';
+import BackStepModal from '@/pages/tasks/components/BackStepModal';
 
 interface IProps extends FormComponentProps {
   loading?: boolean;
@@ -52,6 +53,9 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       open: false,
       multiSelect: true,
       type: '',
+    },
+    backStepModal: {
+      open: false,
     },
   };
 
@@ -112,6 +116,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
       callback: callBack,
     });
   };
+
   //审批并选择人员
   doApprove = e => {
     const { dispatch, formInfo, callBack } = this.props;
@@ -137,6 +142,21 @@ class TaskDetailForm extends PureComponent<IProps, any> {
   onChange = ({ target: { value } }) => {
     this.setState({ note: value });
   };
+
+  onBackStep(e) {
+    const { dispatch, formInfo } = this.props;
+    const data = {
+      taskId: formInfo.taskId,
+      nodeId: e.nodeId,
+      approveMsg: e.approveMsg,
+      processInstanceId: formInfo.processIdoApprovenstanceId,
+    };
+    dispatch({
+      type: 'formDetail/doBackStep',
+      payload: data,
+    });
+    this.setState({ backStepModal: { open: false } });
+  }
 
   render() {
     const {
@@ -267,7 +287,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         type: 'BH',
         handelClick: e => {
           this.setState({
-            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: true },
+            backStepModal: { open: true },
           });
         },
       },
@@ -369,6 +389,18 @@ class TaskDetailForm extends PureComponent<IProps, any> {
           multiSelect={multiSelect}
           open={open}
           approveMsg={note}
+        />
+        <BackStepModal
+          onBackStep={e => {
+            this.onBackStep(e);
+          }}
+          onCancel={() => {
+            this.setState({ backStepModal: { open: false } });
+          }}
+          processInstanceId="cf484d3e18e911ea9e5bdc8b287b3603"
+          open={this.state.backStepModal.open}
+          title="驳回"
+          type="BH"
         />
       </Modal>
     );

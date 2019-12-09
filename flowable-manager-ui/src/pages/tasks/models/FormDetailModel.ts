@@ -14,11 +14,15 @@ import {
   completeTask,
   claimTask,
   unClaimTask,
+  getBackStepList,
+  doBackStep,
 } from '@/pages/tasks/services/FormDetailService';
 import { ReturnCode } from '@/utils/utils';
+import { TasksModelState } from '@/pages/tasks/models/tasksmodel';
 
 export interface FormDetailModelState {
   commentList?: [];
+  backStepList?: [];
   imgSrc?: string;
 }
 
@@ -26,15 +30,18 @@ export interface FormDetailModelType {
   namespace: 'formDetail';
   state: FormDetailModelState;
   effects: {
+    fetchBackStepList: Effect;
     fetchCommentList: Effect;
-    fetchComplete: Effect;
-    fetchStopProcess: Effect;
+    // fetchComplete: Effect;
+    // fetchStopProcess: Effect;
     fetchProcessImage: Effect;
-    fetchRevokeProcess: Effect;
+    // fetchRevokeProcess: Effect;
     doApprove: Effect;
     doApproveNoModel: Effect;
+    doBackStep: Effect;
   };
   reducers: {
+    saveBackStepList: Reducer<TasksModelState>;
     saveCommentList: Reducer<FormDetailModelState>;
   };
 }
@@ -43,9 +50,33 @@ const FormDetailModel: FormDetailModelType = {
   namespace: 'formDetail',
   state: {
     commentList: [],
+    backStepList: [],
     imgSrc: '',
   },
   effects: {
+    *fetchBackStepList({ payload }, { call, put }) {
+      const response = yield call(getBackStepList, payload);
+      yield put({
+        type: 'saveBackStepList',
+        payload: response,
+      });
+    },
+
+    *doBackStep({ payload }, { call, put }) {
+      const response = yield call(doBackStep, payload);
+      if (response.code === ReturnCode.SUCCESS) {
+        yield put({
+          type: 'tasks/showHandleTaskModal',
+          payload: {
+            modalTitle: '',
+            modalVisible: false,
+          },
+        });
+      } else {
+        message.error(response.msg);
+      }
+    },
+
     *doApprove({ payload }, { call, put }) {
       let response = {
         code: ReturnCode.FAIL,
@@ -148,6 +179,12 @@ const FormDetailModel: FormDetailModelType = {
   },
 
   reducers: {
+    saveBackStepList(state, { payload }) {
+      return {
+        ...state,
+        backStepList: payload.datas || [],
+      };
+    },
     saveCommentList(state, { payload }) {
       return {
         ...state,

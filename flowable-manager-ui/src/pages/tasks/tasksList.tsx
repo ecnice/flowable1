@@ -1,12 +1,11 @@
-import { Tabs, Card, Table, Modal } from 'antd';
+import { Card, Modal, Table, Tabs } from 'antd';
 import React, { PureComponent } from 'react';
-
-const { TabPane } = Tabs;
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
 import TaskModalForm from './taskDetailForm';
-import ApproveModal from '@/pages/tasks/components/ApproveModal';
+
+const { TabPane } = Tabs;
 
 @connect(({ tasks, loading }: any) => ({
   loading: loading.models.tasks,
@@ -71,7 +70,6 @@ class TaskList extends PureComponent<any, any> {
       type: 'tasks/fetchMyProcessInstancesTasks',
       payload: payload,
     });
-    debugger;
   };
 
   //tabs切换
@@ -421,6 +419,7 @@ class TaskList extends PureComponent<any, any> {
           loading={loading}
           callBack={this.callBack}
         />
+
         <Modal
           width={1200}
           bodyStyle={{ padding: '10px 15px 10px' }}

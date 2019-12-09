@@ -11,7 +11,7 @@
 .sts4-cache
 
 # dependencies
-**/node_modules
+/node_modules
 # roadhog-api-doc ignore
 /src/utils/request-temp.js
 _roadhog-api-doc

@@ -52,7 +52,6 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
       }
     },
     *saProcessInstanceById({ payload, callback }, { call, put }) {
-      debugger;
       const response = yield call(saProcessInstanceById, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
@@ -62,7 +61,6 @@ const ProcessInstanceModel: ProcessInstanceModelType = {
       }
     },
     *stopProcess({ payload, callback }, { call, put }) {
-      debugger;
       const response = yield call(stopProcess, payload);
       if (response.code == ReturnCode.SUCCESS) {
         message.success(response.msg);
