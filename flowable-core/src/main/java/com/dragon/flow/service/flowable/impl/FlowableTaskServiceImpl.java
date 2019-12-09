@@ -78,6 +78,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                     .changeState();
             //6.删除节点 TODO 这里并没有考虑子流程
             this.deleteActivity(backTaskVo.getDistFlowElementId(),taskEntity.getProcessInstanceId());
+            returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "驳回成功!");
         } else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL, "不存在任务实例,请确认!");
         }
