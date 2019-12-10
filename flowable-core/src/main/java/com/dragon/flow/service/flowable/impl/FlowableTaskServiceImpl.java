@@ -105,8 +105,10 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     }
 
     @Override
-    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String processInstanceId) {
+    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String taskId,String processInstanceId) {
         List<FlowNodeVo> backNods = new ArrayList<>();
+        TaskEntity taskEntity = (TaskEntity) taskService.createTaskQuery().taskId(taskId).singleResult();
+        String currActId = taskEntity.getTaskDefinitionKey();
         //获取运行节点表中usertask
         String sql = "select t.* from act_ru_actinst t where t.ACT_TYPE_ = 'userTask' " +
                 " and t.PROC_INST_ID_=#{processInstanceId} and t.END_TIME_ is not null ";
@@ -117,9 +119,10 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
         sql = "SELECT t.ID_, t.REV_,t.PROC_DEF_ID_,t.PROC_INST_ID_,t.EXECUTION_ID_,t.ACT_ID_, t.TASK_ID_, t.CALL_PROC_INST_ID_, t.ACT_NAME_, t.ACT_TYPE_, " +
                 " t.ASSIGNEE_, t.START_TIME_, max(t.END_TIME_) as END_TIME_, t.DURATION_, t.DELETE_REASON_, t.TENANT_ID_" +
                 " FROM  act_ru_actinst t WHERE t.ACT_TYPE_ = 'parallelGateway' AND t.PROC_INST_ID_ = #{processInstanceId} and t.END_TIME_ is not null" +
-                " GROUP BY t.act_id_";
+                " and t.ACT_ID_ <> #{actId} GROUP BY t.act_id_";
         List<ActivityInstance> parallelGatewaies = runtimeService.createNativeActivityInstanceQuery().sql(sql)
                 .parameter("processInstanceId", processInstanceId)
+                .parameter("actId", currActId)
                 .list();
         //排序
         if (CollectionUtils.isNotEmpty(parallelGatewaies)) {
@@ -187,19 +190,22 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 node.setEndTime(activity.getEndTime());
                 StringBuffer nodeNames = new StringBuffer("会签:");
                 StringBuffer userNames = new StringBuffer("审批人员:");
-                activities.forEach(activityInstance -> {
-                    nodeNames.append(activityInstance.getActivityName()).append(",");
-                    userNames.append(activityIdUserNames.get(activityInstance.getActivityId())).append(",");
-                });
-                node.setNodeName(nodeNames.toString());
-                node.setUserName(userNames.toString());
-                backNods.add(node);
+                if (CollectionUtils.isNotEmpty(activities)){
+                    activities.forEach(activityInstance -> {
+                        nodeNames.append(activityInstance.getActivityName()).append(",");
+                        userNames.append(activityIdUserNames.get(activityInstance.getActivityId())).append(",");
+                    });
+                    node.setNodeName(nodeNames.toString());
+                    node.setUserName(userNames.toString());
+                    backNods.add(node);
+                }
             });
         }
         //去重合并
         List<FlowNodeVo> datas = backNods.stream().collect(
                 Collectors.collectingAndThen(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(nodeVo -> nodeVo.getNodeId()))), ArrayList::new));
+
         //排序
         datas.sort(Comparator.comparing(FlowNodeVo::getEndTime));
         return datas;
