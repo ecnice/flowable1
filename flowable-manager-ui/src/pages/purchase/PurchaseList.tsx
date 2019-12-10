@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import styles from './styles.less';
 import { Dispatch } from 'redux';
-import moment from '_moment@2.24.0@moment';
+import moment from 'moment';
 import PurchaseForm from '@/pages/purchase/PurchaseForm';
 
 const FormItem = Form.Item;

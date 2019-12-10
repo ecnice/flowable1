@@ -1,5 +1,5 @@
-import { Effect } from '_dva@2.4.1@dva';
-import { Reducer } from '_redux@3.7.2@redux';
+import { Effect } from 'dva';
+import { Reducer } from 'redux';
 import {
   updatePurchase,
   delPurchase,
@@ -7,7 +7,7 @@ import {
   listPurchase,
 } from '@/pages/purchase/services/PurchaseService.ts';
 import { ReturnCode } from '@/utils/utils';
-import { message } from '_antd@3.26.0@antd';
+import { message } from 'antd';
 
 /**
  * 定义state接口
