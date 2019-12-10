@@ -96,7 +96,7 @@ public class PurchaseServiceImpl implements IPurchaseService {
 		if (StringUtils.isNotBlank(id)) {
 			Purchase purchase = purchaseDao.getPurchaseById(id);
 			this.purchaseDao.delPurchaseById(id.trim());
-			flowableProcessInstanceService.deleteProcessInstanceById(purchase.getProcessInstanceId());
+//			flowableProcessInstanceService.deleteProcessInstanceById(purchase.getProcessInstanceId());
 		}
 	}
 

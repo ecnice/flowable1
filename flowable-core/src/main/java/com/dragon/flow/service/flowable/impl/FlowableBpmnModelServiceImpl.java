@@ -57,15 +57,39 @@ public class FlowableBpmnModelServiceImpl extends BaseProcessService implements 
         }
     }
     @Override
-    public Activity findMainProcessActivityByActivityId(String processDefId, String activityId) {
-        Activity activity = null;
+    public FlowNode findMainProcessActivityByActivityId(String processDefId, String activityId) {
+        FlowNode activity = null;
         BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);
         Process process = bpmnModel.getMainProcess();
         FlowElement flowElement = process.getFlowElement(activityId);
         if (flowElement != null) {
-            activity = (Activity) flowElement;
+            activity = (FlowNode) flowElement;
         }
         return activity;
+    }
+
+    @Override
+    public FlowNode findFlowNodeByActivityId(String processDefId, String activityId) {
+        FlowNode activity = null;
+        BpmnModel bpmnModel = this.getBpmnModelByProcessDefId(processDefId);
+        List<Process> processes = bpmnModel.getProcesses();
+        for (Process process : processes){
+            FlowElement flowElement = process.getFlowElementMap().get(activityId);
+            if (flowElement != null) {
+                activity = (FlowNode) flowElement;
+                break;
+            }
+        }
+        return activity;
+    }
+    @Override
+    public boolean checkActivitySubprocessByActivityId(String processDefId, String activityId) {
+        boolean flag = true;
+        List<Activity> activities = this.findActivityByActivityId(processDefId,activityId);
+        if (CollectionUtils.isNotEmpty(activities)){
+            flag = false;
+        }
+        return flag;
     }
 
     @Override

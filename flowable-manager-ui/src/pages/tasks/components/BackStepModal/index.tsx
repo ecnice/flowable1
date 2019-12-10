@@ -1,9 +1,10 @@
-import { Input, Modal, Table, Tag, message, List, Radio } from 'antd';
+import { Input, Modal, Table, Tag, message, List, Radio, Row, Col } from 'antd';
 import React, { Component } from 'react';
 import Search from 'antd/lib/input/Search';
 import TextArea from 'antd/lib/input/TextArea';
 import { connect } from 'dva';
 import styles from './index.less';
+import moment from '_moment@2.24.0@moment';
 
 export interface BackStepModalProps {
   onBackStep: (value: object) => void;
@@ -113,14 +114,17 @@ export default class BackStepModal extends Component<BackStepModalProps, BackSte
             <Radio.Group onChange={this.onChange.bind(this)} value={this.state.selectedNodeId}>
               <List
                 size="small"
-                header={<div style={{ width: '600px' }}>选择驳回节点：</div>}
+                header={<div style={{ width: '640px' }}>选择驳回节点：</div>}
                 bordered={false}
                 dataSource={backStepList}
                 renderItem={item => (
                   <List.Item key={item.nodeId}>
-                    <div>
-                      <Radio value={item.nodeId}>{item.nodeName}</Radio>
-                    </div>
+                    <List.Item.Meta
+                      avatar={<Radio value={item.nodeId} />}
+                      title={<div>{item.nodeName}</div>}
+                      description={item.userName}
+                    />
+                    <div>{moment(item.endTime).format('YYYY-MM-DD HH:mm')}</div>
                   </List.Item>
                 )}
               />
