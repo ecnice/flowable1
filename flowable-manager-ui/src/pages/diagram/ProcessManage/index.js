@@ -68,7 +68,6 @@ class ProcessManage extends PureComponent {
   handleCopy = data => {
     const { dispatch } = this.props;
     const count = Math.floor(Math.random() * (8 - 1) + 1);
-
     dispatch({
       type: 'processManage/copyFlow',
       payload: {

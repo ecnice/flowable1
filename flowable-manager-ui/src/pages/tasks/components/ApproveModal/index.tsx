@@ -14,6 +14,7 @@ export interface ApproveModalProps {
   approveMsg?: string;
   onCancel: () => void;
   type: string;
+  dispatch?: any;
 }
 
 interface ApproveModalState {

@@ -304,7 +304,7 @@ class ProcessDesign extends Component {
             />
             <EditingTools
               onOpenFIle={this.handleOpenFile}
-              // onSave={this.handleSave}
+              onSave={this.handleSave}
               onUndo={this.handleUndo}
               onRedo={this.handleRedo}
               onDownloadSvg={this.handleDownloadSvg}

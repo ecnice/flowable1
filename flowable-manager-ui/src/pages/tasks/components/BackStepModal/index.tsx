@@ -1,6 +1,5 @@
 import { Input, Modal, Table, Tag, message, List, Radio, Row, Col } from 'antd';
 import React, { Component } from 'react';
-import Search from 'antd/lib/input/Search';
 import TextArea from 'antd/lib/input/TextArea';
 import { connect } from 'dva';
 import styles from './index.less';
@@ -16,6 +15,7 @@ export interface BackStepModalProps {
   type: string;
   processInstanceId: string;
   taskId: string;
+  dispatch?: any;
 }
 
 interface BackStepModalState {

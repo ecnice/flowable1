@@ -136,7 +136,6 @@ export default {
                 },
               ],
             },
-
             {
               path: '/demo',
               name: 'DOME测试',
