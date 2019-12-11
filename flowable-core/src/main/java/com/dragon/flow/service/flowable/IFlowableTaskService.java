@@ -36,7 +36,7 @@ public interface IFlowableTaskService {
      * @param processInstanceId 流程实例id
      * @return
      */
-    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String taskId,String processInstanceId) ;
+    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String processInstanceId,String taskId) ;
     /**
      * 任务前加签 （如果多次加签只能显示第一次前加签的处理人来处理任务）
      *

@@ -30,27 +30,28 @@ interface ApproveModalState {
   loading: loading.effects['userModel/fetchUserList'],
 }))
 export default class ApproveModal extends Component<ApproveModalProps, ApproveModalState> {
-  static getDerivedStateFromProps(props: ApproveModalProps, prevState: ApproveModalProps) {
-    const { approveMsg } = props;
-    if (null != prevState && approveMsg !== prevState.approveMsg) {
-      return {
-        // approveMsgTemp: prevState.approveMsgTemp||approveMsg
-      };
-    } else {
-      return {};
-    }
-    return null;
-  }
+  state = {
+    value: '',
+    searchMode: true,
+    selectedRows: [],
+    selectedRowKeys: [],
+    approveMsgTemp: '',
+    searchKey: '',
+  };
 
   componentDidMount() {
     this.doSearch();
   }
 
   doSearch() {
-    const { dispatch } = this.props;
+    const { dispatch, approveMsg } = this.props;
     dispatch({
       type: 'userModel/fetchUserList',
       payload: { keyword: this.state.searchKey },
+    });
+    var msg = JSON.parse(JSON.stringify(approveMsg));
+    this.setState({
+      approveMsgTemp: msg,
     });
   }
 
@@ -62,8 +63,9 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
 
   handleOk = e => {
     const { onApprove, type } = this.props;
-    const { approveMsgTemp } = this.state;
-    if (!this.state.selectedRows) {
+    const { approveMsgTemp, selectedRows } = this.state;
+    debugger;
+    if (selectedRows.length == 0) {
       message.warn('请选择人员！');
       return;
     } else if (!approveMsgTemp) {
@@ -91,7 +93,6 @@ export default class ApproveModal extends Component<ApproveModalProps, ApproveMo
 
   //在输入框发生变化的时候修改状态的值
   handleMaxRestoreUp = (event: any) => {
-    console.log('==============', event.target.value);
     this.setState({ approveMsgTemp: event.target.value });
   };
 

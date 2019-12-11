@@ -218,9 +218,9 @@ public class    ApiFormDetailReource extends BaseResource {
      * @param processInstanceId 流程实例id
      * @return
      */
-    @GetMapping(value = "/getBackNodesByProcessInstanceId/{processInstanceId}")
-    public ReturnVo<FlowNodeVo> getBackNodesByProcessInstanceId(@PathVariable String processInstanceId) {
-        List<FlowNodeVo> datas = flowableTaskService.getBackNodesByProcessInstanceId(processInstanceId);
+    @GetMapping(value = "/getBackNodesByProcessInstanceId/{processInstanceId}/{taskId}")
+    public ReturnVo<FlowNodeVo> getBackNodesByProcessInstanceId(@PathVariable String processInstanceId,@PathVariable String taskId) {
+        List<FlowNodeVo> datas = flowableTaskService.getBackNodesByProcessInstanceId(processInstanceId,taskId);
         ReturnVo<FlowNodeVo> returnVo = new ReturnVo<>(ReturnCode.SUCCESS,"查询返回节点成功");
         returnVo.setDatas(datas);
         return returnVo;

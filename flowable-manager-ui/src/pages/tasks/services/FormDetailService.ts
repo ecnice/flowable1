@@ -79,7 +79,7 @@ export async function image(params: any): Promise<any> {
 
 export async function getBackStepList(params: any): Promise<any> {
   return request(
-    `/server/rest/formdetail/getBackNodesByProcessInstanceId/${params.processInstanceId}`,
+    `/server/rest/formdetail/getBackNodesByProcessInstanceId/${params.processInstanceId}/${params.taskId}`,
     {
       method: 'GET',
     },

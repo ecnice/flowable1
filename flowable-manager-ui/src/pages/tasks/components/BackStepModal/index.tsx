@@ -15,6 +15,7 @@ export interface BackStepModalProps {
   onCancel: () => void;
   type: string;
   processInstanceId: string;
+  taskId: string;
 }
 
 interface BackStepModalState {
@@ -28,27 +29,24 @@ interface BackStepModalState {
   loading: loading.effects['userModel/fetchUserList'],
 }))
 export default class BackStepModal extends Component<BackStepModalProps, BackStepModalState> {
-  static getDerivedStateFromProps(props: BackStepModalProps, prevState: BackStepModalProps) {
-    const { approveMsg } = props;
-    if (null != prevState && approveMsg !== prevState.approveMsg) {
-      return {
-        // approveMsgTemp: prevState.approveMsgTemp||approveMsg
-      };
-    } else {
-      return {};
-    }
-    return null;
-  }
-
+  state = {
+    value: '',
+    selectedNodeId: '',
+    approveMsgTemp: '',
+  };
   componentDidMount() {
     this.doSearch();
   }
 
   doSearch() {
-    const { dispatch, processInstanceId } = this.props;
+    const { dispatch, processInstanceId, taskId, approveMsg } = this.props;
     dispatch({
       type: 'formDetail/fetchBackStepList',
-      payload: { processInstanceId: processInstanceId },
+      payload: { processInstanceId: processInstanceId, taskId: taskId },
+    });
+    var msg = JSON.parse(JSON.stringify(approveMsg));
+    this.setState({
+      approveMsgTemp: msg,
     });
   }
 
@@ -79,6 +77,7 @@ export default class BackStepModal extends Component<BackStepModalProps, BackSte
     const { onCancel } = this.props;
     onCancel();
   };
+
   onChange(e) {
     this.setState({
       selectedNodeId: e.target.value,

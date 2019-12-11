@@ -126,6 +126,7 @@ class TaskDetailForm extends PureComponent<IProps, any> {
     e.users.forEach((item, i) => {
       userIds.push(item.userId);
     });
+    debugger;
     const data = {
       taskId: formInfo.taskId,
       processInstanceId: formInfo.processInstanceId,
@@ -256,16 +257,6 @@ class TaskDetailForm extends PureComponent<IProps, any> {
         },
       },
       {
-        buttonText: '签收',
-        showTitle: '签收',
-        type: 'QS',
-        handelClick: e => {
-          this.setState({
-            approveModal: { open: true, title: e.showTitle, type: e.type, multiSelect: false },
-          });
-        },
-      },
-      {
         buttonText: '前加签',
         showTitle: '前加签',
         type: 'QJQ',
@@ -381,31 +372,42 @@ class TaskDetailForm extends PureComponent<IProps, any> {
             )}
           />
         </Card>
-        <ApproveModal
-          onCancel={() => {
-            this.setState({ approveModal: { open: false } });
-          }}
-          onApprove={e => {
-            this.doApprove(e);
-          }}
-          type={type}
-          title={title}
-          multiSelect={multiSelect}
-          open={open}
-          approveMsg={note}
-        />
-        <BackStepModal
-          onBackStep={e => {
-            this.onBackStep(e);
-          }}
-          onCancel={() => {
-            this.setState({ backStepModal: { open: false } });
-          }}
-          processInstanceId={formInfo.processInstanceId}
-          open={this.state.backStepModal.open}
-          title="驳回"
-          type="BH"
-        />
+        {this.state.approveModal.open ? (
+          <ApproveModal
+            onCancel={() => {
+              this.setState({ approveModal: { open: false } });
+            }}
+            onApprove={e => {
+              this.doApprove(e);
+            }}
+            type={type}
+            title={title}
+            multiSelect={multiSelect}
+            open={open}
+            approveMsg={note}
+          />
+        ) : (
+          ''
+        )}
+
+        {this.state.backStepModal.open ? (
+          <BackStepModal
+            onBackStep={e => {
+              this.onBackStep(e);
+            }}
+            onCancel={() => {
+              this.setState({ backStepModal: { open: false } });
+            }}
+            processInstanceId={formInfo.processInstanceId}
+            taskId={formInfo.taskId}
+            open={this.state.backStepModal.open}
+            approveMsg={note}
+            title="驳回"
+            type="BH"
+          />
+        ) : (
+          ''
+        )}
       </Modal>
     );
   }
