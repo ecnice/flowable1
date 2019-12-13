@@ -58,6 +58,24 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     private IFlowableBpmnModelService flowableBpmnModelService;
 
     @Override
+    public boolean checkParallelgatewayNode(String taskId) {
+        boolean flag = false;
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        String executionId = task.getExecutionId();
+        Execution execution = runtimeService.createExecutionQuery().executionId(executionId).singleResult();
+        String pExecutionId = execution.getParentId();
+        Execution pExecution = runtimeService.createExecutionQuery().executionId(pExecutionId).singleResult();
+        if (pExecution != null) {
+            String ppExecutionId = pExecution.getParentId();
+            long count = runtimeService.createExecutionQuery().executionId(ppExecutionId).count();
+            if (count == 0) {
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+    @Override
     public ReturnVo<String> backToStepTask(BackTaskVo backTaskVo) {
         ReturnVo<String> returnVo = null;
         TaskEntity taskEntity = (TaskEntity) taskService.createTaskQuery().taskId(backTaskVo.getTaskId()).singleResult();
@@ -84,18 +102,18 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             if (flowableBpmnModelService.checkActivitySubprocessByActivityId(taskEntity.getProcessDefinitionId(),
                     backTaskVo.getDistFlowElementId())
                     && flowableBpmnModelService.checkActivitySubprocessByActivityId(taskEntity.getProcessDefinitionId(),
-                    taskEntity.getTaskDefinitionKey())){
+                    taskEntity.getTaskDefinitionKey())) {
                 //6.1 子流程内部驳回
                 Execution executionTask = runtimeService.createExecutionQuery().executionId(taskEntity.getExecutionId()).singleResult();
                 String parentId = executionTask.getParentId();
                 List<Execution> executions = runtimeService.createExecutionQuery().parentId(parentId).list();
                 executions.forEach(execution -> executionIds.add(execution.getId()));
-                this.moveExecutionsToSingleActivityId(executionIds,backTaskVo.getDistFlowElementId());
-            }else {
+                this.moveExecutionsToSingleActivityId(executionIds, backTaskVo.getDistFlowElementId());
+            } else {
                 //6.2 普通驳回
                 List<Execution> executions = runtimeService.createExecutionQuery().parentId(taskEntity.getProcessInstanceId()).list();
                 executions.forEach(execution -> executionIds.add(execution.getId()));
-                this.moveExecutionsToSingleActivityId(executionIds,backTaskVo.getDistFlowElementId());
+                this.moveExecutionsToSingleActivityId(executionIds, backTaskVo.getDistFlowElementId());
             }
             returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "驳回成功!");
         } else {
@@ -105,7 +123,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
     }
 
     @Override
-    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String processInstanceId,String taskId) {
+    public List<FlowNodeVo> getBackNodesByProcessInstanceId(String processInstanceId, String taskId) {
         List<FlowNodeVo> backNods = new ArrayList<>();
         TaskEntity taskEntity = (TaskEntity) taskService.createTaskQuery().taskId(taskId).singleResult();
         String currActId = taskEntity.getTaskDefinitionKey();
@@ -190,7 +208,7 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                 node.setEndTime(activity.getEndTime());
                 StringBuffer nodeNames = new StringBuffer("会签:");
                 StringBuffer userNames = new StringBuffer("审批人员:");
-                if (CollectionUtils.isNotEmpty(activities)){
+                if (CollectionUtils.isNotEmpty(activities)) {
                     activities.forEach(activityInstance -> {
                         nodeNames.append(activityInstance.getActivityName()).append(",");
                         userNames.append(activityIdUserNames.get(activityInstance.getActivityId())).append(",");

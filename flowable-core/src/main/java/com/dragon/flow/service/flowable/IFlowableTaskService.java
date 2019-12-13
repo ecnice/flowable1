@@ -133,5 +133,10 @@ public interface IFlowableTaskService {
      */
     public List<User> getApprovers(String processInstanceId);
 
-
+    /**
+     * 通过任务id判断当前节点是不是并行网关的节点
+     * @param taskId 任务id
+     * @return
+     */
+    public boolean checkParallelgatewayNode(String taskId) ;
 }

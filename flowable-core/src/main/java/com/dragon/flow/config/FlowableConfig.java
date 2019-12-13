@@ -1,9 +1,13 @@
 package com.dragon.flow.config;
 
+import com.dragon.flow.constant.FlowConstant;
+import com.dragon.flow.flowable.listener.global.GlobalTypeEventListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
+import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.de.odysseus.el.misc.TypeConverter;
 import org.flowable.common.engine.impl.de.odysseus.el.misc.TypeConverterImpl;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
@@ -16,6 +20,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -47,8 +56,8 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         configure.setIdGenerator(uuidGenerator());
         configure.setXmlEncoding(xmlEncoding);
         //全局监听
-//        Map<String, List<FlowableEventListener>> typedListeners = this.createGlobEventListeners();
-//        configure.setTypedEventListeners(typedListeners);
+        Map<String, List<FlowableEventListener>> typedListeners = this.createGlobEventListeners();
+        configure.setTypedEventListeners(typedListeners);
         //启用任务关系计数
         configure.setEnableTaskRelationshipCounts(true);
         //启动同步功能 一定要启动否则报错
@@ -120,34 +129,16 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
      *
      * @return
      */
-//    private Map<String, List<FlowableEventListener>> createGlobEventListeners() {
-//        Map<String, List<FlowableEventListener>> flowableEventListeners = new HashMap<>();
-//        //1、配置任务创建监听
-//        List<FlowableEventListener> createTasks = new ArrayList<>();
-//        GlobalTypeEventListener globalTaskListener = new GlobalTypeEventListener();
-//        globalTaskListener.setEventHandlerBeanId(FlowConstant.GLOBALTASKCREATELISTENER);
-//        createTasks.add(globalTaskListener);
-//        flowableEventListeners.put(FlowableEngineEventType.TASK_CREATED.name(), createTasks);
-//        //2、配置任务完成监听
-//        List<FlowableEventListener> completedTasks = new ArrayList<>();
-//        GlobalTypeEventListener globalCompletedTaskListener = new GlobalTypeEventListener();
-//        globalCompletedTaskListener.setEventHandlerBeanId(FlowConstant.GLOBALTASKCOMPLETEDLISTENER);
-//        completedTasks.add(globalCompletedTaskListener);
-//        flowableEventListeners.put(FlowableEngineEventType.TASK_COMPLETED.name(), completedTasks);
-//        //3、配置流程实例开始监听
-//        List<FlowableEventListener> startProcist = new ArrayList<>();
-//        GlobalTypeEventListener globalProcistStartListener = new GlobalTypeEventListener();
-//        globalProcistStartListener.setEventHandlerBeanId(FlowConstant.GLOBALPROCISTSTARTLISTENER);
-//        startProcist.add(globalProcistStartListener);
-//        flowableEventListeners.put(FlowableEngineEventType.PROCESS_CREATED.name(), startProcist);
-//        //4、配置流程实例结束监听
-//        List<FlowableEventListener> endProcist = new ArrayList<>();
-//        GlobalTypeEventListener globalProcistEndListener = new GlobalTypeEventListener();
-//        globalProcistEndListener.setEventHandlerBeanId(FlowConstant.GLOBALPROCISTENDLISTENER);
-//        endProcist.add(globalProcistEndListener);
-//        flowableEventListeners.put(FlowableEngineEventType.PROCESS_COMPLETED.name(), endProcist);
-//        return flowableEventListeners;
-//    }
+    private Map<String, List<FlowableEventListener>> createGlobEventListeners() {
+        Map<String, List<FlowableEventListener>> flowableEventListeners = new HashMap<>();
+        //1、配置全局任务创建监听
+        List<FlowableEventListener> createTasks = new ArrayList<>();
+        GlobalTypeEventListener globalTaskListener = new GlobalTypeEventListener();
+        globalTaskListener.setEventHandlerBeanId(FlowConstant.GLOBALTASKCREATELISTENER);
+        createTasks.add(globalTaskListener);
+        flowableEventListeners.put(FlowableEngineEventType.TASK_CREATED.name(), createTasks);
+        return flowableEventListeners;
+    }
 
     /**
      * 在配置文件中如果没有字段，使用@Value的时候就会忽略掉，不会报错
