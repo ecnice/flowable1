@@ -1,7 +1,9 @@
 package com.dragon.flow.config;
 
 import com.dragon.flow.constant.FlowConstant;
+import com.dragon.flow.flowable.listener.global.GlobalTaskCreateListener;
 import com.dragon.flow.flowable.listener.global.GlobalTypeEventListener;
+import com.dragon.tools.common.SpringContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
@@ -14,6 +16,7 @@ import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
 import org.flowable.spring.job.service.SpringAsyncExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +46,10 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
     private String annotationFontName;
     @Value("${flowable.xml.encoding}")
     private String xmlEncoding;
+    @Autowired
+    private GlobalTypeEventListener globalTypeEventListener;
+    @Autowired
+    private GlobalTaskCreateListener globalTaskCreateListener;
 
     @Override
     public void configure(SpringProcessEngineConfiguration configure) {
@@ -133,10 +140,11 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         Map<String, List<FlowableEventListener>> flowableEventListeners = new HashMap<>();
         //1、配置全局任务创建监听
         List<FlowableEventListener> createTasks = new ArrayList<>();
-        GlobalTypeEventListener globalTaskListener = new GlobalTypeEventListener();
-        globalTaskListener.setEventHandlerBeanId(FlowConstant.GLOBALTASKCREATELISTENER);
-        createTasks.add(globalTaskListener);
+        globalTypeEventListener.setEventHandler(globalTaskCreateListener);
+        createTasks.add(globalTypeEventListener);
         flowableEventListeners.put(FlowableEngineEventType.TASK_CREATED.name(), createTasks);
+
+        //2、其他的
         return flowableEventListeners;
     }
 
@@ -150,5 +158,11 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
         configurer.setIgnoreUnresolvablePlaceholders(true);
         return configurer;
+    }
+
+    @Bean
+    public SpringContextHolder creatSpringContextHolder() {
+        SpringContextHolder springContextHolder = new SpringContextHolder();
+        return springContextHolder;
     }
 }

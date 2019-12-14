@@ -108,7 +108,7 @@ public class LeaveResource extends BaseResource {
     }
 
     @PostMapping("/updateLeaveStatus")
-    public void updateLeaveStatus(String json) {
+    public void updateLeaveStatus(@RequestBody  String json) {
         logger.error("修改状态"+json);
     }
 

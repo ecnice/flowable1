@@ -32,8 +32,8 @@ public abstract class BusinessCallListener extends BaseListener {
             this.setParams(params, paramMap);
             paramsJson = JsonUtils.toJson(paramMap);
             //执行dubbo方法
-            logger.debug("开始调用业务系统接口" + restUrl + ",业务参数:" + paramsJson);
-            restTemplate.postForObject(restUrl,paramsJson,String.class);
+            logger.info("开始调用业务系统接口" + restUrl + ",业务参数:" + paramsJson);
+            restTemplate.postForObject(restUrl, paramsJson, String.class);
         } catch (Exception e) {
             logger.error("调用业务系统的方法失败", e);
 //            FlowBuesinessException fbe = new FlowBuesinessException(clazzName,
@@ -50,8 +50,6 @@ public abstract class BusinessCallListener extends BaseListener {
 //            logger.error("创建调用异常出错", e);
 //        }
 //    }
-
-
 
 
 }
