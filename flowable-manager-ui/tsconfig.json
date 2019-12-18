@@ -17,14 +17,6 @@
     "experimentalDecorators": true,
     "strict": true,
     "allowUnusedLabels": false,
-    "noImplicitAny": false,
-
-    "noImplicitThis": true,
-    "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "importHelpers": true,
-    "downlevelIteration": true,
-
     "paths": {
       "@/*": ["./src/*"]
     }
