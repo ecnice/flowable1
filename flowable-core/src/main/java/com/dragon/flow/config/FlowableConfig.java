@@ -1,32 +1,21 @@
 package com.dragon.flow.config;
 
-import com.dragon.flow.flowable.listener.global.GlobalTaskCreateListener;
-import com.dragon.flow.flowable.listener.global.GlobalTypeEventListener;
 import com.dragon.tools.common.SpringContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
-
-import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
-import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.de.odysseus.el.misc.TypeConverter;
 import org.flowable.common.engine.impl.de.odysseus.el.misc.TypeConverterImpl;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
 import org.flowable.spring.job.service.SpringAsyncExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -45,10 +34,6 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
     private String annotationFontName;
     @Value("${flowable.xml.encoding}")
     private String xmlEncoding;
-    @Autowired
-    private GlobalTypeEventListener globalTypeEventListener;
-    @Autowired
-    private GlobalTaskCreateListener globalTaskCreateListener;
 
     @Override
     public void configure(SpringProcessEngineConfiguration configure) {
@@ -61,9 +46,6 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         //设置自定义的uuid生成策略
         configure.setIdGenerator(uuidGenerator());
         configure.setXmlEncoding(xmlEncoding);
-        //全局监听
-        Map<String, List<FlowableEventListener>> typedListeners = this.createGlobEventListeners();
-        configure.setTypedEventListeners(typedListeners);
         //启用任务关系计数
         configure.setEnableTaskRelationshipCounts(true);
         //启动同步功能 一定要启动否则报错
@@ -128,23 +110,6 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
     @Bean
     public SpringFlowable5CompatibilityHandlerFactory createSpringFlowable5CompatibilityHandlerFactory() {
         return new SpringFlowable5CompatibilityHandlerFactory();
-    }
-
-    /**
-     * 创建全局的监听类
-     *
-     * @return
-     */
-    private Map<String, List<FlowableEventListener>> createGlobEventListeners() {
-        Map<String, List<FlowableEventListener>> flowableEventListeners = new HashMap<>();
-        //1、配置全局任务创建监听
-        List<FlowableEventListener> createTasks = new ArrayList<>();
-        globalTypeEventListener.setEventHandler(globalTaskCreateListener);
-        createTasks.add(globalTypeEventListener);
-        flowableEventListeners.put(FlowableEngineEventType.TASK_CREATED.name(), createTasks);
-
-        //2、其他的
-        return flowableEventListeners;
     }
 
     /**

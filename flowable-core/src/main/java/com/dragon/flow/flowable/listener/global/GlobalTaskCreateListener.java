@@ -1,12 +1,12 @@
 package com.dragon.flow.flowable.listener.global;
 
-import com.dragon.flow.flowable.listener.BaseListener;
-import com.dragon.flow.service.flowable.IFlowableTaskService;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
+import org.flowable.common.engine.impl.event.FlowableEntityEventImpl;
+import org.flowable.engine.delegate.event.AbstractFlowableEngineEventListener;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,28 +16,26 @@ import org.springframework.stereotype.Component;
  *  2018 ~ 2030 版权所有
  */
 @Component
-public class GlobalTaskCreateListener extends BaseListener implements EventHandler {
+public class GlobalTaskCreateListener extends AbstractFlowableEngineEventListener {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
-    private IFlowableTaskService flowableTaskService;
 
     @Override
-    public void handle(FlowableEvent event) {
-        try {
-            Object taskEntity = this.getTaskEntityByEvent(event);
-            if (taskEntity instanceof TaskEntity) {
-                TaskEntity entity = (TaskEntity) taskEntity;
+    protected void taskCreated(FlowableEngineEntityEvent event) {
+        if (event instanceof FlowableEntityEventImpl){
+            //得到流程定义id
+            String processDefinitionId = event.getProcessDefinitionId();
+            //得到流程实例id
+            String processInstanceId = event.getProcessInstanceId();
+            FlowableEntityEventImpl eventImpl = (FlowableEntityEventImpl) event;
+            //得到任务实例
+            TaskEntity entity = (TaskEntity)eventImpl.getEntity();
+            //1、授权
 
-                //1、授权
+            //2、相邻节点自动跳过
 
-                //2、相邻节点自动跳过
-
-                //3、发送消息
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("全局的任务创建监听报错", e);
+            //3、发送消息
         }
+
     }
 
 }
