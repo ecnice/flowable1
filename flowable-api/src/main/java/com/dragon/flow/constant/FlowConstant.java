@@ -36,9 +36,4 @@ public class FlowConstant {
     //前加签
     public static final String BEFORE_ADDSIGN = "before";
 
-    /**
-     * 全局的任务创建监听器 beanid
-     */
-    public static final String GLOBALTASKCREATELISTENER = "globalTaskCreateListener";
-
 }

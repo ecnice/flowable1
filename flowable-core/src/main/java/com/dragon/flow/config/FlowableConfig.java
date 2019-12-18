@@ -1,6 +1,5 @@
 package com.dragon.flow.config;
 
-import com.dragon.flow.constant.FlowConstant;
 import com.dragon.flow.flowable.listener.global.GlobalTaskCreateListener;
 import com.dragon.flow.flowable.listener.global.GlobalTypeEventListener;
 import com.dragon.tools.common.SpringContextHolder;

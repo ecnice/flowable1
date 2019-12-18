@@ -25,7 +25,7 @@ package-lock.json
 
 # visual studio code
 .history
-*.log
+*.loglogin/login
 functions/*
 .temp/**
 

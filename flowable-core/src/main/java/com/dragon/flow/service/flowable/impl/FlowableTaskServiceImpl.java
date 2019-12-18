@@ -251,7 +251,6 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
                         finalApplyers.append(user.getDisplayName()).append(",");
                     }
                 }
-
             });
             if (applyers.length() > 0) {
                 applyers = applyers.deleteCharAt(applyers.length() - 1);

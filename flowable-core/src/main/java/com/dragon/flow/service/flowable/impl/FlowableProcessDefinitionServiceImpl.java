@@ -52,4 +52,8 @@ public class FlowableProcessDefinitionServiceImpl extends BaseProcessService imp
         return returnVo;
     }
 
+    public void getLine() {
+
+    }
+
 }

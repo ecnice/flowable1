@@ -41,4 +41,5 @@ public interface IFlowableProcessDefinitionService {
      * @param suspensionState     状态1挂起 2激活
      */
     public ReturnVo suspendOrActivateProcessDefinitionById(String processDefinitionId, int suspensionState);
+
 }
