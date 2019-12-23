@@ -4,6 +4,7 @@ import org.flowable.common.engine.impl.cmd.CustomSqlExecution;
 import org.flowable.engine.ManagementService;
 import org.flowable.engine.impl.cmd.AbstractCustomSqlExecution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @date : 2019/12/239:54
  */
 @Service
+@Scope("prototype")
 public class CustomCommentService {
     @Autowired
     private ManagementService managementService;
