@@ -1,5 +1,6 @@
 package com.dragon.flow.config;
 
+import com.dragon.flow.flowable.custommapper.CustomCommentMapper;
 import com.dragon.tools.common.SpringContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory;
@@ -16,6 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -50,6 +54,10 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         configure.setEnableTaskRelationshipCounts(true);
         //启动同步功能 一定要启动否则报错
         configure.setAsyncExecutor(springAsyncExecutor());
+        //自定义sql
+        Set<Class<?>> customMybatisMappers = new HashSet<>();
+        customMybatisMappers.add(CustomCommentMapper.class);
+        configure.setCustomMybatisMappers(customMybatisMappers);
     }
 
     @Bean
