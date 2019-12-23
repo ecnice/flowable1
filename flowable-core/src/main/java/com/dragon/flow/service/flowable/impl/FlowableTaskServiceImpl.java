@@ -1,5 +1,6 @@
 package com.dragon.flow.service.flowable.impl;
 
+import com.dragon.flow.cmd.MyClaimTaskCmd;
 import com.dragon.flow.constant.FlowConstant;
 import com.dragon.flow.dao.flowable.IFlowableTaskDao;
 import com.dragon.flow.enm.flowable.CommentTypeEnum;
@@ -360,7 +361,8 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             }
             //2.反签收
             if (flag) {
-                taskService.claim(claimTaskVo.getTaskId(), null);
+//                taskService.claim(claimTaskVo.getTaskId(), null);
+                managementService.executeCommand(new MyClaimTaskCmd(claimTaskVo.getTaskId(), null));
                 returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "反签收成功");
             } else {
                 returnVo = new ReturnVo<>(ReturnCode.FAIL, "由于没有候选人或候选组,会导致任务无法认领,请确认.");
@@ -379,7 +381,8 @@ public class FlowableTaskServiceImpl extends BaseProcessService implements IFlow
             //1.添加审批意见
             this.addComment(claimTaskVo.getTaskId(), claimTaskVo.getProcessInstanceId(), CommentTypeEnum.QS.toString(), claimTaskVo.getMessage());
             //2.签收
-            taskService.claim(claimTaskVo.getTaskId(), claimTaskVo.getUserCode());
+            managementService.executeCommand(new MyClaimTaskCmd(claimTaskVo.getTaskId(), claimTaskVo.getUserCode()));
+//            taskService.claim(claimTaskVo.getTaskId(), claimTaskVo.getUserCode());
             returnVo = new ReturnVo<>(ReturnCode.SUCCESS, "签收成功");
         } else {
             returnVo = new ReturnVo<>(ReturnCode.FAIL, "签收失败");
