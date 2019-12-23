@@ -18,26 +18,18 @@ import java.util.Map;
  * @date : 2019/12/239:54
  */
 @Service
-@Scope("prototype")
 public class CustomCommentService {
+
     @Autowired
     private ManagementService managementService;
 
-    private String procInstId ;
-
-    CustomSqlExecution<CustomCommentMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<CustomCommentMapper, List<Map<String, Object>>>(CustomCommentMapper.class) {
-        @Override
-        public List<Map<String, Object>> execute(CustomCommentMapper customMapper) {
-            return customMapper.selectCommentsByProcInstId(procInstId);
-        }
-    };
-
-    public List<Map<String, Object>> getCommentsByProcInstId(String procInstId){
-        this.setProcInstId(procInstId);
+    public List<Map<String, Object>> getCommentsByProcInstId(String procInstId) {
+        CustomSqlExecution<CustomCommentMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<CustomCommentMapper, List<Map<String, Object>>>(CustomCommentMapper.class) {
+            @Override
+            public List<Map<String, Object>> execute(CustomCommentMapper customMapper) {
+                return customMapper.selectCommentsByProcInstId(procInstId);
+            }
+        };
         return managementService.executeCustomSql(customSqlExecution);
-    }
-
-    private void setProcInstId(String procInstId) {
-        this.procInstId = procInstId;
     }
 }
