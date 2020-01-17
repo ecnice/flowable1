@@ -21,11 +21,25 @@
             <artifactId>flowable-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- 配置BPMN -->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-process</artifactId>
             <version>${flowable.version}</version>
         </dependency>
+        <!-- 配置BPMN -->
+        <!-- 配置DMN -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-dmn</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-dmn-spring-configurator</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <!-- 配置DMN -->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-idm-spring-configurator</artifactId>
@@ -105,11 +119,6 @@
             <version>2.1.1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>5.1.10</version>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
@@ -120,7 +129,11 @@
             <version>6.4.2</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.10</version>
+        </dependency>
     </dependencies>
 
 </project>

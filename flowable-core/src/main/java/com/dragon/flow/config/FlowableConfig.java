@@ -58,6 +58,10 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         Set<Class<?>> customMybatisMappers = new HashSet<>();
         customMybatisMappers.add(CustomCommentMapper.class);
         configure.setCustomMybatisMappers(customMybatisMappers);
+        //集成DMN
+//        List<EngineConfigurator> configurators = new ArrayList<>();
+//        configurators.add(dmnEngineConfiguration);
+//        configure.setConfigurators(configurators);
     }
 
     @Bean
