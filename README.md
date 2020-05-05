@@ -7,10 +7,37 @@ flowable学习 可以入群：633168411
 本系统采用微服务的架构设计
 
 
-#### 安装教程
+## 安装教程
+### 一、 服务端初始化
+#### 1、创建数据库表
+```
+  参考docs/sql/flowable.sql
+```
+#### 2、启动服务端
+```
+  启动FlowManagerApplication.java
+```
+### 二、 前端初始化
+#### 1、安装Node(V12.x.x以上)和NPM(V6.x.x以上)
+#### 2、安装淘宝镜像
+```
+  npm install -g cnpm --registry=https://registry.npm.taobao.org
+```
 
-1.  创建数据库表
-2.  启动FlowManagerApplication.java
+#### 3、初始化前端项目
+进入目录【/flowable/flowable-manager-ui】运行
+``` 
+  cnpm install
+```
+
+#### 4、启动项目
+```
+  npm run start:no-mock
+```
+
+### 三、登录账号密码
+admin/test
+
 
 
 #### 使用说明
