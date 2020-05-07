@@ -10,7 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>flowable-manager</artifactId>
-
+    <properties>
+        <start-class>com.dragon.flow.manager.main.FlowManagerApplication</start-class>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
