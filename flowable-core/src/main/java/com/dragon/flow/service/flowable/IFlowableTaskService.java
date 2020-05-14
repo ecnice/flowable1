@@ -39,6 +39,7 @@ public interface IFlowableTaskService {
     public List<FlowNodeVo> getBackNodesByProcessInstanceId(String processInstanceId,String taskId) ;
     /**
      * 任务前加签 （如果多次加签只能显示第一次前加签的处理人来处理任务）
+     * 多个加签人处理完毕任务之后又流到自己这里
      *
      * @param addSignTaskVo 参数
      * @return
@@ -46,7 +47,7 @@ public interface IFlowableTaskService {
     public ReturnVo<String> beforeAddSignTask(AddSignTaskVo addSignTaskVo);
 
     /**
-     * 任务后加签
+     * 任务后加签（加签人自己自动审批完毕加签多个人处理任务）
      *
      * @param addSignTaskVo 参数
      * @return
