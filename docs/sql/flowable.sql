@@ -1454,3 +1454,13 @@ INSERT INTO `tbl_flow_leave` VALUES ('8a884c236e8e0074016e8e0074e80000', '080ec9
 INSERT INTO `tbl_flow_leave` VALUES ('8a884c236e97a7f5016e97a7f5e00000', '2497ec600dd611ea8e38dc8b287b3603', '张三', '1', '2019-11-23 00:00:00', '2019-11-23 00:00:00');
 INSERT INTO `tbl_flow_leave` VALUES ('8a884c406ea23ac0016ea23ac01e0000', '2a7e09b60f7311ea9984dc8b287b3603', '王五', '1', '2019-11-25 00:00:00', '2019-11-26 00:00:00');
 INSERT INTO `tbl_flow_leave` VALUES ('8a884c406ea2ee60016ea2ee60d60000', '932f61e50f8e11ea988cdc8b287b3603', '张三', '2', '2019-11-25 00:00:00', '2019-11-26 00:00:00');
+
+DROP TABLE IF EXISTS `tbl_flow_purchase`;
+CREATE TABLE `tbl_flow_purchase` (
+  `id` varchar(32) DEFAULT NULL,
+  `process_instance_id` varchar(64) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `content` varchar(400) DEFAULT NULL,
+  `money` varchar(255) DEFAULT NULL,
+  `apply_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
