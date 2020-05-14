@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import { connect } from 'dva';
 import styles from './index.less';
-import moment from '_moment@2.24.0@moment';
+import moment from 'moment';
 
 export interface BackStepModalProps {
   onBackStep: (value: object) => void;
