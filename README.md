@@ -42,7 +42,9 @@ admin/test
 
 #### 使用说明
 *由于群里有些朋友对这个flowable还不是 很熟悉，在群里的小伙伴的建议下，我制作一个开源的项目源码，一共大家学习和交流，希望对有帮助，少走弯路  如果有不懂的问题可以入群：633168411  里面都是一些热心肠的人*
-## 项目地址：https://gitee.com/lwj/flowable.git
+## 项目地址：
+https://github.com/ecnice/flowable.git
+https://gitee.com/lwj/flowable.git
 1、导入数据库  所有的密码都是test  账号是00000001到0000004
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128112800979.png)
 2、运行rest 服务
