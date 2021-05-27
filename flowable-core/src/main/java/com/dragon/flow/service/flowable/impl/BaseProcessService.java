@@ -43,6 +43,8 @@ public abstract class BaseProcessService {
     @Autowired
     protected IdentityService identityService;
     @Autowired
+    protected DynamicBpmnService dynamicBpmnService;
+    @Autowired
     protected IFlowableCommentService flowableCommentService;
     @Autowired
     private IRunFlowableActinstDao runFlowableActinstDao;
