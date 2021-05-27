@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
  * @projectName : flowable
  * @description: task service
  * @date : 2019/11/1315:15
- *
  */
 @Service
 public class FlowableTaskServiceImpl extends BaseProcessService implements IFlowableTaskService {
