@@ -1,5 +1,17 @@
 # flowable
 
+## 企业级流程引擎请转移到：  
+[https://github.com/ecnice/flow](https://github.com/ecnice/flow)  
+- 预览地址：
+- [企业数智化 - 流程中心](http://8.129.209.112:8100/idm/#/login?_blank)
+- [企业数智化 - 门户](http://8.129.209.112:8200/idm/#/login)
+
+- [操作演示 - 流程中心](https://www.bilibili.com/video/BV1qU4y1L7pB/)
+- [操作演示 - 门户](https://www.bilibili.com/video/BV1mh411Y7UT/)
+
+- [码云](https://gitee.com/lwj/flow)
+
+
 #### 介绍
 flowable学习 可以入群：633168411
 
