@@ -82,6 +82,12 @@ https://gitee.com/lwj/flowable.git
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191128113702634.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXdlbmp1bjA1MTAx,size_16,color_FFFFFF,t_70)
 *由于水平有限，如果有什么写的有问题的地方，请及时联系我，我会一步步的把这些年的经验都分享出来*
 
+## 推荐
+
+大家在使用本项目时，推荐结合贺波老师的书[《深入Activiti流程引擎：核心原理与高阶实战》](https://item.m.jd.com/product/13928958.html?gx=RnAomTM2bmCImZxDqYAkVCoIHuIYVqc)，这本书对系统学习和深入掌握Activiti/Flowable的用法非常有帮助。
+![image](https://github.com/ecnice/flowable1/assets/16094881/fe9d46b7-6dd1-4e2a-91bb-7bd10d7a581e)
+
+
 #### 参与贡献
 
 1.  天道酬勤 浩然 小徐
